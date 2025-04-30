@@ -1,0 +1,57 @@
+name: Deploy Sphinx Docs to GitHub Pages
+
+on:
+
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies for next steps
+      run: |
+        sudo apt-get update && sudo apt-get install -y libxml2-utils
+        sudo apt-get update && sudo apt-get install -y pandoc
+        python -m pip install --upgrade pip
+        pip install -r scripts/docs_requirements.txt
+        pip install -r scripts/quality_requirements.txt
+        pip install .
+       
+    - name: Run quality check and test coverage
+      run: |
+        cd scripts 
+        chmod +x run_quality_check.sh
+        ./run_quality_check.sh
+        cd ..
+    - name : Build the documentation
+      run: |
+        cp -R _static docs/source/
+        cp -R examples docs/source/
+        rm -f docs/source/tdaad*.rst
+        sphinx-apidoc -o docs/source tdaad
+        cd docs
+        make clean
+        make html
+        
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: gh-pages
+        folder: docs/build/html/
+        clean: true
+
+

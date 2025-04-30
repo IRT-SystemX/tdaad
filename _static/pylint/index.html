@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="author" content="Stephan Müller" />
+
+  <title>pylint</title>
+
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.css" />
+  <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+
+  <nav class="navbar navbar-light bg-light">
+    <span class="navbar-brand mb-0 h1">pylint</span>
+  </nav>
+
+  <section class="content">
+    <div class="container-fluid mt-3">
+        <div class="card bg-light mb-3">
+          <div class="card-header">
+            <h5 class="mb-0">tdaad.anomaly_detectors</h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover table-sm">
+                <thead class="thead-light">
+                  <tr scope="col">
+                    <th></th>
+                    <th data-field="line">Line</th>
+                    <th data-field="column">Column</th>
+                    <th data-field="type">Type</th>
+                    <th data-field="obj">Object</th>
+                    <th data-field="message">Message</th>
+                    <th data-field="symbol">Symbol</th>
+                    <th data-field="message_id">Message Id</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="table-primary">
+                    <td><a href="/blob//tdaad\anomaly_detectors.py#L17" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>17</td>
+                    <td>0</td>
+                    <td>refactor</td>
+                    <td>TopologicalAnomalyDetector</td>
+                    <td>Too many ancestors (9/7)</td>
+                    <td>too-many-ancestors</td>
+                    <td>R0901</td>
+                  </tr>
+                  <tr class="table-primary">
+                    <td><a href="/blob//tdaad\anomaly_detectors.py#L89" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>89</td>
+                    <td>4</td>
+                    <td>refactor</td>
+                    <td>TopologicalAnomalyDetector.__init__</td>
+                    <td>Too many positional arguments (8/5)</td>
+                    <td>too-many-positional-arguments</td>
+                    <td>R0917</td>
+                  </tr>
+                  <tr class="table-warning">
+                    <td><a href="/blob//tdaad\anomaly_detectors.py#L144" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>144</td>
+                    <td>39</td>
+                    <td>warning</td>
+                    <td>TopologicalAnomalyDetector._warped_score_samples</td>
+                    <td>Unused argument 'y'</td>
+                    <td>unused-argument</td>
+                    <td>W0613</td>
+                  </tr>
+                  <tr class="table-warning">
+                    <td><a href="/blob//tdaad\anomaly_detectors.py#L170" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>170</td>
+                    <td>31</td>
+                    <td>warning</td>
+                    <td>TopologicalAnomalyDetector.score_samples</td>
+                    <td>Unused argument 'y'</td>
+                    <td>unused-argument</td>
+                    <td>W0613</td>
+                  </tr>
+                  <tr class="table-warning">
+                    <td><a href="/blob//tdaad\anomaly_detectors.py#L126" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>126</td>
+                    <td>8</td>
+                    <td>warning</td>
+                    <td>TopologicalAnomalyDetector.fit</td>
+                    <td>Attribute 'topological_embedding_' defined outside __init__</td>
+                    <td>attribute-defined-outside-init</td>
+                    <td>W0201</td>
+                  </tr>
+                  <tr class="table-warning">
+                    <td><a href="/blob//tdaad\anomaly_detectors.py#L164" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>164</td>
+                    <td>8</td>
+                    <td>warning</td>
+                    <td>TopologicalAnomalyDetector._warped_score_samples</td>
+                    <td>Attribute 'padding_length_' defined outside __init__</td>
+                    <td>attribute-defined-outside-init</td>
+                    <td>W0201</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="card bg-light mb-3">
+          <div class="card-header">
+            <h5 class="mb-0">tdaad.topological_embedding</h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover table-sm">
+                <thead class="thead-light">
+                  <tr scope="col">
+                    <th></th>
+                    <th data-field="line">Line</th>
+                    <th data-field="column">Column</th>
+                    <th data-field="type">Type</th>
+                    <th data-field="obj">Object</th>
+                    <th data-field="message">Message</th>
+                    <th data-field="symbol">Symbol</th>
+                    <th data-field="message_id">Message Id</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="table-warning">
+                    <td><a href="/blob//tdaad\topological_embedding.py#L19" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>19</td>
+                    <td>28</td>
+                    <td>warning</td>
+                    <td>local_atol_fit</td>
+                    <td>Unused argument 'y'</td>
+                    <td>unused-argument</td>
+                    <td>W0613</td>
+                  </tr>
+                  <tr class="table-warning">
+                    <td><a href="/blob//tdaad\topological_embedding.py#L19" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>19</td>
+                    <td>36</td>
+                    <td>warning</td>
+                    <td>local_atol_fit</td>
+                    <td>Unused argument 'sample_weight'</td>
+                    <td>unused-argument</td>
+                    <td>W0613</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+    </div>
+  </section>
+
+</body>
+
+</html>

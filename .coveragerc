@@ -1,0 +1,14 @@
+[run]
+# Include all files in the test directory for coverage analysis
+include =  tdaad/*
+
+# Exclude certain specific files or folders that are not relevant for coverage
+#omit =
+#    tests/my_tests/*
+
+
+[report]
+# Show coverage percentages in the terminal
+show_missing = True
+skip_covered = False
+
