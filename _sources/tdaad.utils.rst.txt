@@ -1,0 +1,45 @@
+tdaad.utils package
+===================
+
+Submodules
+----------
+
+tdaad.utils.local\_elliptic\_envelope module
+--------------------------------------------
+
+.. automodule:: tdaad.utils.local_elliptic_envelope
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+tdaad.utils.local\_pipeline module
+----------------------------------
+
+.. automodule:: tdaad.utils.local_pipeline
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+tdaad.utils.remapping\_functions module
+---------------------------------------
+
+.. automodule:: tdaad.utils.remapping_functions
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+tdaad.utils.window\_functions module
+------------------------------------
+
+.. automodule:: tdaad.utils.window_functions
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: tdaad.utils
+   :members:
+   :show-inheritance:
+   :undoc-members:

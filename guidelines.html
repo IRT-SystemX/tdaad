@@ -1,0 +1,264 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📖 Guidelines &mdash; Topological Data Analysis for Anomaly Detection 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="🧪 Tutorial" href="tutorial.html" />
+    <link rel="prev" title="Welcome to Topological Data Analysis for Anomaly Detection’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Topological Data Analysis for Anomaly Detection
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">📖 Guidelines</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#install">🚀 Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-usage">🎮 Basic usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#context">Context</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#main-features-topologicalembedding-and-topologicalanomalydetector">Main features: <code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding</span></code> and <code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#improved-usage">🔀 Improved usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#main-outputs">Main outputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#algorithm-main-parameters">Algorithm main parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#good-to-know">Good to know</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#identity-card">🔍 Identity card</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">🧪 Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tech_docs.html">📚 Technical docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theory_overview.html">💡 Theory overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theory_overview.html#references">📑 References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">🔄 Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/modules.html">tdaad</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Topological Data Analysis for Anomaly Detection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">📖 Guidelines</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/guidelines.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="guidelines">
+<h1>📖 Guidelines<a class="headerlink" href="#guidelines" title="Link to this heading"></a></h1>
+<p>This package named <code class="docutils literal notranslate"><span class="pre">tdaad</span></code> is a Python module for detecting anomalies in multiple time series.</p>
+<section id="install">
+<h2>🚀 Install<a class="headerlink" href="#install" title="Link to this heading"></a></h2>
+<p>To install and use the component you can create a Python virtual environment as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>virtualenv
+virtualenv<span class="w"> </span>myenv
+<span class="nb">source</span><span class="w"> </span>myenv/bin/activate
+</pre></div>
+</div>
+<p>Then you can clone the git repo and install from within the folder:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://git.irt-systemx.fr/confianceai/ec_5/ec5_as3/tdaad
+<span class="nb">cd</span><span class="w"> </span>tdaad
+pip<span class="w"> </span>install<span class="w"> </span>.
+</pre></div>
+</div>
+</section>
+<section id="basic-usage">
+<h2>🎮 Basic usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h2>
+<section id="context">
+<h3>Context<a class="headerlink" href="#context" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">tdaad</span></code> provides machine learning algorithms for analyzing timeseries data through the lense of Topological Data
+Analysis, and deriving anomaly scores.</p>
+<p>The targeted input is an object <code class="docutils literal notranslate"><span class="pre">X</span></code> representing a <em>multiple time series</em> with variables columns and timestamps lines.
+We use the term <em>multiple time series</em> to describe a set of univariate timeseries that describe a system or object.
+Note that the package does not handle analysis of a single univariate timeseries.</p>
+<p>The main idea of this package is to analyze time series with topological methods. It is done in three essential steps:</p>
+<ol class="arabic simple">
+<li><p>cut the timeseries into chunks using a sliding window algorithm,</p></li>
+<li><p>represent each timeseries window with topological features,</p></li>
+<li><p>estimate the empirical covariance of those topological features to derive an anomaly detection procedure.</p></li>
+</ol>
+<p>The combination of steps 1. and 2. are performed by an object called <code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding</span></code>,
+and the method can be understood as a representation learning method.</p>
+<p>Step 3. is a standard step of anomaly detection procedure based on vectorized data.</p>
+<p>The combined result is the <code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code> object.</p>
+</section>
+<section id="main-features-topologicalembedding-and-topologicalanomalydetector">
+<h3>Main features: <code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding</span></code> and <code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code><a class="headerlink" href="#main-features-topologicalembedding-and-topologicalanomalydetector" title="Link to this heading"></a></h3>
+<p>As the package is based upon, inspired by and compatible with reknown <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code>
+python library, the representation learning and anomaly detection learning are performed in the most standard way.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.topological_embedding</span><span class="w"> </span><span class="kn">import</span> <span class="n">TopologicalEmbedding</span>
+   <span class="n">embedding</span> <span class="o">=</span> <span class="n">TopologicalEmbedding</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Based on this representation, an empirical covariance is learned and an
+elliptic envelope is calculated with the associated mahalanobis distance, allowing for derivation of an anomaly score.
+All of this is performed within the <code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code> object, so that to perform an anomaly detection process
+one only needs the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.anomaly_detectors</span><span class="w"> </span><span class="kn">import</span> <span class="n">TopologicalAnomalyDetector</span>
+   <span class="n">detector</span> <span class="o">=</span> <span class="n">TopologicalAnomalyDetector</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+   <span class="n">anomaly_scores</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">score_samples</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="improved-usage">
+<h2>🔀 Improved usage<a class="headerlink" href="#improved-usage" title="Link to this heading"></a></h2>
+<section id="inputs">
+<h3>Inputs<a class="headerlink" href="#inputs" title="Link to this heading"></a></h3>
+<p>For now the component is designed to handle inputs <code class="docutils literal notranslate"><span class="pre">X</span></code> in the form of a
+DataFrame with variables as columns and timestamps as lines.</p>
+</section>
+<section id="main-outputs">
+<h3>Main outputs<a class="headerlink" href="#main-outputs" title="Link to this heading"></a></h3>
+<p>The main output is an <code class="docutils literal notranslate"><span class="pre">anomaly_score</span></code> from the <code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code> object,
+in the form of a univariate <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> with timestamps as indices. The scores are not bounded, the lower scores correspond to the more abnormal portions of the timeseries,
+according to the topological representation that was constructed.</p>
+<p>Another key output is that topological representation or embedding, result of the <code class="docutils literal notranslate"><span class="pre">transform</span></code> of the <code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding</span></code> object: a multivariate <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> with timestamps as indices.</p>
+</section>
+<section id="algorithm-main-parameters">
+<h3>Algorithm main parameters<a class="headerlink" href="#algorithm-main-parameters" title="Link to this heading"></a></h3>
+<p>The aforementioned <code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code> objects are ready-to-use as such,
+but should be manually tuned for better results. Key parameters include:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">window_size</span></code> for the sliding window algorithm, important for capturing phenomenons at a certain scale. Ideally one would want at least <code class="docutils literal notranslate"><span class="pre">window_size=100</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_centers_by_dim</span></code> determining the size of the embedding, that one wants as small as possible at risk of missing key information. Perhaps start with value 2 or 3, and if the features are not relevant it is worth going to 10 to 20.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tda_max_dim</span></code> the maximum topological dimension to create features. One should start with dimension 0, 1 or 2. The computation time increases sensibly with this parameter.</p></li>
+</ul>
+</section>
+<section id="good-to-know">
+<h3>Good to know<a class="headerlink" href="#good-to-know" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>For this algorithm to run smoothly, the number of sensors involved can go to 100 without too much problem.</p></li>
+<li><p>It seems possible to adapt the algorithm to an online version if one stays around this order of magnitude. The way to go would be 1. find a reasonable “normal-regime” period and <code class="docutils literal notranslate"><span class="pre">window_size</span></code> to train the detector, then run it on streaming data.</p></li>
+<li><p>Because of its design, the tda detectors would be invariant to noises or transformation that are invariant through correlation (e.g. multiplication), but also to label shifts (as TDA is invariant to label permutation).</p></li>
+<li><p>This detector is good to use in a context where a complex system (e.g. train on a railway, drone fleet, factory…) has various sensors information that can be used to build inference on the state of the system (working / anomalous =&gt; needs attending).</p></li>
+</ul>
+</section>
+</section>
+<section id="identity-card">
+<h2>🔍 Identity card<a class="headerlink" href="#identity-card" title="Link to this heading"></a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Global_information</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Topological</span><span class="nv"> </span><span class="s">description</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">multiple</span><span class="nv"> </span><span class="s">time</span><span class="nv"> </span><span class="s">series</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">GUDHI&quot;</span>
+<span class="w">    </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.4.0</span>
+<span class="w">    </span><span class="nt">License</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MPL-2.0</span>
+<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PythonLib</span>
+<span class="w">    </span><span class="nt">Domain</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Non specific</span>
+<span class="w">    </span><span class="nt">Thematic</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Anomaly detection with TDA</span>
+<span class="w">    </span><span class="nt">Data_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Time series (multivariate)</span>
+<span class="w">    </span><span class="nt">usecases</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UC_Air_Liquide_EMS_Data_Quality</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UC_Naval_Group_Anomaly_Detection</span>
+
+<span class="nt">Attributes</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Trustworthy_attributes</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dependability</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Explainability</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Robustness</span>
+<span class="w">    </span><span class="nt">Eng_activities</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EA51 - Massage data</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EA52 - Characterize data</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EA53 - Scope data</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EA54 - Acquire knowledge</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EA55 - Encode knowledge</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EA56 - Validate knowledge</span>
+<span class="w">    </span><span class="nt">Scientific_Challenge</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SC48 Evaluate the quality of the data mining, enrichment, annotation and preparation process</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SC49 Measure the quality and representativeness of the data / knowledge of an operational domain</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SC50 Identify biases in data/knowledge leading to poor decisions</span>
+
+<span class="nt">Link </span><span class="p">:</span>
+<span class="w">    </span><span class="nt">source_code_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/IRT-SystemX/tdaad</span>
+<span class="w">    </span><span class="nt">documentation_url</span><span class="p">:</span>
+
+<span class="nt">Technical</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">Python Version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&gt;=3.12&quot;</span>
+<span class="w">    </span><span class="nt">Dependencies</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gudhi, pandas, scikit-learn</span>
+<span class="w">    </span><span class="nt">Hardware_compatibiliy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CPU only</span>
+<span class="w">    </span><span class="nt">component_incompatibility</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">None</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Topological Data Analysis for Anomaly Detection’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tutorial.html" class="btn btn-neutral float-right" title="🧪 Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Martin Royer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

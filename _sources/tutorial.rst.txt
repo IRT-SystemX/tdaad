@@ -1,0 +1,9 @@
+.. _tutorial:
+
+🧪 Tutorial
+======================================================
+
+.. toctree::
+   :maxdepth: 5
+
+   notebooks/oua_tutorial

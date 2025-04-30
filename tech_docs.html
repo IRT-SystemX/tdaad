@@ -1,0 +1,235 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📚 Technical docs &mdash; Topological Data Analysis for Anomaly Detection 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="💡 Theory overview" href="theory_overview.html" />
+    <link rel="prev" title="Learning on a modified Ornstein–Uhlenbeck process" href="notebooks/oua_tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Topological Data Analysis for Anomaly Detection
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="guidelines.html">📖 Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">🧪 Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">📚 Technical docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theory_overview.html">💡 Theory overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theory_overview.html#references">📑 References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">🔄 Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/modules.html">tdaad</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Topological Data Analysis for Anomaly Detection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">📚 Technical docs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tech_docs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="technical-docs">
+<span id="doc-techniques"></span><h1>📚 Technical docs<a class="headerlink" href="#technical-docs" title="Link to this heading"></a></h1>
+<p>Here is the functional diagram of the main objects of this component, as well as their technical documentation:</p>
+<figure class="align-default" id="id1">
+<img alt="_images/tdaad.png" src="_images/tdaad.png" />
+<figcaption>
+<p><span class="caption-text">Functional diagram of the topological anomaly detection scheme.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tdaad.anomaly_detectors.</span></span><span class="sig-name descname"><span class="pre">TopologicalAnomalyDetector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tda_max_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_persistence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_centers_by_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">support_fraction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contamination</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/anomaly_detectors.html#TopologicalAnomalyDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Object for detecting anomaly base on Topological Embedding and sklearn.covariance.EllipticEnvelope.
+This object analyzes multiple time series data through the following operations:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>run a sliding window algorithm and represent each time series window with topological features,</dt><dd><p>see <a class="reference internal" href="theory_overview.html#topological-embedding"><span class="std std-ref">Topological Embedding</span></a>,</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>use a MinCovDet algorithm to robustly estimate the data mean and covariance in the embedding space,</dt><dd><p>and use these to derive an embedding mahalanobis distance and associated outlier detection procedure,
+see <a class="reference internal" href="theory_overview.html#elliptic-envelope"><span class="std std-ref">Elliptic Envelope</span></a>.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>After fitting, it is able to produce an anomaly score from a time series describing normal / abnormal time segments.
+(the lower, the more abnormal)
+The predict method (inherited from EllipticEnvelope) allows to transform that score into
+binary normal / anomaly labels.</p>
+<p>Read more in the <a class="reference internal" href="theory_overview.html#topological-anomaly-detection"><span class="std std-ref">User Guide</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>window_size</strong> (<em>int</em><em>, </em><em>default=40</em>) – Size of the sliding window algorithm to extract subsequences as input to named_pipeline.</p></li>
+<li><p><strong>step</strong> (<em>int</em><em>, </em><em>default=5</em>) – Size of the sliding window steps between each window.</p></li>
+<li><p><strong>tda_max_dim</strong> (<em>int</em><em>, </em><em>default=2</em>) – The maximum dimension of the topological feature extraction.</p></li>
+<li><p><strong>min_persistence</strong> (<em>float</em><em>, </em><em>default=0.0</em>) – The minimum persistence value to take into account
+(the persistence value will be strictly greater than min_persistence).</p></li>
+<li><p><strong>n_centers_by_dim</strong> (<em>int</em><em>, </em><em>default=5</em>) – The number of centroids to generate by dimension for vectorizing topological features.
+The resulting embedding will have total dimension =&lt; tda_max_dim * n_centers_by_dim.
+The resulting embedding dimension might be smaller because of the KMeans algorithm in the Archipelago step.</p></li>
+<li><p><strong>support_fraction</strong> (<em>float</em><em>, </em><em>default=None</em>) – The proportion of points to be included in the support of the raw
+MCD estimate. If None, the minimum value of support_fraction will
+be used within the algorithm: <cite>[n_sample + n_features + 1] / 2</cite>.
+Range is (0, 1).</p></li>
+<li><p><strong>contamination</strong> (<em>float</em><em>, </em><em>default=0.1</em>) – The amount of contamination of the data set, i.e. the proportion
+of outliers in the data set. Range is (0, 0.5]. Only matters for computing the decision function.</p></li>
+<li><p><strong>random_state</strong> (<em>int</em><em>, </em><em>RandomState instance</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Determines the pseudo random number generator for shuffling
+the data. Pass an int for reproducible results across multiple function
+calls.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">topological_embedding_</span></span></dt>
+<dd><p>TopologicalEmbedding transformer object that is fitted at <cite>fit</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n_timestamps</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n_sensors</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timestamps</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2024-01-01&#39;</span><span class="p">,</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_timestamps</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_timestamps</span><span class="p">,</span> <span class="n">n_sensors</span><span class="p">)),</span> <span class="n">index</span><span class="o">=</span><span class="n">timestamps</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">n_timestamps</span><span class="o">//</span><span class="mi">2</span><span class="p">:,:</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">n_timestamps</span><span class="o">//</span><span class="mi">2</span><span class="p">:,</span><span class="mi">10</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">detector</span> <span class="o">=</span> <span class="n">TopologicalAnomalyDetector</span><span class="p">(</span><span class="n">n_centers_by_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">tda_max_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">anomaly_scores</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">score_samples</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decision</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">decision_function</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">anomalies</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tdaad.topological_embedding.</span></span><span class="sig-name descname"><span class="pre">TopologicalEmbedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tda_max_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_persistence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_centers_by_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'none'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/topological_embedding.html#TopologicalEmbedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Topological embedding for multiple time series.</p>
+<p>Slices time series into smaller time series windows, forms an affinity matrix on each window
+and applies a Rips procedure to produce persistence diagrams for each affinity
+matrix. Then uses Atol [ref:Atol] on each dimension through the
+gudhi.representation.Archipelago representation to produce topological vectorization.</p>
+<p>Read more in the <a class="reference internal" href="theory_overview.html#topological-embedding"><span class="std std-ref">User Guide</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>window_size</strong> (<em>int</em><em>, </em><em>default=40</em>) – Size of the sliding window algorithm to extract subsequences as input to named_pipeline.</p></li>
+<li><p><strong>step</strong> (<em>int</em><em>, </em><em>default=5</em>) – Size of the sliding window steps between each window.</p></li>
+<li><p><strong>n_centers_by_dim</strong> (<em>int</em><em>, </em><em>default=5</em>) – The number of centroids to generate by dimension for vectorizing topological features.
+The resulting embedding will have total dimension =&lt; tda_max_dim * n_centers_by_dim.
+The resulting embedding dimension might be smaller because of the KMeans algorithm in the Archipelago step.</p></li>
+<li><p><strong>tda_max_dim</strong> (<em>int</em><em>, </em><em>default=2</em>) – The maximum dimension of the topological feature extraction.</p></li>
+<li><p><strong>min_persistence</strong> (<em>float</em><em>, </em><em>default=0.0</em>) – The minimum persistence value to take into account (the persistence value will be strictly
+greater than min_persistence).</p></li>
+<li><p><strong>remapping</strong> (<em>str</em><em>, </em><em>default=&quot;simple&quot;</em>) – The method to use to compute final results out of the sliding window algorithm.
+By default, “simple” means a <cite>simple_index_remapping</cite> procedure is applied, meaning that each window produces
+an anomaly score for its last timestamp. Other options are “vote” where <cite>majority_vote_index_remapping</cite> when
+a score for a certain timestamp is computed by voting over all windows that include that timestamp,
+and “none” where no remapping is applied, meaning that output indices will be tuples of size <cite>window_size</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n_timestamps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n_sensors</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timestamps</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2024-01-01&#39;</span><span class="p">,</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_timestamps</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_timestamps</span><span class="p">,</span> <span class="n">n_sensors</span><span class="p">)),</span> <span class="n">index</span><span class="o">=</span><span class="n">timestamps</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">TopologicalEmbedding</span><span class="p">(</span><span class="n">n_centers_by_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">tda_max_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="notebooks/oua_tutorial.html" class="btn btn-neutral float-left" title="Learning on a modified Ornstein–Uhlenbeck process" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="theory_overview.html" class="btn btn-neutral float-right" title="💡 Theory overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Martin Royer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tdaad.utils package &mdash; Topological Data Analysis for Anomaly Detection 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Topological Data Analysis for Anomaly Detection
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="guidelines.html">📖 Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">🧪 Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tech_docs.html">📚 Technical docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theory_overview.html">💡 Theory overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theory_overview.html#references">📑 References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">🔄 Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/modules.html">tdaad</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Topological Data Analysis for Anomaly Detection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">tdaad.utils package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tdaad.utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tdaad-utils-package">
+<h1>tdaad.utils package<a class="headerlink" href="#tdaad-utils-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-tdaad.utils.local_elliptic_envelope">
+<span id="tdaad-utils-local-elliptic-envelope-module"></span><h2>tdaad.utils.local_elliptic_envelope module<a class="headerlink" href="#module-tdaad.utils.local_elliptic_envelope" title="Link to this heading"></a></h2>
+<p>Pandas Elliptic Envelope.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tdaad.utils.local_elliptic_envelope.pandas_mahalanobis">
+<span class="sig-prename descclassname"><span class="pre">tdaad.utils.local_elliptic_envelope.</span></span><span class="sig-name descname"><span class="pre">pandas_mahalanobis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/utils/local_elliptic_envelope.html#pandas_mahalanobis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.utils.local_elliptic_envelope.pandas_mahalanobis" title="Link to this definition"></a></dt>
+<dd><p>Compute the negative Mahalanobis distances of embedding matrix X.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – The embedding matrix.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>negative_mahal_distances</strong> – Opposite of the Mahalanobis distances.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame of shape (n_samples,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tdaad.utils.local_elliptic_envelope.pandas_score_samples">
+<span class="sig-prename descclassname"><span class="pre">tdaad.utils.local_elliptic_envelope.</span></span><span class="sig-name descname"><span class="pre">pandas_score_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/utils/local_elliptic_envelope.html#pandas_score_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.utils.local_elliptic_envelope.pandas_score_samples" title="Link to this definition"></a></dt>
+<dd><p>Compute the negative Mahalanobis distances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>array-like</em><em> of </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – The data matrix.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>negative_mahal_distances</strong> – Opposite of the Mahalanobis distances.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like of shape (n_samples,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-tdaad.utils.local_pipeline">
+<span id="tdaad-utils-local-pipeline-module"></span><h2>tdaad.utils.local_pipeline module<a class="headerlink" href="#module-tdaad.utils.local_pipeline" title="Link to this heading"></a></h2>
+<p>Window Functions.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tdaad.utils.local_pipeline.LocalPipeline">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tdaad.utils.local_pipeline.</span></span><span class="sig-name descname"><span class="pre">LocalPipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/utils/local_pipeline.html#LocalPipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.utils.local_pipeline.LocalPipeline" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tdaad.utils.local_pipeline.LocalPipeline.set_score_request">
+<span class="sig-name descname"><span class="pre">set_score_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tdaad.utils.local_pipeline.LocalPipeline" title="tdaad.utils.local_pipeline.LocalPipeline"><span class="pre">LocalPipeline</span></a></span></span><a class="headerlink" href="#tdaad.utils.local_pipeline.LocalPipeline.set_score_request" title="Link to this definition"></a></dt>
+<dd><p>Request metadata passed to the <code class="docutils literal notranslate"><span class="pre">score</span></code> method.</p>
+<p>Note that this method is only relevant if
+<code class="docutils literal notranslate"><span class="pre">enable_metadata_routing=True</span></code> (see <code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.set_config()</span></code>).
+Please see <span class="xref std std-ref">User Guide</span> on how the routing
+mechanism works.</p>
+<p>The options for each parameter are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code>: metadata is requested, and passed to <code class="docutils literal notranslate"><span class="pre">score</span></code> if provided. The request is ignored if metadata is not provided.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code>: metadata is not requested and the meta-estimator will not pass it to <code class="docutils literal notranslate"><span class="pre">score</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: metadata is not requested, and the meta-estimator will raise an error if the user provides it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">str</span></code>: metadata should be passed to the meta-estimator with this given alias instead of the original name.</p></li>
+</ul>
+<p>The default (<code class="docutils literal notranslate"><span class="pre">sklearn.utils.metadata_routing.UNCHANGED</span></code>) retains the
+existing request. This allows you to change the request for some
+parameters and not others.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.3.</span></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method is only relevant if this estimator is used as a
+sub-estimator of a meta-estimator, e.g. used inside a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code>. Otherwise it has no effect.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample_weight</strong> (<em>str</em><em>, </em><em>True</em><em>, </em><em>False</em><em>, or </em><em>None</em><em>,                     </em><em>default=sklearn.utils.metadata_routing.UNCHANGED</em>) – Metadata routing for <code class="docutils literal notranslate"><span class="pre">sample_weight</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">score</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>self</strong> – The updated object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-tdaad.utils.remapping_functions">
+<span id="tdaad-utils-remapping-functions-module"></span><h2>tdaad.utils.remapping_functions module<a class="headerlink" href="#module-tdaad.utils.remapping_functions" title="Link to this heading"></a></h2>
+<p>Remapping Functions.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tdaad.utils.remapping_functions.exhaustive_index_remapping">
+<span class="sig-prename descclassname"><span class="pre">tdaad.utils.remapping_functions.</span></span><span class="sig-name descname"><span class="pre">exhaustive_index_remapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/utils/remapping_functions.html#exhaustive_index_remapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.utils.remapping_functions.exhaustive_index_remapping" title="Link to this definition"></a></dt>
+<dd><p>Simple remapping + interpolation. From a dataframe with tuple index, create a new dataframe with index chosen
+as the last element from tuple. Then map the original indices onto those and interpolate in between missing values.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tdaad.utils.remapping_functions.get_index_remapping_fun">
+<span class="sig-prename descclassname"><span class="pre">tdaad.utils.remapping_functions.</span></span><span class="sig-name descname"><span class="pre">get_index_remapping_fun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remapping_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/utils/remapping_functions.html#get_index_remapping_fun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.utils.remapping_functions.get_index_remapping_fun" title="Link to this definition"></a></dt>
+<dd><p>Getter for access to <cite>INDEX_REMAPPING_DICT</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tdaad.utils.remapping_functions.majority_vote_index_remapping">
+<span class="sig-prename descclassname"><span class="pre">tdaad.utils.remapping_functions.</span></span><span class="sig-name descname"><span class="pre">majority_vote_index_remapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/utils/remapping_functions.html#majority_vote_index_remapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.utils.remapping_functions.majority_vote_index_remapping" title="Link to this definition"></a></dt>
+<dd><p>Majority vote (see above) + mean.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tdaad.utils.remapping_functions.majority_vote_index_remapping_med">
+<span class="sig-prename descclassname"><span class="pre">tdaad.utils.remapping_functions.</span></span><span class="sig-name descname"><span class="pre">majority_vote_index_remapping_med</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/utils/remapping_functions.html#majority_vote_index_remapping_med"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.utils.remapping_functions.majority_vote_index_remapping_med" title="Link to this definition"></a></dt>
+<dd><p>Majority vote (see above) + median.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tdaad.utils.remapping_functions.no_remapping">
+<span class="sig-prename descclassname"><span class="pre">tdaad.utils.remapping_functions.</span></span><span class="sig-name descname"><span class="pre">no_remapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/utils/remapping_functions.html#no_remapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.utils.remapping_functions.no_remapping" title="Link to this definition"></a></dt>
+<dd><p>Identity function e.g. no remapping of index.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tdaad.utils.remapping_functions.nonbackward_index_remapping">
+<span class="sig-prename descclassname"><span class="pre">tdaad.utils.remapping_functions.</span></span><span class="sig-name descname"><span class="pre">nonbackward_index_remapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/utils/remapping_functions.html#nonbackward_index_remapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.utils.remapping_functions.nonbackward_index_remapping" title="Link to this definition"></a></dt>
+<dd><p>Simple remapping + interpolation. From a dataframe with tuple index, create a new dataframe with index chosen
+as the last element from tuple. Then map the original indices onto those and interpolate in between missing values.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tdaad.utils.remapping_functions.score_flat_fast_remapping">
+<span class="sig-prename descclassname"><span class="pre">tdaad.utils.remapping_functions.</span></span><span class="sig-name descname"><span class="pre">score_flat_fast_remapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scores</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/utils/remapping_functions.html#score_flat_fast_remapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.utils.remapping_functions.score_flat_fast_remapping" title="Link to this definition"></a></dt>
+<dd><p>Univariate score remapping without window indices and with precomputed padding_length.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tdaad.utils.remapping_functions.simple_index_remapping">
+<span class="sig-prename descclassname"><span class="pre">tdaad.utils.remapping_functions.</span></span><span class="sig-name descname"><span class="pre">simple_index_remapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/utils/remapping_functions.html#simple_index_remapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.utils.remapping_functions.simple_index_remapping" title="Link to this definition"></a></dt>
+<dd><p>From a dataframe with tuple index, create a new dataframe with index chosen as the last element from tuple.</p>
+</dd></dl>
+
+</section>
+<section id="module-tdaad.utils.window_functions">
+<span id="tdaad-utils-window-functions-module"></span><h2>tdaad.utils.window_functions module<a class="headerlink" href="#module-tdaad.utils.window_functions" title="Link to this heading"></a></h2>
+<p>Window Functions.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tdaad.utils.window_functions.sliding_window_ppl">
+<span class="sig-prename descclassname"><span class="pre">tdaad.utils.window_functions.</span></span><span class="sig-name descname"><span class="pre">sliding_window_ppl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">120</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/utils/window_functions.html#sliding_window_ppl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.utils.window_functions.sliding_window_ppl" title="Link to this definition"></a></dt>
+<dd><p>Applies a pipeline to timeseries data chunks using the Sliding Window algorithm.</p>
+<p>&#64;param data: pd.DataFrame with index to apply named_pipeline to.
+&#64;param window_size: size of the sliding window algorithm to extract subsequences as input to named_pipeline.
+&#64;param step: size of the sliding window steps between each window.
+&#64;param pipeline: pipeline (sequence of operators that have a <cite>name</cite> attribute) to apply to each window.
+&#64;return: pd.DataFrame that maps data to the result of applying named_pipeline to window view of data.</p>
+</dd></dl>
+
+</section>
+<section id="module-tdaad.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-tdaad.utils" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Martin Royer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

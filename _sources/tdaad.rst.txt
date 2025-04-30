@@ -1,0 +1,45 @@
+tdaad package
+=============
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   tdaad.utils
+
+Submodules
+----------
+
+tdaad.anomaly\_detectors module
+-------------------------------
+
+.. automodule:: tdaad.anomaly_detectors
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+tdaad.topological\_embedding module
+-----------------------------------
+
+.. automodule:: tdaad.topological_embedding
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+tdaad.twe\_logger module
+------------------------
+
+.. automodule:: tdaad.twe_logger
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: tdaad
+   :members:
+   :show-inheritance:
+   :undoc-members:

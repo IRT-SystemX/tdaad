@@ -1,0 +1,10 @@
+demo package
+============
+
+Module contents
+---------------
+
+.. automodule:: demo
+   :members:
+   :show-inheritance:
+   :undoc-members:
