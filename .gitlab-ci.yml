@@ -1,0 +1,125 @@
+# Script a utiliser pour finaliser le deploiement des composants intégrés 
+# Pour l'intégration des composant niveau 2 , ne garder que "build_release" dans les etape de stage ci dessous 
+
+
+stages:
+  - check_quality # verifie pylint et flake8  ( a commenter pour les comp niv2)
+  - deploy  # exporte la documentation HTML en ligne (a commenter pour les comp niv2)
+  - build_releases # deploie le pkg python sur le nexus
+
+default:
+  image: python:3.10 
+  tags: 
+    - confiance
+    - public 
+
+  before_script:
+    - python -V
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  NEXUS_URL: "repo.irtsysx.fr"
+  PROJECT_NAME: "$CI_PROJECT_NAME"
+  PROJECT_VERSION: "$CI_COMMIT_TAG"
+  PROJECT_TYPE: "wheel"
+  SETUP_PY_PATH: "./"
+
+check_quality:
+  stage: check_quality
+  script:
+    # Installation des depéndances
+    - echo "Preparing environment..."
+    - pip install . 
+    - pip install pylint pylint-exit anybadge pylint-gitlab flake8 flake8-html coverage pytest
+    - echo "Dependencies installed." 
+
+    # Pylint
+    - echo "Running Pylint..."
+    - mkdir -p public/pylint
+    - pylint tdaad --output-format=text --exit-zero | tee public/pylint/pylint.txt # remplacer "deel" par le nom de votre pkg python
+    - PYLINT_SCORE=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' public/pylint/pylint.txt)
+    - echo "Pylint score is $PYLINT_SCORE"
+    - pylint tdaad --output-format=pylint_gitlab.GitlabPagesHtmlReporter --exit-zero > public/pylint/index.html # remplacer "deel" par le nom de votre pkg python
+    - anybadge --overwrite --label pylint --value=$PYLINT_SCORE --file=public/pylint/pylint.svg 4=red 6=orange 8=yellow 10=green
+    
+    # Flake8
+    - echo "Running Flake8..."
+    - mkdir -p public/flake8
+    - flake8 tdaad --format=html --htmldir=public/flake8 --exit-zero # remplacer "deel" par le nom de votre pkg python
+    - anybadge --label flake8 --value="report" --file=public/flake8/flake8.svg
+
+    # Test coverage
+    - echo "Running test coverage..."
+    - coverage run -m pytest tests
+    - coverage report > coverage_report.txt
+    - mkdir -p public/coverage  
+    - COVERAGE_SCORE=$(grep 'TOTAL' coverage_report.txt | awk '{print $4}' | sed 's/%//')
+    - echo "Coverage score is $COVERAGE_SCORE"
+    - anybadge --overwrite --label coverage --value=$COVERAGE_SCORE --file=public/coverage/coverage.svg 50=red 60=orange 75=yellow 100=green
+    - coverage html -d public/coverage
+
+  artifacts:
+    paths:
+      - public/pylint/
+      - public/flake8/
+      - public/coverage/
+  only:
+    - EC1_integration_v130-rc2 # remplacer Integration_N3_v0.7 par le nom de la branche contenant votre code
+  when: manual  
+  
+pages:
+  stage: deploy
+  script:
+    # Quality code
+    - mkdir -p public/pages/pylint
+    - mkdir -p public/pages/flake8
+    - mkdir -p public/pages/coverage
+    - cp -r public/pylint/* public/pages/pylint
+    - cp -r public/flake8/* public/pages/flake8
+    - cp -r public/coverage/* public/pages/coverage
+
+    # Documentation
+    - mkdir -p public/
+    - mkdir -p public/docs/assets
+    - cp -r docs/assets/* public/docs/assets
+    - cp -r docs/build/html/* public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - EC1_integration_v130-rc2 # remplacer Integration_N3_v0.7 par le nom de la branche contenant votre code
+  
+  environment:
+      name: production/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
+      #url: https://confianceai.pages.irt-systemx.fr/${CI_PROJECT_NAME}
+      url: $CI_PAGES_URL
+  when: manual
+#### deploiement de la lib sur Nexus ####
+
+python_build_releases:
+  image: confianceai/gitlab-executor
+  stage: build_releases
+  before_script:
+    - echo "Overridable env variables -> PROJECT_NAME, PROJECT_VERSION"
+    - python3 --version
+    - pip3 install wheel
+  script:
+    - |-
+      cat << EOF > $HOME/.pypirc
+      [distutils]
+      index-servers =
+        nexus-pypi
+      [nexus-pypi]
+      repository = https://$NEXUS_URL/repository/pypi-releases/
+      trusted-host = $NEXUS_URL
+      username = $NEXUS_USER
+      password = $NEXUS_PWD
+      EOF
+    - python3 ${SETUP_PY_PATH}setup.py sdist bdist_$PROJECT_TYPE upload --repository nexus-pypi
+    - rm -f $HOME/.pypirc
+
+  when: manual
+  
+  rules:
+   - if: $CI_COMMIT_TAG =~ /^((0|[1-9]\d*){1,2}\.){2}(0|[1-9]\d*){1,2}$/
+   - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == "EC1_integration_v130-rc2" #  remplacer Integration_N3_v0.7 par le nom la branche qui doit faire l'export

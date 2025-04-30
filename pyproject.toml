@@ -1,0 +1,30 @@
+[project]
+name = "tdaad"
+version = "1.4.0"
+description = "Tools for anomaly detection in time series based on Topological Data Analysis"
+readme = "README.md"
+requires-python = ">=3.12"
+dynamic = ["dependencies"]
+license ="MPL-2.0"
+authors = [
+  {name = "Martin ROYER"},
+  {email="martin.royer@irt-systemx.fr"}
+]
+
+[project.urls]
+Homepage = "https://irt-systemx.github.io/tdaad/"
+Documentation = "https://irt-systemx.github.io/tdaad/"
+Repository = "https://github.com/IRT-SystemX/tdaad"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+where = ["."]  # list of folders that contain the packages (["."] by default)
+include = ["tdaad","tdaad.utils"]  # package names should match these glob patterns (["*"] by default)
+exclude = []  # exclude packages matching these glob patterns (empty by default)
+namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"

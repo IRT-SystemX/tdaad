@@ -1,0 +1,14 @@
+************* Module tdaad.anomaly_detectors
+tdaad\anomaly_detectors.py:17:0: R0901: Too many ancestors (9/7) (too-many-ancestors)
+tdaad\anomaly_detectors.py:89:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+tdaad\anomaly_detectors.py:144:39: W0613: Unused argument 'y' (unused-argument)
+tdaad\anomaly_detectors.py:170:31: W0613: Unused argument 'y' (unused-argument)
+tdaad\anomaly_detectors.py:126:8: W0201: Attribute 'topological_embedding_' defined outside __init__ (attribute-defined-outside-init)
+tdaad\anomaly_detectors.py:164:8: W0201: Attribute 'padding_length_' defined outside __init__ (attribute-defined-outside-init)
+************* Module tdaad.topological_embedding
+tdaad\topological_embedding.py:19:28: W0613: Unused argument 'y' (unused-argument)
+tdaad\topological_embedding.py:19:36: W0613: Unused argument 'sample_weight' (unused-argument)
+
+------------------------------------------------------------------
+Your code has been rated at 9.42/10 (previous run: 9.42/10, +0.00)
+
