@@ -80,6 +80,8 @@
 
 <span class="c1"># Author: Martin Royer</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">itemgetter</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
@@ -114,6 +116,11 @@
 
 <span class="n">RipsPersistence</span><span class="o">.</span><span class="n">get_feature_names_out</span> <span class="o">=</span> <span class="n">get_feature_names_out</span>
 
+<div class="viewcode-block" id="wrap_in_list">
+<a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.wrap_in_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wrap_in_list</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">X</span><span class="p">]</span></div>
+
 
 <div class="viewcode-block" id="PersistenceDiagramTransformer">
 <a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.PersistenceDiagramTransformer">[docs]</a>
@@ -146,11 +153,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">min_persistence</span> <span class="o">=</span> <span class="n">min_persistence</span>
         <span class="n">similarity_transformer</span> <span class="o">=</span> <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">_data_to_similarity</span><span class="p">)</span>
         <span class="n">similarity_transformer</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;1-$\mathbf</span><span class="si">{Corr}</span><span class="s2">(X)$&quot;</span>
-        <span class="n">list_encapsulate_transformer</span> <span class="o">=</span> <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">X</span><span class="p">:</span> <span class="p">[</span><span class="n">X</span><span class="p">])</span>
+        <span class="n">list_encapsulate_transformer</span> <span class="o">=</span> <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">wrap_in_list</span><span class="p">)</span>
         <span class="n">list_encapsulate_transformer</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">rips_transformer</span> <span class="o">=</span> <span class="n">RipsPersistence</span><span class="p">(</span><span class="n">homology_dimensions</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">tda_max_dim</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">input_type</span><span class="o">=</span><span class="s1">&#39;lower distance matrix&#39;</span><span class="p">)</span>   <span class="c1"># @todo: fix homol dimension</span>
         <span class="n">rips_transformer</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">list_popper_transformer</span> <span class="o">=</span> <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">X</span><span class="p">:</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">list_popper_transformer</span> <span class="o">=</span> <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
         <span class="n">list_popper_transformer</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
         <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span>

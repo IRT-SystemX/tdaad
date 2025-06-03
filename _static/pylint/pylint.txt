@@ -1,3 +1,21 @@
+************* Module tdaad.topological_embedding
+tdaad/topological_embedding.py:26:0: C0301: Line too long (146/120) (line-too-long)
+tdaad/topological_embedding.py:72:0: C0301: Line too long (151/120) (line-too-long)
+tdaad/topological_embedding.py:140:0: C0301: Line too long (124/120) (line-too-long)
+tdaad/topological_embedding.py:141:0: C0301: Line too long (134/120) (line-too-long)
+tdaad/topological_embedding.py:142:0: C0301: Line too long (128/120) (line-too-long)
+tdaad/topological_embedding.py:175:166: C0303: Trailing whitespace (trailing-whitespace)
+tdaad/topological_embedding.py:175:0: C0301: Line too long (166/120) (line-too-long)
+tdaad/topological_embedding.py:38:0: C0116: Missing function or method docstring (missing-function-docstring)
+tdaad/topological_embedding.py:111:0: C0116: Missing function or method docstring (missing-function-docstring)
+tdaad/topological_embedding.py:111:42: W0613: Unused argument 'input_features' (unused-argument)
+tdaad/topological_embedding.py:133:7: C1802: Do not use `len(SEQUENCE)` without comparison to determine if a sequence is empty (use-implicit-booleaness-not-len)
+tdaad/topological_embedding.py:116:28: W0613: Unused argument 'y' (unused-argument)
+tdaad/topological_embedding.py:218:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+tdaad/topological_embedding.py:272:27: W0613: Unused argument 'y' (unused-argument)
+tdaad/topological_embedding.py:304:4: C0116: Missing function or method docstring (missing-function-docstring)
+tdaad/topological_embedding.py:304:31: W0613: Unused argument 'y' (unused-argument)
+tdaad/topological_embedding.py:304:0: W0613: Unused argument 'fit_params' (unused-argument)
 ************* Module tdaad.twe_logger
 tdaad/twe_logger.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module tdaad.anomaly_detectors
@@ -9,37 +27,19 @@ tdaad/anomaly_detectors.py:129:8: W0201: Attribute 'topological_embedding_' defi
 tdaad/anomaly_detectors.py:144:12: W0201: Attribute 'support_fraction' defined outside __init__ (attribute-defined-outside-init)
 tdaad/anomaly_detectors.py:146:12: W0201: Attribute 'support_fraction' defined outside __init__ (attribute-defined-outside-init)
 tdaad/anomaly_detectors.py:169:8: W0201: Attribute 'padding_length_' defined outside __init__ (attribute-defined-outside-init)
-************* Module tdaad.topological_embedding
-tdaad/topological_embedding.py:24:0: C0301: Line too long (146/120) (line-too-long)
-tdaad/topological_embedding.py:68:0: C0301: Line too long (151/120) (line-too-long)
-tdaad/topological_embedding.py:136:0: C0301: Line too long (124/120) (line-too-long)
-tdaad/topological_embedding.py:137:0: C0301: Line too long (134/120) (line-too-long)
-tdaad/topological_embedding.py:138:0: C0301: Line too long (128/120) (line-too-long)
-tdaad/topological_embedding.py:171:166: C0303: Trailing whitespace (trailing-whitespace)
-tdaad/topological_embedding.py:171:0: C0301: Line too long (166/120) (line-too-long)
-tdaad/topological_embedding.py:107:0: C0116: Missing function or method docstring (missing-function-docstring)
-tdaad/topological_embedding.py:107:42: W0613: Unused argument 'input_features' (unused-argument)
-tdaad/topological_embedding.py:129:7: C1802: Do not use `len(SEQUENCE)` without comparison to determine if a sequence is empty (use-implicit-booleaness-not-len)
-tdaad/topological_embedding.py:112:28: W0613: Unused argument 'y' (unused-argument)
-tdaad/topological_embedding.py:214:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-tdaad/topological_embedding.py:268:27: W0613: Unused argument 'y' (unused-argument)
-tdaad/topological_embedding.py:300:4: C0116: Missing function or method docstring (missing-function-docstring)
-tdaad/topological_embedding.py:300:31: W0613: Unused argument 'y' (unused-argument)
-tdaad/topological_embedding.py:300:0: W0613: Unused argument 'fit_params' (unused-argument)
-************* Module tdaad.utils.window_functions
-tdaad/utils/window_functions.py:20:0: C0303: Trailing whitespace (trailing-whitespace)
 ************* Module tdaad.utils.remapping_functions
 tdaad/utils/remapping_functions.py:17:26: W0123: Use of eval (eval-used)
 tdaad/utils/remapping_functions.py:19:25: W0212: Access to a protected member _libs of a client class (protected-access)
 tdaad/utils/remapping_functions.py:100:76: W0640: Cell variable w defined in loop (cell-var-from-loop)
 tdaad/utils/remapping_functions.py:131:29: C0201: Consider iterating the dictionary directly instead of calling .keys() (consider-iterating-dictionary)
+************* Module tdaad.utils.window_functions
+tdaad/utils/window_functions.py:20:0: C0303: Trailing whitespace (trailing-whitespace)
 ************* Module tdaad.utils.local_pipeline
 tdaad/utils/local_pipeline.py:8:0: C0115: Missing class docstring (missing-class-docstring)
 tdaad/utils/local_pipeline.py:31:12: W0612: Unused variable 'name' (unused-variable)
-************* Module tdaad.utils.__init__
-tdaad/utils/__init__.py:1:0: R0801: Similar lines in 2 files
+tdaad/utils/local_pipeline.py:1:0: R0801: Similar lines in 2 files
 ==tdaad.anomaly_detectors:[105:128]
-==tdaad.topological_embedding:[222:227]
+==tdaad.topological_embedding:[226:231]
         self.window_size = window_size
         self.step = step
         self.tda_max_dim = tda_max_dim
@@ -47,5 +47,5 @@ tdaad/utils/__init__.py:1:0: R0801: Similar lines in 2 files
         self.n_centers_by_dim = n_centers_by_dim (duplicate-code)
 
 -----------------------------------
-Your code has been rated at 8.90/10
+Your code has been rated at 8.88/10
 
