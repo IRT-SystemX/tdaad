@@ -97,7 +97,7 @@
 <span class="sd">    @param pipeline: pipeline (sequence of operators that have a `name` attribute) to apply to each window.</span>
 <span class="sd">    @return: pd.DataFrame that maps data to the result of applying named_pipeline to window view of data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
+
     <span class="n">swv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">stride_tricks</span><span class="o">.</span><span class="n">sliding_window_view</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">window_size</span><span class="p">)[::</span><span class="n">step</span><span class="p">,</span> <span class="p">:]</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">swv</span><span class="p">):</span>

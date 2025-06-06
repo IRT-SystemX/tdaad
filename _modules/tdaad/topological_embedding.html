@@ -80,195 +80,32 @@
 
 <span class="c1"># Author: Martin Royer</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">itemgetter</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span><span class="p">,</span> <span class="n">FunctionTransformer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.compose</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnTransformer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w">       </span><span class="kn">import</span> <span class="n">pairwise</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">gudhi.sklearn.rips_persistence</span><span class="w"> </span><span class="kn">import</span> <span class="n">RipsPersistence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gudhi.representations.vector_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">Atol</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.persistencediagram_transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">PersistenceDiagramTransformer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.utils.local_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalPipeline</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.utils.window_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">sliding_window_ppl</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.utils.remapping_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_index_remapping_fun</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_data_to_similarity</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">filter_nan</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Transforms dataframe X into similarity matrix :math:`1-\mathbf{Corr}(X)`.&quot;&quot;&quot;</span>
-    <span class="n">target</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">X</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-    <span class="n">nanrowcols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">filter_nan</span> <span class="k">else</span> <span class="o">~</span><span class="n">target</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># this filters when a variable is constant -&gt; nan on all rows</span>
-    <span class="k">return</span> <span class="n">target</span><span class="p">[</span><span class="o">~</span><span class="n">nanrowcols</span><span class="p">,</span> <span class="p">:][:,</span> <span class="o">~</span><span class="n">nanrowcols</span><span class="p">]</span>
-
-
-
-<div class="viewcode-block" id="get_feature_names_out">
-<a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.get_feature_names_out">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_feature_names_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used for following the set_output sklearn API&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;H</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">homology_dimensions</span><span class="p">]</span></div>
-
-
-
-<span class="n">RipsPersistence</span><span class="o">.</span><span class="n">get_feature_names_out</span> <span class="o">=</span> <span class="n">get_feature_names_out</span>
-
-<div class="viewcode-block" id="wrap_in_list">
-<a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.wrap_in_list">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">wrap_in_list</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">X</span><span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="PersistenceDiagramTransformer">
-<a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.PersistenceDiagramTransformer">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">PersistenceDiagramTransformer</span><span class="p">(</span><span class="n">LocalPipeline</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Persistence Diagram Transformer for multivariate time series.</span>
-
-<span class="sd">    From a multivariate timeseries, form a similarity matrix and apply a TDA procedure to produce</span>
-<span class="sd">    topological descriptor in the form of persistence diagrams.</span>
-
-<span class="sd">    Read more in the :ref: `User Guide &lt;persistence_diagrams&gt;`.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        tda_max_dim : int, default=2</span>
-<span class="sd">            The maximum dimension of the topological feature extraction.</span>
-<span class="sd">        min_persistence : float, default=0.0</span>
-<span class="sd">            The minimum persistence value to take into account (the persistence value will be</span>
-<span class="sd">            strictly greater than min_persistence).</span>
-
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">    &gt;&gt;&gt; n_timestamps = 100</span>
-<span class="sd">    &gt;&gt;&gt; n_sensors = 5</span>
-<span class="sd">    &gt;&gt;&gt; timestamps = pd.to_datetime(&#39;2024-01-01&#39;, utc=True) + pd.Timedelta(1, &#39;h&#39;) * np.arange(n_timestamps)</span>
-<span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(np.random.random(size=(n_timestamps, n_sensors)), index=timestamps)</span>
-<span class="sd">    &gt;&gt;&gt; pdiagrams = PersistenceDiagramTransformer().fit_transform(X)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tda_max_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">min_persistence</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tda_max_dim</span> <span class="o">=</span> <span class="n">tda_max_dim</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">min_persistence</span> <span class="o">=</span> <span class="n">min_persistence</span>
-        <span class="n">similarity_transformer</span> <span class="o">=</span> <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">_data_to_similarity</span><span class="p">)</span>
-        <span class="n">similarity_transformer</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;1-$\mathbf</span><span class="si">{Corr}</span><span class="s2">(X)$&quot;</span>
-        <span class="n">list_encapsulate_transformer</span> <span class="o">=</span> <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">wrap_in_list</span><span class="p">)</span>
-        <span class="n">list_encapsulate_transformer</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">rips_transformer</span> <span class="o">=</span> <span class="n">RipsPersistence</span><span class="p">(</span><span class="n">homology_dimensions</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">tda_max_dim</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">input_type</span><span class="o">=</span><span class="s1">&#39;lower distance matrix&#39;</span><span class="p">)</span>   <span class="c1"># @todo: fix homol dimension</span>
-        <span class="n">rips_transformer</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">list_popper_transformer</span> <span class="o">=</span> <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-        <span class="n">list_popper_transformer</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
-        <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="s2">&quot;similarity_step&quot;</span><span class="p">,</span> <span class="n">similarity_transformer</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;list_encapsulate&quot;</span><span class="p">,</span> <span class="n">list_encapsulate_transformer</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;rips_step&quot;</span><span class="p">,</span> <span class="n">rips_transformer</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;list_popper&quot;</span><span class="p">,</span> <span class="n">list_popper_transformer</span><span class="p">),</span>
-        <span class="p">]</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">)</span>
-
-<div class="viewcode-block" id="PersistenceDiagramTransformer.fit_transform">
-<a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.PersistenceDiagramTransformer.fit_transform">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transforms data X into a list of persistence diagrams arranged in order of homology dimension.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            X : {array-like, sparse matrix} of shape (n_timestamps, n_sensors)</span>
-<span class="sd">                Multiple time series to transform, where `n_timestamps` is the number of timestamps</span>
-<span class="sd">                in the series X, and `n_sensors` is the number of sensors.</span>
-<span class="sd">            y : Ignored</span>
-<span class="sd">                Not used, present for API consistency by convention.</span>
-
-<span class="sd">            **fit_params : Ignored</span>
-<span class="sd">                Not used, present for API consistency.</span>
-
-<span class="sd">        Nb: this function can be removed, but is here so that returns can be explicited.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">        --------</span>
-<span class="sd">        by_dim_arrays: list of persistence diagrams [pd_0, pd_1, ...] arranged in order of homology dimension.</span>
-<span class="sd">            a persistence diagram pd_i is a ndarray of shape {n_i, 2} where n_i is the number of homological</span>
-<span class="sd">            features in dimension i found in the similarity matrix of the data.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">by_dim_arrays</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">by_dim_arrays</span></div>
-</div>
-
-
-
-<div class="viewcode-block" id="pdt_functrans_feature_names_out">
-<a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.pdt_functrans_feature_names_out">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">pdt_functrans_feature_names_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_features</span><span class="p">):</span>
-    <span class="c1"># return named_pipeline_signature(self.kw_args[&quot;pipeline&quot;])</span>
-    <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;PH_</span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kw_args</span><span class="p">[</span><span class="s2">&quot;pipeline&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tda_max_dim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span></div>
-
+<span class="n">atol_vanilla_fit</span> <span class="o">=</span> <span class="n">Atol</span><span class="o">.</span><span class="n">fit</span>
 
 
 <div class="viewcode-block" id="local_atol_fit">
 <a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.local_atol_fit">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">local_atol_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calibration step: fit centers to the target sample measures and derive inertias between centers. If the target</span>
-<span class="sd">    does not contain enough points for creating the intended number of centers, we fill in with bogus centers.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        X (list N x d numpy arrays): input measures in R^d from which to learn center locations and inertias</span>
-<span class="sd">            (measures can have different N).</span>
-<span class="sd">        y: Ignored, present for API consistency by convention.</span>
-<span class="sd">        sample_weight (list of numpy arrays): weights for each measure point in X, optional.</span>
-<span class="sd">            If None, the object&#39;s weighting_method will be used.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        self</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_clusters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantiser</span><span class="o">.</span><span class="n">n_clusters</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot fit Atol on empty target.&quot;</span><span class="p">)</span>
-    <span class="n">measures_concat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>  <span class="c1"># this is our only modification of this function from gudhi==3.11</span>
-    <span class="k">if</span> <span class="n">sample_weight</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">sample_weight</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_weighting_method</span><span class="p">()(</span><span class="n">measure</span><span class="p">)</span> <span class="k">for</span> <span class="n">measure</span> <span class="ow">in</span> <span class="n">X</span><span class="p">]</span>
-    <span class="n">weights_concat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">)</span>
-
-    <span class="c1"># In fitting we remove infinite birth/death time points so that every center is finite. We do not care about duplicates.</span>
-    <span class="n">filtered_measures_concat</span> <span class="o">=</span> <span class="n">measures_concat</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">measures_concat</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="p">:]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">measures_concat</span><span class="p">)</span> <span class="k">else</span> <span class="n">measures_concat</span>
-    <span class="n">filtered_weights_concat</span> <span class="o">=</span> <span class="n">weights_concat</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">measures_concat</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">measures_concat</span><span class="p">)</span> <span class="k">else</span> <span class="n">weights_concat</span>
-
-    <span class="n">n_points</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">filtered_measures_concat</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">n_points</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot fit Atol on measure with infinite components only.&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">n_points</span> <span class="o">&lt;</span> <span class="n">n_clusters</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">quantiser</span><span class="o">.</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="n">n_points</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">quantiser</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">filtered_measures_concat</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">filtered_weights_concat</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">centers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantiser</span><span class="o">.</span><span class="n">cluster_centers_</span>
-
-    <span class="c1"># Hack, but some people are unhappy if the order depends on the version of sklearn</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">centers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">centers</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">lexsort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centers</span><span class="o">.</span><span class="n">T</span><span class="p">)]</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantiser</span><span class="o">.</span><span class="n">n_clusters</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">dist_centers</span> <span class="o">=</span> <span class="n">pairwise</span><span class="o">.</span><span class="n">pairwise_distances</span><span class="p">(</span><span class="n">filtered_measures_concat</span><span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">dist_centers</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">best_inertia</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dist_centers</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dist_centers</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inertias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">best_inertia</span><span class="p">])</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">dist_centers</span> <span class="o">=</span> <span class="n">pairwise</span><span class="o">.</span><span class="n">pairwise_distances</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centers</span><span class="p">)</span>
-        <span class="n">dist_centers</span><span class="p">[</span><span class="n">dist_centers</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inertias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dist_centers</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
-
-    <span class="k">if</span> <span class="n">n_points</span> <span class="o">&lt;</span> <span class="n">n_clusters</span><span class="p">:</span>
-        <span class="c1"># There weren&#39;t enough points to fit n_clusters, so we arbitrarily put centers as [-np.inf]^measure_dim.</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Atol] after filtering had only </span><span class="si">{</span><span class="n">n_points</span><span class="si">=}</span><span class="s2"> to fit </span><span class="si">{</span><span class="n">n_clusters</span><span class="si">=}</span><span class="s2">, adding meaningless centers.&quot;</span><span class="p">)</span>
-        <span class="n">fill_center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">repeats</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">fill_inertia</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">centers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">centers</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">([</span><span class="n">fill_center</span><span class="p">],</span> <span class="n">repeats</span><span class="o">=</span><span class="n">n_clusters</span><span class="o">-</span><span class="n">n_points</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inertias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">inertias</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">fill_inertia</span><span class="p">,</span> <span class="n">repeats</span><span class="o">=</span><span class="n">n_clusters</span><span class="o">-</span><span class="n">n_points</span><span class="p">)])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">quantiser</span><span class="o">.</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="n">n_clusters</span>
-    <span class="k">return</span> <span class="bp">self</span></div>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; local modification to prevent FutureWarning triggered by np.concatenate(X) when X is a pd.Series.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">):</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">return</span> <span class="n">atol_vanilla_fit</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">)</span></div>
 
 
-<span class="n">Atol</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">local_atol_fit</span>   <span class="c1"># we make this local modification to prevent FutureWarning triggered by np.concatenate(X) when X is a pd.Series (as in our pipeline below) </span>
+
+<span class="n">Atol</span><span class="o">.</span><span class="n">fit</span> <span class="o">=</span> <span class="n">local_atol_fit</span>
+
 
 <div class="viewcode-block" id="TopologicalEmbedding">
 <a class="viewcode-back" href="../../tech_docs.html#tdaad.topological_embedding.TopologicalEmbedding">[docs]</a>
@@ -294,15 +131,6 @@
 <span class="sd">        The resulting embedding dimension might be smaller because of the KMeans algorithm in the Archipelago step.</span>
 <span class="sd">    tda_max_dim : int, default=2</span>
 <span class="sd">        The maximum dimension of the topological feature extraction.</span>
-<span class="sd">    min_persistence : float, default=0.0</span>
-<span class="sd">        The minimum persistence value to take into account (the persistence value will be strictly</span>
-<span class="sd">        greater than min_persistence).</span>
-<span class="sd">    remapping : str, default=&quot;simple&quot;</span>
-<span class="sd">        The method to use to compute final results out of the sliding window algorithm.</span>
-<span class="sd">        By default, &quot;simple&quot; means a `simple_index_remapping` procedure is applied, meaning that each window produces</span>
-<span class="sd">        an anomaly score for its last timestamp. Other options are &quot;vote&quot; where `majority_vote_index_remapping` when</span>
-<span class="sd">        a score for a certain timestamp is computed by voting over all windows that include that timestamp,</span>
-<span class="sd">        and &quot;none&quot; where no remapping is applied, meaning that output indices will be tuples of size `window_size`.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    ----------</span>
@@ -310,7 +138,7 @@
 <span class="sd">    &gt;&gt;&gt; n_sensors = 5</span>
 <span class="sd">    &gt;&gt;&gt; timestamps = pd.to_datetime(&#39;2024-01-01&#39;, utc=True) + pd.Timedelta(1, &#39;h&#39;) * np.arange(n_timestamps)</span>
 <span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(np.random.random(size=(n_timestamps, n_sensors)), index=timestamps)</span>
-<span class="sd">    &gt;&gt;&gt; TopologicalEmbedding(n_centers_by_dim=2, tda_max_dim=2).fit_transform(X)</span>
+<span class="sd">    &gt;&gt;&gt; TopologicalEmbedding(n_centers_by_dim=2, tda_max_dim=1).fit_transform(X)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -318,27 +146,22 @@
             <span class="n">window_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
             <span class="n">step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
             <span class="n">tda_max_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="n">min_persistence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
             <span class="n">n_centers_by_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
-            <span class="n">remapping</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">=</span> <span class="n">window_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">step</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tda_max_dim</span> <span class="o">=</span> <span class="n">tda_max_dim</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">min_persistence</span> <span class="o">=</span> <span class="n">min_persistence</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_centers_by_dim</span> <span class="o">=</span> <span class="n">n_centers_by_dim</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">remapping</span> <span class="o">=</span> <span class="n">remapping</span>
         <span class="n">named_ppl</span> <span class="o">=</span> <span class="n">PersistenceDiagramTransformer</span><span class="p">(</span>
             <span class="n">tda_max_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tda_max_dim</span><span class="p">,</span>
-            <span class="n">min_persistence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_persistence</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
             <span class="p">(</span><span class="s2">&quot;StandardScaler&quot;</span><span class="p">,</span>
              <span class="n">StandardScaler</span><span class="p">()</span>
              <span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;SlidingPersistenceDiagramTransformer&quot;</span><span class="p">,</span>
-             <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">sliding_window_ppl</span><span class="p">,</span> <span class="n">feature_names_out</span><span class="o">=</span><span class="n">pdt_functrans_feature_names_out</span><span class="p">,</span>
-                                 <span class="n">kw_args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">,</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span> <span class="n">named_ppl</span><span class="p">})</span>
+             <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">sliding_window_ppl</span><span class="p">,</span> <span class="n">kw_args</span><span class="o">=</span><span class="p">{</span>
+                                 <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">,</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span> <span class="n">named_ppl</span><span class="p">})</span>
              <span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;Archipelago&quot;</span><span class="p">,</span>
              <span class="n">ColumnTransformer</span><span class="p">(</span>
@@ -347,69 +170,7 @@
                   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tda_max_dim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span>
              <span class="p">),</span>
         <span class="p">])</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_output</span><span class="p">(</span><span class="n">transform</span><span class="o">=</span><span class="s2">&quot;pandas&quot;</span><span class="p">)</span>
-
-<div class="viewcode-block" id="TopologicalEmbedding.fit">
-<a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.TopologicalEmbedding.fit">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the model from data in X.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            X : {array-like, sparse matrix} of shape (n_timestamps, n_sensors)</span>
-<span class="sd">                Multiple time series to transform, where `n_timestamps` is the number of timestamps</span>
-<span class="sd">                in the series X, and `n_sensors` is the number of sensors.</span>
-<span class="sd">            y : Ignored</span>
-<span class="sd">                Not used, present for API consistency by convention.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        self : object</span>
-<span class="sd">            Returns the instance itself.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
-
-
-<div class="viewcode-block" id="TopologicalEmbedding.transform">
-<a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.TopologicalEmbedding.transform">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            X : {array-like, sparse matrix} of shape (n_timestamps, n_sensors)</span>
-<span class="sd">                Multiple time series to transform, where `n_timestamps` is the number of timestamps</span>
-<span class="sd">                in the series X, and `n_sensors` is the number of sensors.</span>
-<span class="sd">            y : Ignored</span>
-<span class="sd">                Not used, present for API consistency by convention.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        X_new : array-like of shape (n_timestamps_new, n_embedding)</span>
-<span class="sd">            Topological embedding of the target matrix, with new composite timestamps</span>
-<span class="sd">            due to sliding window embedding, and n_embedding the number of embedding</span>
-<span class="sd">            dimensions &lt;= tda_max_dimension * n_centers_by_dim.</span>
-<span class="sd">            Take good note that X_new.index is (most-likely) different from X.index.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">X_new</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">X_new</span>
-        <span class="n">X_remapped</span> <span class="o">=</span> <span class="n">get_index_remapping_fun</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remapping</span><span class="p">)(</span><span class="n">X_new</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remapping</span> <span class="o">==</span> <span class="s2">&quot;exhaustive&quot;</span> <span class="ow">and</span> <span class="n">X_remapped</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">):</span>
-            <span class="c1"># post-processing step for exhaustive index remapping</span>
-            <span class="n">X_faster</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">X_remapped</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-            <span class="n">X_faster</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">X_remapped</span><span class="o">.</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">X_remapped</span>
-            <span class="c1"># this puts na at the end, we will fill forward if necessary</span>
-            <span class="n">X_faster</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">limit_direction</span><span class="o">=</span><span class="s2">&quot;forward&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">X_faster</span>
-        <span class="k">return</span> <span class="n">X_remapped</span></div>
-
-
-<div class="viewcode-block" id="TopologicalEmbedding.fit_transform">
-<a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.TopologicalEmbedding.fit_transform">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div>
-</div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_output</span><span class="p">(</span><span class="n">transform</span><span class="o">=</span><span class="s2">&quot;pandas&quot;</span><span class="p">)</span></div>
 
 </pre></div>
 
