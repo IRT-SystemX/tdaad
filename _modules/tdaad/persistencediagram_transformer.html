@@ -1,0 +1,208 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tdaad.persistencediagram_transformer &mdash; Topological Data Analysis for Anomaly Detection 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Topological Data Analysis for Anomaly Detection
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guidelines.html">📖 Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">🧪 Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tech_docs.html">📚 Technical docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory_overview.html">💡 Theory overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory_overview.html#references">📑 References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">🔄 Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">🔎 Tdaad package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Topological Data Analysis for Anomaly Detection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tdaad.persistencediagram_transformer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for tdaad.persistencediagram_transformer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Persistence Diagram Transformers.&quot;&quot;&quot;</span>
+
+<span class="c1"># Author: Martin Royer</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">itemgetter</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gudhi.sklearn.rips_persistence</span><span class="w"> </span><span class="kn">import</span> <span class="n">RipsPersistence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionTransformer</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.utils.local_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalPipeline</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_data_to_similarity</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">filter_nan</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Transforms dataframe X into similarity matrix :math:`1-\mathbf{Corr}(X)`.&quot;&quot;&quot;</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">X</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="n">nanrowcols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">filter_nan</span> <span class="k">else</span> <span class="o">~</span><span class="n">target</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># this filters when a variable is constant -&gt; nan on all rows</span>
+    <span class="k">return</span> <span class="n">target</span><span class="p">[</span><span class="o">~</span><span class="n">nanrowcols</span><span class="p">,</span> <span class="p">:][:,</span> <span class="o">~</span><span class="n">nanrowcols</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="wrap_in_list">
+<a class="viewcode-back" href="../../tdaad.html#tdaad.persistencediagram_transformer.wrap_in_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wrap_in_list</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; wrapper because RipsPersistence.transform expects a list&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">X</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="PersistenceDiagramTransformer">
+<a class="viewcode-back" href="../../tdaad.html#tdaad.persistencediagram_transformer.PersistenceDiagramTransformer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PersistenceDiagramTransformer</span><span class="p">(</span><span class="n">LocalPipeline</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Persistence Diagram Transformer for point cloud.</span>
+
+<span class="sd">    For a given point cloud, form a similarity matrix and apply a RipsPersistence procedure</span>
+<span class="sd">    to produce topological descriptors in the form of persistence diagrams.</span>
+
+<span class="sd">    Read more in the :ref: `User Guide &lt;persistence_diagrams&gt;`.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        tda_max_dim : int, default=2</span>
+<span class="sd">            The maximum dimension of the topological feature extraction.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; n_timestamps = 100</span>
+<span class="sd">    &gt;&gt;&gt; n_sensors = 5</span>
+<span class="sd">    &gt;&gt;&gt; timestamps = pd.to_datetime(&#39;2024-01-01&#39;, utc=True) + pd.Timedelta(1, &#39;h&#39;) * np.arange(n_timestamps)</span>
+<span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(np.random.random(size=(n_timestamps, n_sensors)), index=timestamps)</span>
+<span class="sd">    &gt;&gt;&gt; PersistenceDiagramTransformer().fit_transform(X)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tda_max_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tda_max_dim</span> <span class="o">=</span> <span class="n">tda_max_dim</span>
+        <span class="n">similarity_transformer</span> <span class="o">=</span> <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">_data_to_similarity</span><span class="p">)</span>
+        <span class="n">similarity_transformer</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;1-$\mathbf</span><span class="si">{Corr}</span><span class="s2">(X)$&quot;</span>
+        <span class="n">list_encapsulate_transformer</span> <span class="o">=</span> <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">wrap_in_list</span><span class="p">)</span>
+        <span class="n">list_encapsulate_transformer</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">rips_transformer</span> <span class="o">=</span> <span class="n">RipsPersistence</span><span class="p">(</span><span class="n">homology_dimensions</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span>
+            <span class="n">tda_max_dim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">input_type</span><span class="o">=</span><span class="s1">&#39;lower distance matrix&#39;</span><span class="p">)</span>
+        <span class="n">rips_transformer</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">list_popper_transformer</span> <span class="o">=</span> <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">list_popper_transformer</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;similarity_step&quot;</span><span class="p">,</span> <span class="n">similarity_transformer</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;list_encapsulate&quot;</span><span class="p">,</span> <span class="n">list_encapsulate_transformer</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;rips_step&quot;</span><span class="p">,</span> <span class="n">rips_transformer</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;list_popper&quot;</span><span class="p">,</span> <span class="n">list_popper_transformer</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PersistenceDiagramTransformer.fit_transform">
+<a class="viewcode-back" href="../../tdaad.html#tdaad.persistencediagram_transformer.PersistenceDiagramTransformer.fit_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transforms data X into a list of persistence diagrams arranged in order of homology dimension.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X : {array-like, sparse matrix} of shape (n_timestamps, n_sensors)</span>
+<span class="sd">                Multiple time series to transform, where `n_timestamps` is the number of timestamps</span>
+<span class="sd">                in the series X, and `n_sensors` is the number of sensors.</span>
+<span class="sd">            y : Ignored</span>
+<span class="sd">                Not used, present for API consistency by convention.</span>
+
+<span class="sd">            **fit_params : Ignored</span>
+<span class="sd">                Not used, present for API consistency.</span>
+
+<span class="sd">        Nb: this function can be removed, but is here so that returns can be explicited.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        by_dim_arrays: list of persistence diagrams [pd_0, pd_1, ...] arranged in order of homology dimension.</span>
+<span class="sd">            a persistence diagram pd_i is a ndarray of shape {n_i, 2} where n_i is the number of homological</span>
+<span class="sd">            features in dimension i found in the similarity matrix of the data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">by_dim_arrays</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">by_dim_arrays</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Martin Royer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

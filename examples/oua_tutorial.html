@@ -1,0 +1,837 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learning on a modified Ornstein–Uhlenbeck process &mdash; Topological Data Analysis for Anomaly Detection 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Topological Data Analysis for Anomaly Detection
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../guidelines.html">📖 Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">🧪 Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tech_docs.html">📚 Technical docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_overview.html">💡 Theory overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_overview.html#references">📑 References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">🔄 Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">🔎 Tdaad package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Topological Data Analysis for Anomaly Detection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Learning on a modified Ornstein–Uhlenbeck process</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/oua_tutorial.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Learning-on-a-modified-Ornstein–Uhlenbeck-process">
+<h1>Learning on a modified Ornstein–Uhlenbeck process<a class="headerlink" href="#Learning-on-a-modified-Ornstein–Uhlenbeck-process" title="Link to this heading"></a></h1>
+<p>The Ornstein-Uhlenbeck process is an auto-regressive process of order 1, and can be understood as a random walk that can be used for modelling timeseries in applicative fields such as physics, biology or finance. We generate that process and disturb it at times with gaussian noise for demonstrating this component.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">ornstein_uhlenbeck_anomaly</span><span class="p">(</span>
+        <span class="n">t</span><span class="p">,</span>
+        <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">noise_scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">mean_reverting</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">anomaly_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">anomaly_duration</span><span class="o">=</span><span class="mf">.1</span><span class="p">,</span>
+        <span class="n">anomaly_scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="mi">314</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">length</span><span class="p">,</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">length</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span>
+    <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">target</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">dt</span> <span class="o">/</span> <span class="n">anomaly_duration</span><span class="p">)</span>
+        <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+            <span class="n">target</span> <span class="o">+</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">target</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">mean_reverting</span> <span class="o">*</span> <span class="n">dt</span><span class="p">),</span>
+            <span class="n">noise_scale</span> <span class="o">*</span> <span class="n">dt</span> <span class="o">**</span> <span class="mf">.5</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">rng</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">dt</span> <span class="o">/</span> <span class="n">anomaly_freq</span><span class="p">:</span>
+            <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">target</span> <span class="o">+=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">anomaly_scale</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">/</span> <span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">pre_X</span><span class="p">,</span> <span class="n">pre_y</span> <span class="o">=</span> <span class="n">ornstein_uhlenbeck_anomaly</span><span class="p">(</span>
+    <span class="n">t</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">noise_scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">mean_reverting</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">anomaly_freq</span><span class="o">=</span><span class="mf">.1</span><span class="p">,</span>
+    <span class="n">anomaly_duration</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>
+    <span class="n">anomaly_scale</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2021-01-01&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pre_X</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;X</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pre_X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pre_y</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">])</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Axes: &gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_oua_tutorial_3_1.png" src="../_images/examples_oua_tutorial_3_1.png" />
+</div>
+</div>
+</section>
+<section id="Topological-embedding-of-a-multiple-time-series">
+<h1>Topological embedding of a multiple time series<a class="headerlink" href="#Topological-embedding-of-a-multiple-time-series" title="Link to this heading"></a></h1>
+<section id="The-persistence-diagram-transform">
+<h2>The persistence diagram transform<a class="headerlink" href="#The-persistence-diagram-transform" title="Link to this heading"></a></h2>
+<p>A major tool from the Topological Data Analysis (TDA) field is the persistence diagram, that summarizes information in the form of a set of points in <span class="math notranslate nohighlight">\(\mathbf{R}^2\)</span>.</p>
+<p>For instance if we try to extract topological information on the entire multiple timeseries <code class="docutils literal notranslate"><span class="pre">X</span></code>:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.topological_embedding</span><span class="w"> </span><span class="kn">import</span> <span class="n">PersistenceDiagramTransformer</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gudhi</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_persistence_diagram</span>
+<span class="n">global_pdiagram</span> <span class="o">=</span> <span class="n">PersistenceDiagramTransformer</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">plot_persistence_diagram</span><span class="p">(</span><span class="n">global_pdiagram</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[06-05 17:23:37] {C:\Users\martin.royer\SVN\tdaad\tdaad\twe_logger.py:104} INFO - Logger: name: twe_logger, handlers: [&lt;StreamHandler stdout (DEBUG)&gt;]
+[06-05 17:23:44] {C:\Users\martin.royer\SVN\tdaad\tdaad\twe_logger.py:104} INFO - Logger: name: twe_logger, handlers: [&lt;StreamHandler stdout (DEBUG)&gt;]
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Axes: title={&#39;center&#39;: &#39;Persistence diagram&#39;}, xlabel=&#39;Birth&#39;, ylabel=&#39;Death&#39;&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_oua_tutorial_7_2.png" src="../_images/examples_oua_tutorial_7_2.png" />
+</div>
+</div>
+</section>
+<section id="The-sliding-window-algorithm">
+<h2>The sliding window algorithm<a class="headerlink" href="#The-sliding-window-algorithm" title="Link to this heading"></a></h2>
+<p>In order to capture local information and detect potential anomalies, we cut the multiple timeseries in regular chunks or <em>windows</em>, and apply the Persistence Diagram Transform on each window. Therefore we transform the original time series into a persistence diagram time series, for instance if we cut it in three parts:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">swv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">stride_tricks</span><span class="o">.</span><span class="n">sliding_window_view</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">//</span><span class="mi">2</span><span class="p">)[::</span><span class="mi">200</span><span class="p">,</span> <span class="p">:]</span>
+
+<span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="n">swv</span><span class="p">:</span>
+    <span class="n">pdiagram</span> <span class="o">=</span> <span class="n">PersistenceDiagramTransformer</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">window</span><span class="p">])</span>
+    <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">window</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_persistence_diagram</span><span class="p">(</span><span class="n">pdiagram</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">window</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_oua_tutorial_10_0.png" src="../_images/examples_oua_tutorial_10_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_oua_tutorial_10_1.png" src="../_images/examples_oua_tutorial_10_1.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_oua_tutorial_10_2.png" src="../_images/examples_oua_tutorial_10_2.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_oua_tutorial_10_3.png" src="../_images/examples_oua_tutorial_10_3.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_oua_tutorial_10_4.png" src="../_images/examples_oua_tutorial_10_4.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_oua_tutorial_10_5.png" src="../_images/examples_oua_tutorial_10_5.png" />
+</div>
+</div>
+</section>
+<section id="Vectorizing-topological-information">
+<h2>Vectorizing topological information<a class="headerlink" href="#Vectorizing-topological-information" title="Link to this heading"></a></h2>
+<p>These persistence diagrams carry the information associated to a homological dimension, but the number of these points cannot be predicted generally, and therefore persistence diagrams need to be vectorized in order to integrate a classical machine learning pipeline. This is done using the <code class="docutils literal notranslate"><span class="pre">Atol</span></code> and <code class="docutils literal notranslate"><span class="pre">Archipelago</span></code> tools from the Gudhi library, and the <code class="docutils literal notranslate"><span class="pre">PersistenceDiagramTransformer</span></code> is integrated into a larger pipeline making use of these tools.</p>
+<p>Selecting a number of encoding points by dimension, <code class="docutils literal notranslate"><span class="pre">n_centers_by_dim</span></code>, this results in a <em>representation method</em> we call <code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding</span></code>.</p>
+<p>Now we apply the procedure from before with the sliding window algorithm. So instead of a single embedding vector, we get a vector for each window in the timeseries <code class="docutils literal notranslate"><span class="pre">X</span></code>:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.topological_embedding</span><span class="w"> </span><span class="kn">import</span> <span class="n">TopologicalEmbedding</span>
+
+<span class="n">embedder</span> <span class="o">=</span> <span class="n">TopologicalEmbedding</span><span class="p">(</span><span class="n">window_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">n_centers_by_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">embedding</span> <span class="o">=</span> <span class="n">embedder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">embedding</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 191/191 [00:00&lt;00:00, 911.28it/s]
+100%|██████████| 191/191 [00:00&lt;00:00, 856.35it/s]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Atol0__Atol Center 1</th>
+      <th>Atol0__Atol Center 2</th>
+      <th>Atol1__Atol Center 1</th>
+      <th>Atol1__Atol Center 2</th>
+      <th>Atol2__Atol Center 1</th>
+      <th>Atol2__Atol Center 2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>8.014427</td>
+      <td>8.337348</td>
+      <td>0.139429</td>
+      <td>2.369379</td>
+      <td>1.041305</td>
+      <td>0.869459</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>7.646981</td>
+      <td>8.840381</td>
+      <td>0.905686</td>
+      <td>0.737120</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>8.490968</td>
+      <td>7.406048</td>
+      <td>1.041629</td>
+      <td>1.851082</td>
+      <td>0.934886</td>
+      <td>0.006830</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>8.781508</td>
+      <td>7.212324</td>
+      <td>1.795035</td>
+      <td>1.523272</td>
+      <td>0.009076</td>
+      <td>0.957346</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>10.458802</td>
+      <td>5.208043</td>
+      <td>1.027982</td>
+      <td>1.873740</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>186</th>
+      <td>9.582538</td>
+      <td>4.739616</td>
+      <td>0.158071</td>
+      <td>1.707738</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>187</th>
+      <td>9.188312</td>
+      <td>5.705798</td>
+      <td>0.003870</td>
+      <td>1.839969</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>188</th>
+      <td>9.862403</td>
+      <td>6.028840</td>
+      <td>0.504404</td>
+      <td>1.867278</td>
+      <td>0.128751</td>
+      <td>0.723518</td>
+    </tr>
+    <tr>
+      <th>189</th>
+      <td>8.202467</td>
+      <td>7.330862</td>
+      <td>0.080560</td>
+      <td>2.732715</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>190</th>
+      <td>8.475916</td>
+      <td>6.191814</td>
+      <td>1.013029</td>
+      <td>2.501380</td>
+      <td>0.205330</td>
+      <td>1.519385</td>
+    </tr>
+  </tbody>
+</table>
+<p>191 rows × 6 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;text.usetex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="n">embedding</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">embedding</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subplots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([&lt;Axes: &gt;, &lt;Axes: &gt;, &lt;Axes: &gt;, &lt;Axes: &gt;, &lt;Axes: &gt;, &lt;Axes: &gt;],
+      dtype=object)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_oua_tutorial_15_1.png" src="../_images/examples_oua_tutorial_15_1.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="Anomaly-Detection-based-on-topological-features">
+<h1>Anomaly Detection based on topological features<a class="headerlink" href="#Anomaly-Detection-based-on-topological-features" title="Link to this heading"></a></h1>
+<p>What is left is to analyze those topological features for detecting anomaly. We use a procedure from <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code> called <code class="docutils literal notranslate"><span class="pre">EllipticEnvelope</span></code> based on a robust covariance estimation procedure, that estimates the topological mean and covariance of the vectors and use these to produce the associated mahalanobis distance. Once this distance is defined, an anomaly score is simply derived from it.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.anomaly_detectors</span><span class="w"> </span><span class="kn">import</span> <span class="n">TopologicalAnomalyDetector</span>
+
+<span class="n">detector</span> <span class="o">=</span> <span class="n">TopologicalAnomalyDetector</span><span class="p">(</span><span class="n">window_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">n_centers_by_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">tda_max_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">anomaly_score</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">score_samples</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">anomaly_score</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 191/191 [00:00&lt;00:00, 1210.81it/s]
+100%|██████████| 191/191 [00:00&lt;00:00, 1077.35it/s]
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+X.shape[0]=1000, self.window_size=50, self.step=5, so running self.padding_length_=0...
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 191/191 [00:00&lt;00:00, 1368.41it/s]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([  -3.62090796,   -3.62090796,   -3.62090796,   -3.62090796,
+         -3.62090796,  -10.08873951,  -10.08873951,  -10.08873951,
+        -10.08873951,  -10.08873951,  -10.78583457,  -10.78583457,
+        -10.78583457,  -10.78583457,  -10.78583457,  -12.18904978,
+        -12.18904978,  -12.18904978,  -12.18904978,  -12.18904978,
+        -12.72126438,  -12.72126438,  -12.72126438,  -12.72126438,
+        -12.72126438,  -17.02984659,  -17.02984659,  -17.02984659,
+        -17.02984659,  -17.02984659,  -18.43424569,  -18.43424569,
+        -18.43424569,  -18.43424569,  -18.43424569,  -23.00511013,
+        -23.00511013,  -23.00511013,  -23.00511013,  -23.00511013,
+        -25.57913524,  -25.57913524,  -25.57913524,  -25.57913524,
+        -25.57913524,  -31.57776802,  -31.57776802,  -31.57776802,
+        -31.57776802,  -31.57776802,  -31.45946288,  -31.45946288,
+        -31.45946288,  -31.45946288,  -31.45946288,  -32.41516313,
+        -32.41516313,  -32.41516313,  -32.41516313,  -32.41516313,
+        -33.62752756,  -33.62752756,  -33.62752756,  -33.62752756,
+        -33.62752756,  -34.02074975,  -34.02074975,  -34.02074975,
+        -34.02074975,  -34.02074975,  -38.5246302 ,  -38.5246302 ,
+        -38.5246302 ,  -38.5246302 ,  -38.5246302 ,  -38.63818671,
+        -38.63818671,  -38.63818671,  -38.63818671,  -38.63818671,
+        -39.28788031,  -39.28788031,  -39.28788031,  -39.28788031,
+        -39.28788031,  -42.6035978 ,  -42.6035978 ,  -42.6035978 ,
+        -42.6035978 ,  -42.6035978 ,  -50.29238806,  -50.29238806,
+        -50.29238806,  -50.29238806,  -50.29238806,  -46.10305427,
+        -46.10305427,  -46.10305427,  -46.10305427,  -46.10305427,
+        -50.10379525,  -50.10379525,  -50.10379525,  -50.10379525,
+        -50.10379525,  -48.43836262,  -48.43836262,  -48.43836262,
+        -48.43836262,  -48.43836262,  -47.72314895,  -47.72314895,
+        -47.72314895,  -47.72314895,  -47.72314895,  -47.91093761,
+        -47.91093761,  -47.91093761,  -47.91093761,  -47.91093761,
+        -47.98965423,  -47.98965423,  -47.98965423,  -47.98965423,
+        -47.98965423,  -45.11052359,  -45.11052359,  -45.11052359,
+        -45.11052359,  -45.11052359,  -46.47204516,  -46.47204516,
+        -46.47204516,  -46.47204516,  -46.47204516,  -39.44578881,
+        -39.44578881,  -39.44578881,  -39.44578881,  -39.44578881,
+        -32.90720578,  -32.90720578,  -32.90720578,  -32.90720578,
+        -32.90720578,  -35.10904563,  -35.10904563,  -35.10904563,
+        -35.10904563,  -35.10904563,  -32.45779434,  -32.45779434,
+        -32.45779434,  -32.45779434,  -32.45779434,  -28.93868572,
+        -28.93868572,  -28.93868572,  -28.93868572,  -28.93868572,
+        -31.70128123,  -31.70128123,  -31.70128123,  -31.70128123,
+        -31.70128123,  -32.31686914,  -32.31686914,  -32.31686914,
+        -32.31686914,  -32.31686914,  -30.90304808,  -30.90304808,
+        -30.90304808,  -30.90304808,  -30.90304808,  -37.61721775,
+        -37.61721775,  -37.61721775,  -37.61721775,  -37.61721775,
+        -47.14621736,  -47.14621736,  -47.14621736,  -47.14621736,
+        -47.14621736,  -53.92175157,  -53.92175157,  -53.92175157,
+        -53.92175157,  -53.92175157,  -52.31800896,  -52.31800896,
+        -52.31800896,  -52.31800896,  -52.31800896,  -55.03285144,
+        -55.03285144,  -55.03285144,  -55.03285144,  -55.03285144,
+        -52.78405115,  -52.78405115,  -52.78405115,  -52.78405115,
+        -52.78405115,  -54.53167815,  -54.53167815,  -54.53167815,
+        -54.53167815,  -54.53167815,  -52.09853585,  -52.09853585,
+        -52.09853585,  -52.09853585,  -52.09853585,  -53.56135449,
+        -53.56135449,  -53.56135449,  -53.56135449,  -53.56135449,
+        -52.1935825 ,  -52.1935825 ,  -52.1935825 ,  -52.1935825 ,
+        -52.1935825 ,  -49.5214615 ,  -49.5214615 ,  -49.5214615 ,
+        -49.5214615 ,  -49.5214615 ,  -40.56280223,  -40.56280223,
+        -40.56280223,  -40.56280223,  -40.56280223,  -44.41263656,
+        -44.41263656,  -44.41263656,  -44.41263656,  -44.41263656,
+        -48.66065978,  -48.66065978,  -48.66065978,  -48.66065978,
+        -48.66065978,  -49.99896066,  -49.99896066,  -49.99896066,
+        -49.99896066,  -49.99896066,  -49.34922552,  -49.34922552,
+        -49.34922552,  -49.34922552,  -49.34922552,  -54.0744707 ,
+        -54.0744707 ,  -54.0744707 ,  -54.0744707 ,  -54.0744707 ,
+        -66.11419323,  -66.11419323,  -66.11419323,  -66.11419323,
+        -66.11419323,  -75.57244603,  -75.57244603,  -75.57244603,
+        -75.57244603,  -75.57244603,  -80.82660304,  -80.82660304,
+        -80.82660304,  -80.82660304,  -80.82660304,  -78.05884369,
+        -78.05884369,  -78.05884369,  -78.05884369,  -78.05884369,
+        -77.59082894,  -77.59082894,  -77.59082894,  -77.59082894,
+        -77.59082894,  -69.23543809,  -69.23543809,  -69.23543809,
+        -69.23543809,  -69.23543809,  -69.03692792,  -69.03692792,
+        -69.03692792,  -69.03692792,  -69.03692792,  -63.27832293,
+        -63.27832293,  -63.27832293,  -63.27832293,  -63.27832293,
+        -67.06954701,  -67.06954701,  -67.06954701,  -67.06954701,
+        -67.06954701,  -61.91295318,  -61.91295318,  -61.91295318,
+        -61.91295318,  -61.91295318,  -52.12720126,  -52.12720126,
+        -52.12720126,  -52.12720126,  -52.12720126,  -43.39671989,
+        -43.39671989,  -43.39671989,  -43.39671989,  -43.39671989,
+        -41.34592409,  -41.34592409,  -41.34592409,  -41.34592409,
+        -41.34592409,  -45.94835351,  -45.94835351,  -45.94835351,
+        -45.94835351,  -45.94835351,  -45.18761033,  -45.18761033,
+        -45.18761033,  -45.18761033,  -45.18761033,  -50.88942775,
+        -50.88942775,  -50.88942775,  -50.88942775,  -50.88942775,
+        -47.30047383,  -47.30047383,  -47.30047383,  -47.30047383,
+        -47.30047383,  -48.33243339,  -48.33243339,  -48.33243339,
+        -48.33243339,  -48.33243339,  -48.65493539,  -48.65493539,
+        -48.65493539,  -48.65493539,  -48.65493539,  -52.78563103,
+        -52.78563103,  -52.78563103,  -52.78563103,  -52.78563103,
+        -50.76485606,  -50.76485606,  -50.76485606,  -50.76485606,
+        -50.76485606,  -58.03554053,  -58.03554053,  -58.03554053,
+        -58.03554053,  -58.03554053,  -63.73312163,  -63.73312163,
+        -63.73312163,  -63.73312163,  -63.73312163,  -74.63117375,
+        -74.63117375,  -74.63117375,  -74.63117375,  -74.63117375,
+        -85.15165911,  -85.15165911,  -85.15165911,  -85.15165911,
+        -85.15165911,  -82.42196279,  -82.42196279,  -82.42196279,
+        -82.42196279,  -82.42196279,  -82.5435437 ,  -82.5435437 ,
+        -82.5435437 ,  -82.5435437 ,  -82.5435437 ,  -82.85375948,
+        -82.85375948,  -82.85375948,  -82.85375948,  -82.85375948,
+        -77.87969231,  -77.87969231,  -77.87969231,  -77.87969231,
+        -77.87969231,  -73.5448301 ,  -73.5448301 ,  -73.5448301 ,
+        -73.5448301 ,  -73.5448301 ,  -73.9658258 ,  -73.9658258 ,
+        -73.9658258 ,  -73.9658258 ,  -73.9658258 ,  -63.79194345,
+        -63.79194345,  -63.79194345,  -63.79194345,  -63.79194345,
+        -57.58108672,  -57.58108672,  -57.58108672,  -57.58108672,
+        -57.58108672,  -40.23220596,  -40.23220596,  -40.23220596,
+        -40.23220596,  -40.23220596,  -41.56030716,  -41.56030716,
+        -41.56030716,  -41.56030716,  -41.56030716,  -77.93239779,
+        -77.93239779,  -77.93239779,  -77.93239779,  -77.93239779,
+       -127.48673713, -127.48673713, -127.48673713, -127.48673713,
+       -127.48673713, -179.34701167, -179.34701167, -179.34701167,
+       -179.34701167, -179.34701167, -267.51322046, -267.51322046,
+       -267.51322046, -267.51322046, -267.51322046, -359.26298608,
+       -359.26298608, -359.26298608, -359.26298608, -359.26298608,
+       -418.5569144 , -418.5569144 , -418.5569144 , -418.5569144 ,
+       -418.5569144 , -453.42889887, -453.42889887, -453.42889887,
+       -453.42889887, -453.42889887, -464.27793693, -464.27793693,
+       -464.27793693, -464.27793693, -464.27793693, -466.90705157,
+       -466.90705157, -466.90705157, -466.90705157, -466.90705157,
+       -453.13421738, -453.13421738, -453.13421738, -453.13421738,
+       -453.13421738, -414.78888627, -414.78888627, -414.78888627,
+       -414.78888627, -414.78888627, -367.4540131 , -367.4540131 ,
+       -367.4540131 , -367.4540131 , -367.4540131 , -315.54657638,
+       -315.54657638, -315.54657638, -315.54657638, -315.54657638,
+       -248.04666653, -248.04666653, -248.04666653, -248.04666653,
+       -248.04666653, -183.59516919, -183.59516919, -183.59516919,
+       -183.59516919, -183.59516919, -175.06735838, -175.06735838,
+       -175.06735838, -175.06735838, -175.06735838, -199.89003815,
+       -199.89003815, -199.89003815, -199.89003815, -199.89003815,
+       -260.83807633, -260.83807633, -260.83807633, -260.83807633,
+       -260.83807633, -322.20340895, -322.20340895, -322.20340895,
+       -322.20340895, -322.20340895, -350.42226808, -350.42226808,
+       -350.42226808, -350.42226808, -350.42226808, -363.25798328,
+       -363.25798328, -363.25798328, -363.25798328, -363.25798328,
+       -363.70676502, -363.70676502, -363.70676502, -363.70676502,
+       -363.70676502, -378.28090278, -378.28090278, -378.28090278,
+       -378.28090278, -378.28090278, -362.05856559, -362.05856559,
+       -362.05856559, -362.05856559, -362.05856559, -338.8806949 ,
+       -338.8806949 , -338.8806949 , -338.8806949 , -338.8806949 ,
+       -287.62828084, -287.62828084, -287.62828084, -287.62828084,
+       -287.62828084, -227.48131613, -227.48131613, -227.48131613,
+       -227.48131613, -227.48131613, -151.86148195, -151.86148195,
+       -151.86148195, -151.86148195, -151.86148195,  -89.60697089,
+        -89.60697089,  -89.60697089,  -89.60697089,  -89.60697089,
+        -63.29330952,  -63.29330952,  -63.29330952,  -63.29330952,
+        -63.29330952,  -49.55795657,  -49.55795657,  -49.55795657,
+        -49.55795657,  -49.55795657,  -47.045813  ,  -47.045813  ,
+        -47.045813  ,  -47.045813  ,  -47.045813  ,  -30.29376241,
+        -30.29376241,  -30.29376241,  -30.29376241,  -30.29376241,
+        -36.00891023,  -36.00891023,  -36.00891023,  -36.00891023,
+        -36.00891023,  -32.32139204,  -32.32139204,  -32.32139204,
+        -32.32139204,  -32.32139204,  -35.02436513,  -35.02436513,
+        -35.02436513,  -35.02436513,  -35.02436513,  -37.67405456,
+        -37.67405456,  -37.67405456,  -37.67405456,  -37.67405456,
+        -39.80933939,  -39.80933939,  -39.80933939,  -39.80933939,
+        -39.80933939,  -38.33560525,  -38.33560525,  -38.33560525,
+        -38.33560525,  -38.33560525,  -44.42853951,  -44.42853951,
+        -44.42853951,  -44.42853951,  -44.42853951,  -45.64543219,
+        -45.64543219,  -45.64543219,  -45.64543219,  -45.64543219,
+        -45.21862114,  -45.21862114,  -45.21862114,  -45.21862114,
+        -45.21862114,  -51.07988061,  -51.07988061,  -51.07988061,
+        -51.07988061,  -51.07988061,  -42.04076733,  -42.04076733,
+        -42.04076733,  -42.04076733,  -42.04076733,  -42.36440188,
+        -42.36440188,  -42.36440188,  -42.36440188,  -42.36440188,
+        -38.80380634,  -38.80380634,  -38.80380634,  -38.80380634,
+        -38.80380634,  -38.30312025,  -38.30312025,  -38.30312025,
+        -38.30312025,  -38.30312025,  -42.33929893,  -42.33929893,
+        -42.33929893,  -42.33929893,  -42.33929893,  -43.07194965,
+        -43.07194965,  -43.07194965,  -43.07194965,  -43.07194965,
+        -38.68956918,  -38.68956918,  -38.68956918,  -38.68956918,
+        -38.68956918,  -41.26557772,  -41.26557772,  -41.26557772,
+        -41.26557772,  -41.26557772,  -39.44063089,  -39.44063089,
+        -39.44063089,  -39.44063089,  -39.44063089,  -41.09613501,
+        -41.09613501,  -41.09613501,  -41.09613501,  -41.09613501,
+        -47.16798911,  -47.16798911,  -47.16798911,  -47.16798911,
+        -47.16798911,  -46.87630374,  -46.87630374,  -46.87630374,
+        -46.87630374,  -46.87630374,  -54.2742902 ,  -54.2742902 ,
+        -54.2742902 ,  -54.2742902 ,  -54.2742902 ,  -52.03250394,
+        -52.03250394,  -52.03250394,  -52.03250394,  -52.03250394,
+        -47.83084237,  -47.83084237,  -47.83084237,  -47.83084237,
+        -47.83084237,  -47.86537761,  -47.86537761,  -47.86537761,
+        -47.86537761,  -47.86537761,  -46.08389818,  -46.08389818,
+        -46.08389818,  -46.08389818,  -46.08389818,  -40.66600449,
+        -40.66600449,  -40.66600449,  -40.66600449,  -40.66600449,
+        -42.74159983,  -42.74159983,  -42.74159983,  -42.74159983,
+        -42.74159983,  -34.44249623,  -34.44249623,  -34.44249623,
+        -34.44249623,  -34.44249623,  -31.23243547,  -31.23243547,
+        -31.23243547,  -31.23243547,  -31.23243547,  -30.11961397,
+        -30.11961397,  -30.11961397,  -30.11961397,  -30.11961397,
+        -22.88610359,  -22.88610359,  -22.88610359,  -22.88610359,
+        -22.88610359,  -22.66522498,  -22.66522498,  -22.66522498,
+        -22.66522498,  -22.66522498,  -22.8258467 ,  -22.8258467 ,
+        -22.8258467 ,  -22.8258467 ,  -22.8258467 ,  -25.37145157,
+        -25.37145157,  -25.37145157,  -25.37145157,  -25.37145157,
+        -29.45671685,  -29.45671685,  -29.45671685,  -29.45671685,
+        -29.45671685,  -36.30382435,  -36.30382435,  -36.30382435,
+        -36.30382435,  -36.30382435,  -64.88047059,  -64.88047059,
+        -64.88047059,  -64.88047059,  -64.88047059,  -90.40117992,
+        -90.40117992,  -90.40117992,  -90.40117992,  -90.40117992,
+       -117.85854224, -117.85854224, -117.85854224, -117.85854224,
+       -117.85854224, -146.65567437, -146.65567437, -146.65567437,
+       -146.65567437, -146.65567437, -175.4335766 , -175.4335766 ,
+       -175.4335766 , -175.4335766 , -175.4335766 , -213.1768593 ,
+       -213.1768593 , -213.1768593 , -213.1768593 , -213.1768593 ,
+       -246.36052771, -246.36052771, -246.36052771, -246.36052771,
+       -246.36052771, -254.07443916, -254.07443916, -254.07443916,
+       -254.07443916, -254.07443916, -263.73274134, -263.73274134,
+       -263.73274134, -263.73274134, -263.73274134, -258.03283753,
+       -258.03283753, -258.03283753, -258.03283753, -258.03283753,
+       -233.33633164, -233.33633164, -233.33633164, -233.33633164,
+       -233.33633164, -209.26667778, -209.26667778, -209.26667778,
+       -209.26667778, -209.26667778, -198.50333932, -198.50333932,
+       -198.50333932, -198.50333932, -198.50333932, -192.19746949,
+       -192.19746949, -192.19746949, -192.19746949, -192.19746949,
+       -182.44656671, -182.44656671, -182.44656671, -182.44656671,
+       -182.44656671, -164.21427251, -164.21427251, -164.21427251,
+       -164.21427251, -164.21427251, -143.79641255, -143.79641255,
+       -143.79641255, -143.79641255, -143.79641255, -140.67194607,
+       -140.67194607, -140.67194607, -140.67194607, -140.67194607,
+       -124.58322603, -124.58322603, -124.58322603, -124.58322603,
+       -124.58322603, -124.89753589, -124.89753589, -124.89753589,
+       -124.89753589, -124.89753589, -125.11225829, -125.11225829,
+       -125.11225829, -125.11225829, -125.11225829, -125.81703407,
+       -125.81703407, -125.81703407, -125.81703407, -125.81703407,
+       -106.96613932, -106.96613932, -106.96613932, -106.96613932,
+       -106.96613932,  -83.17853528,  -83.17853528,  -83.17853528,
+        -83.17853528,  -83.17853528,  -69.41292893,  -69.41292893,
+        -69.41292893,  -69.41292893,  -69.41292893,  -54.03692269,
+        -54.03692269,  -54.03692269,  -54.03692269,  -54.03692269,
+        -40.53106631,  -40.53106631,  -40.53106631,  -40.53106631,
+        -40.53106631,  -33.3205849 ,  -33.3205849 ,  -33.3205849 ,
+        -33.3205849 ,  -33.3205849 ,  -36.37400949,  -36.37400949,
+        -36.37400949,  -36.37400949,  -36.37400949,  -35.64897529,
+        -35.64897529,  -35.64897529,  -35.64897529,  -35.64897529,
+        -29.56753594,  -29.56753594,  -29.56753594,  -29.56753594,
+        -29.56753594,  -29.09557814,  -29.09557814,  -29.09557814,
+        -29.09557814,  -29.09557814,  -27.99146529,  -27.99146529,
+        -27.99146529,  -27.99146529,  -27.99146529,  -26.58469763,
+        -26.58469763,  -26.58469763,  -26.58469763,  -26.58469763,
+        -20.32485707,  -20.32485707,  -20.32485707,  -20.32485707,
+        -20.32485707,  -15.06863064,  -15.06863064,  -15.06863064,
+        -15.06863064,  -15.06863064,  -12.47770867,  -12.47770867,
+        -12.47770867,  -12.47770867,  -12.47770867,  -10.55085402,
+        -10.55085402,  -10.55085402,  -10.55085402,  -10.55085402,
+         -7.17536086,   -7.17536086,   -7.17536086,   -7.17536086,
+         -7.17536086,   -4.83432784,   -4.83432784,   -4.83432784,
+         -4.83432784,   -4.83432784,   -4.13833286,   -4.13833286,
+         -4.13833286,   -4.13833286,   -4.13833286,   -1.81402187,
+         -1.81402187,   -1.81402187,   -1.81402187,   -1.81402187])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Axes: &gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_oua_tutorial_19_1.png" src="../_images/examples_oua_tutorial_19_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="p">[</span><span class="s2">&quot;TDA anomalies&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">anomaly_score</span>
+<span class="n">y</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subplots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([&lt;Axes: &gt;, &lt;Axes: &gt;], dtype=object)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_oua_tutorial_20_1.png" src="../_images/examples_oua_tutorial_20_1.png" />
+</div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Martin Royer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -19,7 +19,8 @@
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="tdaad package" href="tdaad.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,14 +43,28 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="guidelines.html">📖 Guidelines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">🧪 Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tech_docs.html">📚 Technical docs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="theory_overview.html">💡 Theory overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="theory_overview.html#references">📑 References</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">🔄 Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generated/modules.html">tdaad</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">🔎 Tdaad package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tdaad.html">tdaad package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="tdaad.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">tdaad.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tdaad.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tdaad.html#module-tdaad.anomaly_detectors">tdaad.anomaly_detectors module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tdaad.html#module-tdaad.persistencediagram_transformer">tdaad.persistencediagram_transformer module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tdaad.html#module-tdaad.topological_embedding">tdaad.topological_embedding module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tdaad.html#module-tdaad">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -66,6 +81,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">🔎 Tdaad package</a></li>
+          <li class="breadcrumb-item"><a href="tdaad.html">tdaad package</a></li>
       <li class="breadcrumb-item active">tdaad.utils package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/tdaad.utils.rst.txt" rel="nofollow"> View page source</a>
@@ -124,12 +141,12 @@
 <p>Window Functions.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tdaad.utils.local_pipeline.LocalPipeline">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tdaad.utils.local_pipeline.</span></span><span class="sig-name descname"><span class="pre">LocalPipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/utils/local_pipeline.html#LocalPipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.utils.local_pipeline.LocalPipeline" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tdaad.utils.local_pipeline.</span></span><span class="sig-name descname"><span class="pre">LocalPipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/utils/local_pipeline.html#LocalPipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.utils.local_pipeline.LocalPipeline" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code></p>
 <p>Local pipeline modification for added functionality.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tdaad.utils.local_pipeline.LocalPipeline.set_score_request">
-<span class="sig-name descname"><span class="pre">set_score_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tdaad.utils.local_pipeline.LocalPipeline" title="tdaad.utils.local_pipeline.LocalPipeline"><span class="pre">LocalPipeline</span></a></span></span><a class="headerlink" href="#tdaad.utils.local_pipeline.LocalPipeline.set_score_request" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_score_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tdaad.utils.local_pipeline.LocalPipeline" title="tdaad.utils.local_pipeline.LocalPipeline"><span class="pre">LocalPipeline</span></a></span></span><a class="headerlink" href="#tdaad.utils.local_pipeline.LocalPipeline.set_score_request" title="Link to this definition"></a></dt>
 <dd><p>Request metadata passed to the <code class="docutils literal notranslate"><span class="pre">score</span></code> method.</p>
 <p>Note that this method is only relevant if
 <code class="docutils literal notranslate"><span class="pre">enable_metadata_routing=True</span></code> (see <code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.set_config()</span></code>).
@@ -203,7 +220,9 @@ sub-estimator of a meta-estimator, e.g. used inside a
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tdaad.html" class="btn btn-neutral float-left" title="tdaad package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 

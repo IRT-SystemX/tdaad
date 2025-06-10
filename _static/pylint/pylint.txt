@@ -2,15 +2,13 @@
 tdaad/topological_embedding.py:19:28: W0613: Unused argument 'y' (unused-argument)
 tdaad/topological_embedding.py:19:36: W0613: Unused argument 'sample_weight' (unused-argument)
 ************* Module tdaad.anomaly_detectors
+tdaad/anomaly_detectors.py:17:0: R0901: Too many ancestors (10/7) (too-many-ancestors)
 tdaad/anomaly_detectors.py:87:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
-tdaad/anomaly_detectors.py:108:21: W0613: Unused argument 'y' (unused-argument)
 tdaad/anomaly_detectors.py:142:39: W0613: Unused argument 'y' (unused-argument)
 tdaad/anomaly_detectors.py:168:31: W0613: Unused argument 'y' (unused-argument)
 tdaad/anomaly_detectors.py:124:8: W0201: Attribute 'topological_embedding_' defined outside __init__ (attribute-defined-outside-init)
-tdaad/anomaly_detectors.py:137:12: W0201: Attribute 'support_fraction' defined outside __init__ (attribute-defined-outside-init)
-tdaad/anomaly_detectors.py:139:12: W0201: Attribute 'support_fraction' defined outside __init__ (attribute-defined-outside-init)
 tdaad/anomaly_detectors.py:162:8: W0201: Attribute 'padding_length_' defined outside __init__ (attribute-defined-outside-init)
 
 -----------------------------------
-Your code has been rated at 9.28/10
+Your code has been rated at 9.42/10
 
