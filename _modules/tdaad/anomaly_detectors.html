@@ -96,12 +96,14 @@
 <a class="viewcode-back" href="../../tech_docs.html#tdaad.anomaly_detectors.TopologicalAnomalyDetector">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TopologicalAnomalyDetector</span><span class="p">(</span><span class="n">EllipticEnvelope</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Object for detecting anomaly base on Topological Embedding and sklearn.covariance.EllipticEnvelope.</span>
+
 <span class="sd">    This object analyzes multiple time series data through the following operations:</span>
-<span class="sd">        - run a sliding window algorithm and represent each time series window with topological features,</span>
-<span class="sd">            see :ref:`Topological Embedding &lt;topological_embedding&gt;`,</span>
-<span class="sd">        - use a MinCovDet algorithm to robustly estimate the data mean and covariance in the embedding space,</span>
-<span class="sd">            and use these to derive an embedding mahalanobis distance and associated outlier detection procedure,</span>
-<span class="sd">            see :ref:`Elliptic Envelope &lt;elliptic_envelope&gt;`.</span>
+<span class="sd">    - run a sliding window algorithm and represent each time series window with topological features,</span>
+<span class="sd">        see :ref:`Topological Embedding &lt;topological_embedding&gt;`,</span>
+
+<span class="sd">    - use a MinCovDet algorithm to robustly estimate the data mean and covariance in the embedding space,</span>
+<span class="sd">        and use these to derive an embedding mahalanobis distance and associated outlier detection procedure,</span>
+<span class="sd">        see :ref:`Elliptic Envelope &lt;elliptic_envelope&gt;`.</span>
 
 <span class="sd">    After fitting, it is able to produce an anomaly score from a time series describing normal / abnormal time segments.</span>
 <span class="sd">    (the lower, the more abnormal)</span>

@@ -105,7 +105,7 @@ virtualenv<span class="w"> </span>myenv
 </pre></div>
 </div>
 <p>Then you can clone the git repo and install from within the folder:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://git.irt-systemx.fr/confianceai/ec_5/ec5_as3/tdaad
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/IRT-SystemX/tdaad.git
 <span class="nb">cd</span><span class="w"> </span>tdaad
 pip<span class="w"> </span>install<span class="w"> </span>.
 </pre></div>
@@ -160,9 +160,8 @@ DataFrame with variables as columns and timestamps as lines.</p>
 <section id="main-outputs">
 <h3>Main outputs<a class="headerlink" href="#main-outputs" title="Link to this heading"></a></h3>
 <p>The main output is an <code class="docutils literal notranslate"><span class="pre">anomaly_score</span></code> from the <code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code> object,
-in the form of a univariate <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> with timestamps as indices. The scores are not bounded, the lower scores correspond to the more abnormal portions of the timeseries,
-according to the topological representation that was constructed.</p>
-<p>Another key output is that topological representation or embedding, result of the <code class="docutils literal notranslate"><span class="pre">transform</span></code> of the <code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding</span></code> object: a multivariate <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> with timestamps as indices.</p>
+in the form of a univariate <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>. The scores are not bounded, the lower scores correspond to the more abnormal portions of the timeseries, according to the topological representation that was constructed.</p>
+<p>Another key output is that topological representation or embedding, result of the <code class="docutils literal notranslate"><span class="pre">transform</span></code> of the <code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding</span></code> object: a multivariate <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> that “encodes” the timeseries into vectorial (and topological) representation.</p>
 </section>
 <section id="algorithm-main-parameters">
 <h3>Algorithm main parameters<a class="headerlink" href="#algorithm-main-parameters" title="Link to this heading"></a></h3>

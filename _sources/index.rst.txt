@@ -20,7 +20,7 @@ Welcome to Topological Data Analysis for Anomaly Detection's documentation!
    theory_overview
    changelog
    modules
-   
+
 
 Indices and tables
 ==================

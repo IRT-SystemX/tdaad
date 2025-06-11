@@ -6,4 +6,4 @@
 .. toctree::
    :maxdepth: 5
 
-   notebooks/oua_tutorial
+   examples/oua_tutorial

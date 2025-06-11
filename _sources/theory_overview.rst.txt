@@ -5,6 +5,7 @@
 ===================
 
 .. _topological_data_analysis:
+
 Topological Data Analysis is a recent and fast growing field providing topological and geometric tools to infer features for complex data.
 See an introduction in [CM21]_.
 
@@ -32,7 +33,7 @@ Essentially once you estimate the mean and covariance of a set of vectors, assum
 
 
 📑 References
-==========
+==============
 
 .. [CM21] `F. Chazal, B. Michel. An introduction to Topological Data Analysis: fundamental and practical aspects for data scientists. Frontiers in AI, 2021 <https://www.frontiersin.org/articles/10.3389/frai.2021.667963/full>`_.
 
