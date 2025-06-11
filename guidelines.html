@@ -59,7 +59,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#good-to-know">Good to know</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#identity-card">🔍 Identity card</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">🧪 Tutorial</a></li>
@@ -184,49 +183,6 @@ but should be manually tuned for better results. Key parameters include:</p>
 <li><p>This detector is good to use in a context where a complex system (e.g. train on a railway, drone fleet, factory…) has various sensors information that can be used to build inference on the state of the system (working / anomalous =&gt; needs attending).</p></li>
 </ul>
 </section>
-</section>
-<section id="identity-card">
-<h2>🔍 Identity card<a class="headerlink" href="#identity-card" title="Link to this heading"></a></h2>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Global_information</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Topological</span><span class="nv"> </span><span class="s">description</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">multiple</span><span class="nv"> </span><span class="s">time</span><span class="nv"> </span><span class="s">series</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">GUDHI&quot;</span>
-<span class="w">    </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.4.0</span>
-<span class="w">    </span><span class="nt">License</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MPL-2.0</span>
-<span class="w">    </span><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PythonLib</span>
-<span class="w">    </span><span class="nt">Domain</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Non specific</span>
-<span class="w">    </span><span class="nt">Thematic</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Anomaly detection with TDA</span>
-<span class="w">    </span><span class="nt">Data_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Time series (multivariate)</span>
-<span class="w">    </span><span class="nt">usecases</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UC_Air_Liquide_EMS_Data_Quality</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UC_Naval_Group_Anomaly_Detection</span>
-
-<span class="nt">Attributes</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">Trustworthy_attributes</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dependability</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Explainability</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Robustness</span>
-<span class="w">    </span><span class="nt">Eng_activities</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EA51 - Massage data</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EA52 - Characterize data</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EA53 - Scope data</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EA54 - Acquire knowledge</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EA55 - Encode knowledge</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EA56 - Validate knowledge</span>
-<span class="w">    </span><span class="nt">Scientific_Challenge</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SC48 Evaluate the quality of the data mining, enrichment, annotation and preparation process</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SC49 Measure the quality and representativeness of the data / knowledge of an operational domain</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SC50 Identify biases in data/knowledge leading to poor decisions</span>
-
-<span class="nt">Link </span><span class="p">:</span>
-<span class="w">    </span><span class="nt">source_code_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/IRT-SystemX/tdaad</span>
-<span class="w">    </span><span class="nt">documentation_url</span><span class="p">:</span>
-
-<span class="nt">Technical</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">Python Version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&gt;=3.12&quot;</span>
-<span class="w">    </span><span class="nt">Dependencies</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gudhi, pandas, scikit-learn</span>
-<span class="w">    </span><span class="nt">Hardware_compatibiliy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CPU only</span>
-<span class="w">    </span><span class="nt">component_incompatibility</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">None</span>
-</pre></div>
-</div>
 </section>
 </section>
 

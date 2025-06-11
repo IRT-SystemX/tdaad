@@ -17,10 +17,11 @@ Topological Anomaly Detection in this module:
         and use these to derive an embedding mahalanobis distance and associated outlier detection procedure,
         see :ref:`Elliptic Envelope <elliptic_envelope>`.
 
+This library is the implementation result of the TADA algorithm introduced in [CLR24]_.
 
 .. _topological_embedding:
 
-For more details on the way to produce a temporal topological embedding, please refer to [CLR24].
+For more details on the way to produce a temporal topological embedding, please refer to [CLR24]_.
 
 
 .. _elliptic_envelope:
@@ -35,5 +36,4 @@ Essentially once you estimate the mean and covariance of a set of vectors, assum
 
 .. [CM21] `F. Chazal, B. Michel. An introduction to Topological Data Analysis: fundamental and practical aspects for data scientists. Frontiers in AI, 2021 <https://www.frontiersin.org/articles/10.3389/frai.2021.667963/full>`_.
 
-.. [CLR24] `F. Chazal, C. Levrard and M. Royer. Topological Analysis for Detecting Anomalies (TADA) in Time Series. <https://hal.science/hal-04604083>`_.
-
+.. [CLR24] `F. Chazal, C. Levrard and M. Royer. Topological Analysis for Detecting Anomalies (TADA) in dependent sequences: application to Time Series. Journal of Machine Learning Research, 2024 <http://jmlr.org/papers/v25/24-0853.html>`_.
