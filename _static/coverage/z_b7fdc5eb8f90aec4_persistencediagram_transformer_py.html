@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Coverage for tdaad/persistencediagram_transformer.py: 100%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
-    <link rel="stylesheet" href="style_cb_81f8c14c.css" type="text/css">
+    <link rel="stylesheet" href="style_cb_6b508a39.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
 </head>
 <body class="pyfile">
@@ -64,8 +64,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_b7fdc5eb8f90aec4_topological_embedding_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.9.1">coverage.py v7.9.1</a>,
-            created at 2025-06-13 13:45 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
+            created at 2025-09-04 13:48 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -97,7 +97,7 @@
     <p class="pln"><span class="n"><a id="t15" href="#t15">15</a></span><span class="t">    <span class="str">r"""Transforms dataframe X into similarity matrix :math:`1-\mathbf{Corr}(X)`."""</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t">    <span class="nam">target</span> <span class="op">=</span> <span class="num">1</span> <span class="op">-</span> <span class="nam">X</span><span class="op">.</span><span class="nam">corr</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">to_numpy</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t17" href="#t17">17</a></span><span class="t">    <span class="nam">nanrowcols</span> <span class="op">=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">isnan</span><span class="op">(</span><span class="nam">target</span><span class="op">)</span><span class="op">.</span><span class="nam">all</span><span class="op">(</span><span class="nam">axis</span><span class="op">=</span><span class="num">0</span><span class="op">)</span> <span class="key">if</span> <span class="nam">filter_nan</span> <span class="key">else</span> <span class="op">~</span><span class="nam">target</span><span class="op">.</span><span class="nam">any</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t18" href="#t18">18</a></span><span class="t">        <span class="nam">axis</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>  <span class="com"># this filters when a variable is constant -> nan on all rows</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t18" href="#t18">18</a></span><span class="t">        <span class="nam">axis</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>  <span class="com"># this filters when a variable is constant -> nan on all rows</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t19" href="#t19">19</a></span><span class="t">    <span class="key">return</span> <span class="nam">target</span><span class="op">[</span><span class="op">~</span><span class="nam">nanrowcols</span><span class="op">,</span> <span class="op">:</span><span class="op">]</span><span class="op">[</span><span class="op">:</span><span class="op">,</span> <span class="op">~</span><span class="nam">nanrowcols</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t20" href="#t20">20</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t21" href="#t21">21</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -134,17 +134,17 @@
     <p class="run"><span class="n"><a id="t52" href="#t52">52</a></span><span class="t">        <span class="nam">list_encapsulate_transformer</span> <span class="op">=</span> <span class="nam">FunctionTransformer</span><span class="op">(</span><span class="nam">func</span><span class="op">=</span><span class="nam">wrap_in_list</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t53" href="#t53">53</a></span><span class="t">        <span class="nam">list_encapsulate_transformer</span><span class="op">.</span><span class="nam">name</span> <span class="op">=</span> <span class="str">""</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t54" href="#t54">54</a></span><span class="t">        <span class="nam">rips_transformer</span> <span class="op">=</span> <span class="nam">RipsPersistence</span><span class="op">(</span><span class="nam">homology_dimensions</span><span class="op">=</span><span class="nam">range</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t55" href="#t55">55</a></span><span class="t">            <span class="nam">tda_max_dim</span> <span class="op">+</span> <span class="num">1</span><span class="op">)</span><span class="op">,</span> <span class="nam">input_type</span><span class="op">=</span><span class="str">'lower distance matrix'</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t55" href="#t55">55</a></span><span class="t">            <span class="nam">tda_max_dim</span> <span class="op">+</span> <span class="num">1</span><span class="op">)</span><span class="op">,</span> <span class="nam">input_type</span><span class="op">=</span><span class="str">'lower distance matrix'</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t56" href="#t56">56</a></span><span class="t">        <span class="nam">rips_transformer</span><span class="op">.</span><span class="nam">name</span> <span class="op">=</span> <span class="str">""</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t57" href="#t57">57</a></span><span class="t">        <span class="nam">list_popper_transformer</span> <span class="op">=</span> <span class="nam">FunctionTransformer</span><span class="op">(</span><span class="nam">func</span><span class="op">=</span><span class="nam">itemgetter</span><span class="op">(</span><span class="num">0</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t58" href="#t58">58</a></span><span class="t">        <span class="nam">list_popper_transformer</span><span class="op">.</span><span class="nam">name</span> <span class="op">=</span> <span class="str">""</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t59" href="#t59">59</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t60" href="#t60">60</a></span><span class="t">        <span class="nam">steps</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t61" href="#t61">61</a></span><span class="t">            <span class="op">(</span><span class="str">"similarity_step"</span><span class="op">,</span> <span class="nam">similarity_transformer</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t62" href="#t62">62</a></span><span class="t">            <span class="op">(</span><span class="str">"list_encapsulate"</span><span class="op">,</span> <span class="nam">list_encapsulate_transformer</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t63" href="#t63">63</a></span><span class="t">            <span class="op">(</span><span class="str">"rips_step"</span><span class="op">,</span> <span class="nam">rips_transformer</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t64" href="#t64">64</a></span><span class="t">            <span class="op">(</span><span class="str">"list_popper"</span><span class="op">,</span> <span class="nam">list_popper_transformer</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t65" href="#t65">65</a></span><span class="t">        <span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t61" href="#t61">61</a></span><span class="t">            <span class="op">(</span><span class="str">"similarity_step"</span><span class="op">,</span> <span class="nam">similarity_transformer</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t62" href="#t62">62</a></span><span class="t">            <span class="op">(</span><span class="str">"list_encapsulate"</span><span class="op">,</span> <span class="nam">list_encapsulate_transformer</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t63" href="#t63">63</a></span><span class="t">            <span class="op">(</span><span class="str">"rips_step"</span><span class="op">,</span> <span class="nam">rips_transformer</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t64" href="#t64">64</a></span><span class="t">            <span class="op">(</span><span class="str">"list_popper"</span><span class="op">,</span> <span class="nam">list_popper_transformer</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t65" href="#t65">65</a></span><span class="t">        <span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t66" href="#t66">66</a></span><span class="t">        <span class="nam">super</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">__init__</span><span class="op">(</span><span class="nam">steps</span><span class="op">=</span><span class="nam">steps</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t67" href="#t67">67</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t68" href="#t68">68</a></span><span class="t">    <span class="key">def</span> <span class="nam">fit_transform</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">X</span><span class="op">,</span> <span class="nam">y</span><span class="op">=</span><span class="key">None</span><span class="op">,</span> <span class="op">**</span><span class="nam">fit_params</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -179,8 +179,8 @@
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_b7fdc5eb8f90aec4_topological_embedding_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.9.1">coverage.py v7.9.1</a>,
-            created at 2025-06-13 13:45 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
+            created at 2025-09-04 13:48 +0000
         </p>
     </div>
 </footer>
