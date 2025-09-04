@@ -23,10 +23,20 @@
 	<a href="_static/coverage/index.html">
         <img src="_static/coverage/coverage.svg" alt="Coverage report">
     </a>
-
-
 </div>
 <br>
+
+<div align="center">
+    <a href="https://github.com/IRT-SystemX/tdaad">
+        <img src="https://img.shields.io/badge/GitHub-Repository-181717?logo=github" alt="GitHub">
+    </a>
+    <a href="https://irt-systemx.github.io/tdaad/">
+        <img src="https://img.shields.io/badge/Online%20Documentation-available-0A66C2?logo=readthedocs&logoColor=white" alt="Docs">
+    </a>
+    <a href="https://pypi.org/project/tdaad/">
+        <img src="https://img.shields.io/pypi/v/tdaad?color=blue&label=PyPI&logo=pypi&logoColor=white" alt="PyPI">
+    </a>
+</div>
 
 # Topological Data Analysis for Anomaly Detection module
 
