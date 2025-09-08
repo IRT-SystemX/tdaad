@@ -1,4 +1,3 @@
-<img width="1312" height="321" alt="image" src="https://github.com/user-attachments/assets/1c26ecf9-8b9c-4cc3-aeeb-2cf00b0b2530" />
 <div align="center">
 	<img src="_static/Logo_ConfianceAI.png" width="20%" alt="ConfianceAI Logo" />
     <h1 style="font-size: large; font-weight: bold;">TDAAD</h1>
