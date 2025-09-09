@@ -152,6 +152,14 @@ sphinx-apidoc -o docs/source/generated tdaad
 sphinx-build -M html docs/source docs/build -W --keep-going
 ```
 
-## License
+## Contributors and Support
 
-MPL 2.0
+<p align="center">
+  TDAAD is developed by  
+  <a href="https://www.irt-systemx.fr/en/" title="IRT SystemX">
+   <img src="https://www.irt-systemx.fr/wp-content/uploads/2013/03/system-x-logo.jpeg"  height="70">
+  </a>and supported by the 
+<a href="https://www.trustworthy-ai-foundation.eu/" title="European Trustworthy AI association">
+<img src="https://media.licdn.com/dms/image/v2/D4E0BAQGzfvLxz3sS8Q/company-logo_200_200/B4EZfkq1KLHwAI-/0/1751888122857/european_trustworthy_ai_foundation_logo?e=1759968000&v=beta&t=L2BNgzJNtZeWxHyrU_8Ap3VhrJ_9MdZmh-75IDQIMDc"  height="90">
+</a>
+</p>
