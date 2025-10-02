@@ -11,16 +11,16 @@ from sklearn.preprocessing import FunctionTransformer
 from tdaad.utils.local_pipeline import LocalPipeline
 
 
-def _data_to_similarity(X, filter_nan=True):
-    r"""Transforms dataframe X into similarity matrix :math:`1-\mathbf{Corr}(X)`."""
-    target = 1 - X.corr().to_numpy()
-    nanrowcols = np.isnan(target).all(axis=0) if filter_nan else ~target.any(
-        axis=0)  # this filters when a variable is constant -> nan on all rows
-    return target[~nanrowcols, :][:, ~nanrowcols]
+def _numpy_data_to_similarity(X, filter_nan=True):
+    r"""Transforms numpy matrix X into similarity matrix :math:`1-\mathbf{Corr}(X)`."""
+    target = 1 - np.corrcoef(X, rowvar=False)
+    # this filters when a variable is constant -> nan on all rows
+    nanrowcols = np.isnan(target).all(axis=0) if filter_nan else ~target.any(axis=0)
+    return target[~nanrowcols][:, ~nanrowcols]
 
 
 def wrap_in_list(X):
-    """ wrapper because RipsPersistence.transform expects a list"""
+    """wrapper because RipsPersistence.transform expects a list"""
     return [X]
 
 
@@ -47,12 +47,14 @@ class PersistenceDiagramTransformer(LocalPipeline):
 
     def __init__(self, tda_max_dim=2):
         self.tda_max_dim = tda_max_dim
-        similarity_transformer = FunctionTransformer(func=_data_to_similarity)
+        similarity_transformer = FunctionTransformer(func=_numpy_data_to_similarity)
         similarity_transformer.name = r"1-$\mathbf{Corr}(X)$"
         list_encapsulate_transformer = FunctionTransformer(func=wrap_in_list)
         list_encapsulate_transformer.name = ""
-        rips_transformer = RipsPersistence(homology_dimensions=range(
-            tda_max_dim + 1), input_type='lower distance matrix')
+        rips_transformer = RipsPersistence(
+            homology_dimensions=range(tda_max_dim + 1),
+            input_type="lower distance matrix",
+        )
         rips_transformer.name = ""
         list_popper_transformer = FunctionTransformer(func=itemgetter(0))
         list_popper_transformer.name = ""
