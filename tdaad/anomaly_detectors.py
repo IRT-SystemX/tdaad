@@ -87,19 +87,19 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
     }
 
     def __init__(
-            self,
-            window_size: int = 100,
-            step: int = 5,
-            tda_max_dim: int = 2,
-            n_centers_by_dim: int = 5,
-            support_fraction: float = None,
-            contamination: float = 0.1,
-            random_state: int = 42,
+        self,
+        window_size: int = 100,
+        step: int = 5,
+        tda_max_dim: int = 2,
+        n_centers_by_dim: int = 5,
+        support_fraction: float = None,
+        contamination: float = 0.1,
+        random_state: int = 42,
     ):
         super().__init__(
             support_fraction=support_fraction,
             contamination=contamination,
-            random_state=random_state
+            random_state=random_state,
         )
         self.window_size = window_size
         self.step = step
@@ -141,7 +141,9 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
             self.support_fraction = None
         return self
 
-    def _warped_score_samples(self, X, y=None):  # this exists to retrieve scores before remapping
+    def _warped_score_samples(
+        self, X, y=None
+    ):  # this exists to retrieve scores before remapping
         """Compute the negative Mahalanobis distances associated with the TopologicalEmbedding representation of X.
 
         Args
@@ -162,7 +164,7 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
 
         imax = (X.shape[0] - self.window_size) // self.step
         self.padding_length_ = X.shape[0] - (self.step * imax + self.window_size)
-        print(f"{X.shape[0]=}, {self.window_size=}, {self.step=}, so running {self.padding_length_=}...")
+        # print(f"{X.shape[0]=}, {self.window_size=}, {self.step=}, so running {self.padding_length_=}...")
 
         embedding = self.topological_embedding_.transform(X=X)
         return super().score_samples(embedding)
@@ -185,8 +187,12 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
         """
         warped_score_samples = self._warped_score_samples(X)
 
-        unwarped_scores = score_flat_fast_remapping(warped_score_samples, window_size=self.window_size,
-                                                    stride=self.step, padding_length=self.padding_length_)
+        unwarped_scores = score_flat_fast_remapping(
+            warped_score_samples,
+            window_size=self.window_size,
+            stride=self.step,
+            padding_length=self.padding_length_,
+        )
         # print(f"...yields {remapped_scores.shape[0]=}")
 
         return unwarped_scores

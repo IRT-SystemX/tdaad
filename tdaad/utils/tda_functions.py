@@ -15,11 +15,6 @@ def _numpy_data_to_similarity(X, filter_nan=True):
     return target[~nanrowcols][:, ~nanrowcols]
 
 
-def wrap_in_list(X):
-    """wrapper because RipsPersistence.transform expects a list"""
-    return [X]
-
-
 def transform_to_persistence_diagram(X, tda_max_dim=0):
     """Persistence Diagram Transformer for point cloud.
 
