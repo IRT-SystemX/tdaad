@@ -26,7 +26,7 @@ def _sliding_window_3D_view(data, window_size, step):
 
 
 def sliding_window_ppl_pp(
-    data, pipeline, step=5, window_size=120, parallel=True, n_jobs=-1
+    data, func, step=5, window_size=120, parallel=True, n_jobs=-1
 ):
     """Applies a pipeline to timeseries data chunks using the Sliding Window algorithm.
 
@@ -43,10 +43,9 @@ def sliding_window_ppl_pp(
 
     if parallel:
         results = Parallel(n_jobs=n_jobs)(
-            delayed(lambda wdw: (hash_window(wdw), pipeline.transform(wdw)))(w)
-            for w in windows
+            delayed(lambda wdw: (hash_window(wdw), func(wdw)))(w) for w in windows
         )
     else:
-        results = [(hash_window(w), pipeline.transform(w)) for w in windows]
+        results = [(hash_window(w), func(w)) for w in windows]
     post_result = pd.DataFrame.from_dict(dict(results), orient="index")
     return post_result

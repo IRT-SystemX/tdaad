@@ -2,13 +2,15 @@
 
 # Author: Martin Royer
 
+from functools import partial
+
 from sklearn.preprocessing import StandardScaler, FunctionTransformer
 from sklearn.compose import ColumnTransformer
 from sklearn.cluster import KMeans
 
 from gudhi.representations.vector_methods import Atol
 
-from tdaad.persistencediagram_transformer import PersistenceDiagramTransformer
+from tdaad.persistencediagram_transformer import transform_to_persistence_diagram
 from tdaad.utils.local_pipeline import LocalPipeline
 from tdaad.utils.window_functions import sliding_window_ppl_pp
 
@@ -69,9 +71,7 @@ class TopologicalEmbedding(LocalPipeline):
         self.step = step
         self.tda_max_dim = tda_max_dim
         self.n_centers_by_dim = n_centers_by_dim
-        named_ppl = PersistenceDiagramTransformer(
-            tda_max_dim=self.tda_max_dim,
-        )
+        func = partial(transform_to_persistence_diagram, tda_max_dim=self.tda_max_dim)
         super().__init__(
             steps=[
                 ("StandardScaler", StandardScaler()),
@@ -82,7 +82,8 @@ class TopologicalEmbedding(LocalPipeline):
                         kw_args={
                             "window_size": self.window_size,
                             "step": self.step,
-                            "pipeline": named_ppl,
+                            "func": func,
+                            "parallel": False,
                         },
                     ),
                 ),
