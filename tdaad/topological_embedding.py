@@ -4,14 +4,16 @@
 
 from functools import partial
 
-from sklearn.preprocessing import StandardScaler, FunctionTransformer
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import FunctionTransformer
 from sklearn.compose import ColumnTransformer
 from sklearn.cluster import KMeans
 
 from gudhi.representations.vector_methods import Atol
 
 from tdaad.persistencediagram_transformer import transform_to_persistence_diagram
-from tdaad.utils.local_pipeline import LocalPipeline
 from tdaad.utils.window_functions import sliding_window_ppl_pp
 
 
@@ -28,7 +30,7 @@ def local_atol_fit(self, X, y=None, sample_weight=None):
 Atol.fit = local_atol_fit
 
 
-class TopologicalEmbedding(LocalPipeline):
+class TopologicalEmbedding(BaseEstimator, TransformerMixin):
     """Topological embedding for multiple time series.
 
     Slices time series into smaller time series windows, forms an affinity matrix on each window
@@ -71,40 +73,90 @@ class TopologicalEmbedding(LocalPipeline):
         self.step = step
         self.tda_max_dim = tda_max_dim
         self.n_centers_by_dim = n_centers_by_dim
+
+    def _build_pipeline(self):
+        steps = []
+        steps.append(("Standard scaler", StandardScaler()))
         func = partial(transform_to_persistence_diagram, tda_max_dim=self.tda_max_dim)
-        super().__init__(
-            steps=[
-                ("StandardScaler", StandardScaler()),
-                (
-                    "SlidingPersistenceDiagramTransformer",
-                    FunctionTransformer(
-                        func=sliding_window_ppl_pp,
-                        kw_args={
-                            "window_size": self.window_size,
-                            "step": self.step,
-                            "func": func,
-                        },
-                    ),
+        steps.append(
+            (
+                "Sliding persistence diagram transformer",
+                FunctionTransformer(
+                    func=sliding_window_ppl_pp,
+                    kw_args={
+                        "window_size": self.window_size,
+                        "step": self.step,
+                        "func": func,
+                    },
                 ),
-                (
-                    "Archipelago",
-                    ColumnTransformer(
-                        [
-                            (
-                                f"Atol{i}",
-                                Atol(
-                                    quantiser=KMeans(
-                                        n_clusters=self.n_centers_by_dim,
-                                        random_state=202312,
-                                        n_init="auto",
-                                    )
-                                ),
-                                i,
-                            )
-                            for i in range(self.tda_max_dim + 1)
-                        ]
-                    ),
-                ),
-            ]
+            )
         )
-        super().set_output(transform="pandas")
+        steps.append(
+            (
+                "Archipelago",
+                ColumnTransformer(
+                    [
+                        (
+                            f"Atol{i}",
+                            Atol(
+                                quantiser=KMeans(
+                                    n_clusters=self.n_centers_by_dim,
+                                    random_state=202312,
+                                    n_init="auto",
+                                )
+                            ),
+                            i,
+                        )
+                        for i in range(self.tda_max_dim + 1)
+                    ]
+                ),
+            )
+        )
+        return Pipeline(steps).set_output(transform="pandas")
+
+    def fit(self, X, y=None):
+        """
+        Fit the internal pipeline to the data.
+
+        Parameters
+        ----------
+        X : pandas.DataFrame
+            Input feature matrix.
+
+        y : array-like, optional
+            Target values (not used here, but accepted for compatibility with sklearn).
+
+        Returns
+        -------
+        self : object
+            Fitted transformer.
+        """
+        self.pipeline_ = self._build_pipeline()
+        self.pipeline_.fit(X, y)
+        return self
+
+    def transform(self, X):
+        """
+        Apply transformations to the input data using the fitted pipeline.
+
+        Parameters
+        ----------
+        X : pandas.DataFrame
+            Input data to transform.
+
+        Returns
+        -------
+        X_transformed : array-like or DataFrame
+            Transformed data.
+        """
+        return self.pipeline_.transform(X)
+
+    def fit_transform(self, X, y=None, **fit_params):
+        """
+        Fit to data, then transform it.
+
+        Returns
+        -------
+        X_transformed : array-like
+        """
+        return self.fit(X, y).transform(X)
