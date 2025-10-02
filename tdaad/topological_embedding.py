@@ -83,7 +83,6 @@ class TopologicalEmbedding(LocalPipeline):
                             "window_size": self.window_size,
                             "step": self.step,
                             "func": func,
-                            "parallel": False,
                         },
                     ),
                 ),
