@@ -11,7 +11,7 @@ from joblib import Parallel, delayed
 
 def hash_window(window: np.ndarray) -> str:
     """Hash encoding of sliding window index."""
-    return hashlib.sha1(window.view(np.uint8)).hexdigest()
+    return hashlib.sha1(np.ascontiguousarray(window).view(np.uint8)).hexdigest()
 
 
 def sliding_window_3D_view(data, window_size, step):
