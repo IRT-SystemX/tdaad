@@ -2,11 +2,11 @@
 
 # Author: Martin Royer
 
+import hashlib
 import numpy as np
 import pandas as pd
 
 from joblib import Parallel, delayed
-import hashlib
 
 
 def hash_window(window: np.ndarray) -> str:
@@ -14,7 +14,7 @@ def hash_window(window: np.ndarray) -> str:
     return hashlib.sha1(window.view(np.uint8)).hexdigest()
 
 
-def _sliding_window_3D_view(data, window_size, step):
+def sliding_window_3D_view(data, window_size, step):
     """
     Create a 3D sliding window view over a 2D array without copying data.
 
@@ -98,7 +98,7 @@ def sliding_window_ppl_pp(data, func, window_size=120, step=5, n_jobs=-1):
     >>> result = sliding_window_ppl_pp(X, func=mean_window, window_size=10, step=2)
     >>> print(result.head())
     """
-    windows = _sliding_window_3D_view(data.to_numpy(), window_size, step)
+    windows = sliding_window_3D_view(data.to_numpy(), window_size, step)
 
     results = Parallel(n_jobs=n_jobs)(
         delayed(lambda wdw: (hash_window(wdw), func(wdw)))(w) for w in windows
