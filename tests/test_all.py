@@ -3,12 +3,12 @@ import pandas as pd
 
 import itertools
 
-from tdaad.persistencediagram_transformer import transform_to_persistence_diagram
+from tdaad.utils.tda_functions import transform_to_persistence_diagram
 from tdaad.topological_embedding import TopologicalEmbedding
 from tdaad.anomaly_detectors import TopologicalAnomalyDetector
 
 
-def test_persistencediagramtransformer():
+def test_transform_to_persistence_diagram():
     """Test for PersistenceDiagramTransformer functionalities."""
     n_timestamps = 100
     n_sensors = 5

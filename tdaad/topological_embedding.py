@@ -13,7 +13,7 @@ from sklearn.cluster import KMeans
 
 from gudhi.representations.vector_methods import Atol
 
-from tdaad.persistencediagram_transformer import transform_to_persistence_diagram
+from tdaad.utils.tda_functions import transform_to_persistence_diagram
 from tdaad.utils.window_functions import sliding_window_ppl_pp
 
 
