@@ -1,13 +1,10 @@
 """Topological Anomaly Detectors."""
 
 # Author: Martin Royer
-
 from typing import Sequence
-from numbers import Integral
 
 import pandas as pd
 
-from sklearn.utils._param_validation import Interval
 from sklearn.base import _fit_context, TransformerMixin
 from tdaad.utils.remapping_functions import score_flat_fast_remapping
 from tdaad.topological_embedding import TopologicalEmbedding
@@ -35,7 +32,7 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
     Parameters
     ----------
     window_size : int, default=40
-        Size of the sliding window algorithm to extract subsequences as input to named_pipeline.
+        Size of the sliding window algorithm to extract subsequences for topological embedding.
     step : int, default=5
         Size of the sliding window steps between each window.
     tda_max_dim : int, default=2
@@ -78,12 +75,14 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
 
     required_properties: Sequence[str] = ["multiple_time_series"]
 
-    _parameter_constraints: dict = {
-        **EllipticEnvelope._parameter_constraints,
-        "window_size": [Interval(Integral, left=2, right=None, closed="left")],
-        "step": [Interval(Integral, left=1, right=None, closed="left")],
-        "tda_max_dim": [Interval(Integral, left=0, right=3, closed="left")],
-        "n_centers_by_dim": [Interval(Integral, left=1, right=None, closed="left")],
+    _parameter_constraints = {
+        "window_size": ["integer", ">=1"],
+        "step": ["integer", ">=1"],
+        "tda_max_dim": ["in", {0, 1, 2}],
+        "n_centers_by_dim": ["integer", ">=1"],
+        "support_fraction": ["number", ">=0", "<=1"],
+        "contamination": ["number", ">=0", "<=.5"],
+        "random_state": ["integer", ">=0"],
     }
 
     def __init__(
