@@ -6,6 +6,9 @@ from typing import Sequence
 import pandas as pd
 
 from sklearn.base import _fit_context, TransformerMixin
+from sklearn.utils._param_validation import Interval
+import numbers
+
 from tdaad.utils.remapping_functions import score_flat_fast_remapping
 from tdaad.topological_embedding import TopologicalEmbedding
 from tdaad.utils.local_elliptic_envelope import EllipticEnvelope
@@ -75,21 +78,21 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
 
     required_properties: Sequence[str] = ["multiple_time_series"]
 
-    _parameter_constraints = {
-        "window_size": ["integer", ">=1"],
-        "step": ["integer", ">=1"],
-        "tda_max_dim": ["in", {0, 1, 2}],
-        "n_centers_by_dim": ["integer", ">=1"],
-        "support_fraction": ["number", ">=0", "<=1"],
-        "contamination": ["number", ">=0", "<=.5"],
-        "random_state": ["integer", ">=0"],
+    _parameter_constraints: dict = {
+        "window_size": [Interval(numbers.Integral, 1, None, closed="left")],
+        "step": [Interval(numbers.Integral, 1, None, closed="left")],
+        "tda_max_dim": [Interval(numbers.Integral, 0, 2, closed="both")],
+        "n_centers_by_dim": [Interval(numbers.Integral, 1, None, closed="left")],
+        "support_fraction": [Interval(numbers.Real, 0, 1, closed="both"), None],
+        "contamination": [Interval(numbers.Real, 0, 0.5, closed="both")],
+        "random_state": ["random_state"],
     }
 
     def __init__(
         self,
         window_size: int = 100,
         step: int = 5,
-        tda_max_dim: int = 2,
+        tda_max_dim: int = 1,
         n_centers_by_dim: int = 5,
         support_fraction: float = None,
         contamination: float = 0.1,
