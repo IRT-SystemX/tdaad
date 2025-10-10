@@ -3,9 +3,9 @@
 # Author: Martin Royer
 from typing import Sequence, Optional, Union
 
-import numpy as np
 import numbers
 import warnings
+import numpy as np
 
 from sklearn.base import _fit_context, TransformerMixin
 from sklearn.utils._param_validation import Interval
@@ -77,6 +77,7 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
         "support_fraction": [Interval(numbers.Real, 0, 1, closed="both"), None],
         "contamination": [Interval(numbers.Real, 0, 0.5, closed="both")],
         "random_state": ["random_state"],
+        "n_jobs": [Interval(numbers.Integral, 1, None, closed="left")],
     }
 
     def __init__(
@@ -88,6 +89,7 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
         support_fraction: Optional[float] = None,
         contamination: float = 0.1,
         random_state: Optional[Union[int, np.random.RandomState]] = 42,
+        n_jobs: int = 1,
     ):
         super().__init__(
             support_fraction=support_fraction,
@@ -98,6 +100,7 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
         self.step = step
         self.tda_max_dim = tda_max_dim
         self.n_centers_by_dim = n_centers_by_dim
+        self.n_jobs = n_jobs
 
     @_fit_context(prefer_skip_nested_validation=True)
     def fit(self, X, y=None):
@@ -121,6 +124,7 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
             step=self.step,
             n_centers_by_dim=self.n_centers_by_dim,
             tda_max_dim=self.tda_max_dim,
+            n_jobs=self.n_jobs,
         )
         embedding = self.topological_embedding_.fit_transform(X)
         try:

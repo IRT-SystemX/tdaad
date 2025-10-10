@@ -68,11 +68,13 @@ class TopologicalEmbedding(BaseEstimator, TransformerMixin):
         step: int = 5,
         tda_max_dim: int = 2,
         n_centers_by_dim: int = 5,
+        n_jobs: int = 1,
     ):
         self.window_size = window_size
         self.step = step
         self.tda_max_dim = tda_max_dim
         self.n_centers_by_dim = n_centers_by_dim
+        self.n_jobs = n_jobs
 
     def _build_pipeline(self):
         steps = []
@@ -87,6 +89,7 @@ class TopologicalEmbedding(BaseEstimator, TransformerMixin):
                         "window_size": self.window_size,
                         "step": self.step,
                         "func": func,
+                        "n_jobs": self.n_jobs,
                     },
                 ),
             )
