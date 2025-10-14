@@ -1,10 +1,13 @@
+import warnings
+import time
 from collections import defaultdict
 import logging
-from sklearn.base import BaseEstimator, TransformerMixin
 from joblib import Parallel, delayed
 import numpy as np
-from scipy.stats import entropy
 from scipy.signal import welch
+from numba import njit
+from sklearn.exceptions import NotFittedError
+from sklearn.base import BaseEstimator, TransformerMixin
 
 
 logger = logging.getLogger(__name__)
@@ -105,6 +108,56 @@ class ResolutionSelector(BaseEstimator, TransformerMixin):
             return self.selector_.transform(X)
 
 
+@njit
+def entropy_fast(x, bins=10):
+    hist = np.zeros(bins, dtype=np.float64)
+    bin_edges = np.linspace(np.min(x), np.max(x), bins + 1)
+    n = x.shape[0]
+
+    # Compute histogram manually (since np.histogram not supported by njit)
+    for i in range(n):
+        xi = x[i]
+        # Find the right bin (linear scan since bins small)
+        for b in range(bins):
+            if bin_edges[b] <= xi < bin_edges[b + 1]:
+                hist[b] += 1
+                break
+        else:
+            # If xi == max(x), put it in last bin
+            if xi == bin_edges[-1]:
+                hist[bins - 1] += 1
+
+    # Normalize histogram
+    for i in range(bins):
+        hist[i] /= n
+
+    s = 0.0
+    for h in hist:
+        if h > 0:
+            s -= h * np.log(h)
+    return s
+
+
+@njit
+def autocorr_fast(x):
+    n = x.shape[0]
+    mean_x = 0.0
+    for i in range(n):
+        mean_x += x[i]
+    mean_x /= n
+
+    numerator = 0.0
+    denominator = 0.0
+    for i in range(n - 1):
+        numerator += (x[i] - mean_x) * (x[i + 1] - mean_x)
+    for i in range(n):
+        denominator += (x[i] - mean_x) ** 2
+
+    if denominator == 0:
+        return 0.0
+    return numerator / denominator
+
+
 class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
     """
     Base class for resolution finding that extract and score
@@ -128,11 +181,11 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
     include_variance : bool, default=True
         Whether to include variance feature.
 
-    include_entropy : bool, default=True
-        Whether to include entropy feature.
-
     include_derivative_std : bool, default=True
         Whether to include standard deviation of derivatives feature.
+
+    include_entropy : bool, default=True
+        Whether to include entropy feature.
 
     include_autocorr : bool, default=False
         Whether to include autocorrelation features.
@@ -148,8 +201,8 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
         score_method="combined",
         n_jobs=-1,
         include_variance=True,
-        include_entropy=True,
         include_derivative_std=True,
+        include_entropy=False,
         include_autocorr=False,
         include_spectral_entropy=False,
     ):
@@ -158,41 +211,106 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
         self.score_method = score_method
         self.n_jobs = n_jobs
         self.include_variance = include_variance
-        self.include_entropy = include_entropy
         self.include_derivative_std = include_derivative_std
+        self.include_entropy = include_entropy
         self.include_autocorr = include_autocorr
         self.include_spectral_entropy = include_spectral_entropy
 
+    def calibrate_features(self, X, sample_size=1):
+        """
+        Measure feature timing on a few random windows to auto-disable slow features
+        before parallel transform.
+        """
+        if hasattr(X, "values"):
+            X = X.values
+        if not hasattr(self, "_enabled_features"):
+            self._enabled_features = {}
+
+        n = X.shape[0]
+        for _ in range(sample_size):
+            t = np.random.randint(20, n - 20)
+            w = self.resolutions[0]
+            hw = w // 2
+            window = X[t - hw : t + hw]
+            self._time_features(window)
+            break  # only run once for now
+
     def _extract_features(self, window):
-        feats = []
-        if self.include_variance:
-            feats.append(np.var(window, axis=0).mean())
-        if self.include_entropy:
-            ent = [
-                entropy(np.histogram(window[:, i], bins=10, density=True)[0] + 1e-12)
-                for i in range(window.shape[1])
-            ]
-            feats.append(np.mean(ent))
-        if self.include_derivative_std:
-            feats.append(np.std(np.diff(window, axis=0), axis=0).mean())
-        if self.include_autocorr:
-            ac_vals = []
-            for i in range(window.shape[1]):
-                x = window[:, i] - np.mean(window[:, i])
-                if len(x) >= 3:
-                    ac1 = np.corrcoef(x[:-1], x[1:])[0, 1]
-                    ac2 = np.corrcoef(x[:-2], x[2:])[0, 1]
-                    ac_vals.extend([ac1, ac2])
-            feats.append(np.mean(ac_vals) if ac_vals else 0.0)
-        if self.include_spectral_entropy:
-            se_vals = []
-            for i in range(window.shape[1]):
-                f, Pxx = welch(window[:, i], nperseg=len(window))
-                Pxx += 1e-12
-                Pxx /= Pxx.sum()
-                se_vals.append(-np.sum(Pxx * np.log2(Pxx)))
-            feats.append(np.mean(se_vals))
-        return np.array(feats)
+        """
+        Extracts time-domain features from a given window.
+        Auto-disables slow features after first measurement.
+        """
+        if not hasattr(self, "_enabled_features"):
+            raise NotFittedError(
+                "This resolution selector is not fitted yet. "
+                "Call `.fit(X)` before using `.transform(X)`."
+            )
+        features = []
+        if self._enabled_features.get("variance", False):
+            features.append(np.var(window))
+        if self._enabled_features.get("entropy", False):
+            features.append(entropy_fast(window[:, 0]))
+        if self._enabled_features.get("derivative_std", False):
+            deriv = np.diff(window, axis=0)
+            features.append(np.std(deriv))
+        if self._enabled_features.get("autocorr", False):
+            features.append(autocorr_fast(window[:, 0]))
+        if self._enabled_features.get("spectral_entropy", False):
+            freqs, psd = welch(window[:, 0], nperseg=len(window))
+            psd = psd / np.sum(psd)
+            se = -np.sum(psd * np.log(psd + 1e-8))
+            features.append(se)
+        return np.array(features)
+
+    def _time_features(self, window):
+        """
+        Measure time per feature, auto-disable slow ones.
+        """
+        times = {}
+        enabled = {}
+
+        def timed(name, func):
+            start = time.perf_counter()
+            try:
+                func()
+                elapsed = time.perf_counter() - start
+                times[name] = elapsed
+                enabled[name] = True
+            except Exception as e:
+                times[name] = float("inf")
+                enabled[name] = False
+                warnings.warn(f"Feature '{name}' failed: {e}")
+
+        # Time each feature
+        timed("variance", lambda: np.var(window))
+        timed(
+            "entropy",
+            lambda: -np.sum(
+                np.histogram(window, bins=10, density=True)[0]
+                * np.log(np.histogram(window, bins=10, density=True)[0] + 1e-8)
+            ),
+        )
+        timed("derivative_std", lambda: np.std(np.diff(window, axis=0)))
+        timed(
+            "autocorr", lambda: np.correlate(window[:, 0], window[:, 0], mode="full")[0]
+        )
+        timed(
+            "spectral_entropy",
+            lambda: __import__("scipy.signal").signal.welch(
+                window[:, 0], nperseg=len(window)
+            ),
+        )
+
+        fastest = min(t for t in times.values() if t > 0)
+        threshold = fastest * 10
+
+        logger.info("Feature timing (seconds):")
+        for name, t in sorted(times.items(), key=lambda x: x[1]):
+            status = "✅" if t <= threshold else "❌ (disabled)"
+            logger.info(f"  {name:<16}: {t:.6f} {status}")
+            enabled[name] = enabled[name] and (t <= threshold)
+
+        self._enabled_features = enabled
 
     def _parallel_score_matrix(self, X):
         """
@@ -252,6 +370,21 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
         logger.info(f"Completed scoring over {valid_count} valid (t, w) windows.")
         return scores_by_t, scores_by_w
 
+    def fit(self, X, y=None):
+        if hasattr(X, "values"):
+            X = X.values
+        if not hasattr(self, "_enabled_features"):
+            # Use first valid window to calibrate features
+            for w in self.resolutions:
+                hw = w // 2
+                if X.shape[0] > 2 * hw:
+                    window = X[hw:-hw][:w]  # a valid centered window
+                    self._time_features(window)
+                    break
+        enabled = [k for k, v in self._enabled_features.items() if v]
+        logger.info(f"Enabled features: {enabled}")
+        return self
+
 
 class GlobalResolutionsFinder(BaseResolutionsFinder):
     """
@@ -268,7 +401,7 @@ class GlobalResolutionsFinder(BaseResolutionsFinder):
     """
 
     def fit(self, X, y=None):
-        return self
+        return super().fit(X, y)
 
     def transform(self, X):
         if hasattr(X, "values"):
@@ -307,7 +440,7 @@ class LocalResolutionsFinder(BaseResolutionsFinder):
     """
 
     def fit(self, X, y=None):
-        return self
+        return super().fit(X, y)
 
     def transform(self, X):
         if hasattr(X, "values"):

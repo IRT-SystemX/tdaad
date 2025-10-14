@@ -43,8 +43,12 @@ print(f"Top-k local resolutions at {local_topk[100]=}")
 selector = ResolutionSelector(
     candidates=[10, 50, 100, 500, 1000],  # or fixed int, or list of candidates
     k=2,
-    n_jobs=4,
-    feature_selector_kwargs={"include_entropy": True},
+    n_jobs=-1,
+    feature_selector_kwargs={
+        "include_entropy": True,
+        "include_autocorr": True,
+        "include_spectral_entropy": True,
+    },
 )
 
 selector.fit(X)
