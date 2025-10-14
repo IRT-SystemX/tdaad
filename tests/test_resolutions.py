@@ -16,9 +16,6 @@ selector = GlobalResolutionsFinder(
     k=3,
     score_method="combined",
     n_jobs=4,
-    include_variance=True,
-    include_entropy=True,
-    include_derivative_std=True,
 )
 
 top_resolutions = selector.fit_transform(X)
@@ -30,9 +27,6 @@ selector = LocalResolutionsFinder(
     k=2,
     score_method="combined",
     n_jobs=4,
-    include_variance=True,
-    include_entropy=True,
-    include_derivative_std=True,
 )
 
 local_topk = selector.fit_transform(X)
@@ -44,11 +38,6 @@ selector = ResolutionSelector(
     candidates=[10, 50, 100, 500, 1000],  # or fixed int, or list of candidates
     k=2,
     n_jobs=-1,
-    feature_selector_kwargs={
-        "include_entropy": True,
-        "include_autocorr": True,
-        "include_spectral_entropy": True,
-    },
 )
 
 selector.fit(X)

@@ -3,15 +3,33 @@ import time
 from collections import defaultdict
 import logging
 from joblib import Parallel, delayed
+
 import numpy as np
-from scipy.signal import welch
-from numba import njit
+
 from sklearn.exceptions import NotFittedError
 from sklearn.base import BaseEstimator, TransformerMixin
+
+from tdaad._feature_functions import (
+    feature_variance,
+    feature_derivative_std,
+    entropy_fast,
+    autocorr_fast,
+    feature_spectral_entropy,
+)
 
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+
+# Dictionary of available features
+FEATURE_FUNCTIONS = {
+    "variance": feature_variance,
+    "derivative_std": feature_derivative_std,
+    "entropy": entropy_fast,
+    "autocorr": autocorr_fast,
+    "spectral_entropy": feature_spectral_entropy,
+}
 
 
 class ResolutionSelector(BaseEstimator, TransformerMixin):
@@ -67,12 +85,15 @@ class ResolutionSelector(BaseEstimator, TransformerMixin):
         if isinstance(self.candidates, int):
             return self  # fixed window size
 
-        candidates = [64, 128, 256]
+        default_candidates = [64, 128, 256]
+
         # Decide strategy and candidates
         if self.candidates == "adaptive_global":
             strategy = "global"
+            candidates = default_candidates
         elif self.candidates == "adaptive_local":
             strategy = "local"
+            candidates = default_candidates
         elif isinstance(self.candidates, list):
             strategy = "global"
             candidates = self.candidates
@@ -187,6 +208,9 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
     include_entropy : bool, default=True
         Whether to include entropy feature.
 
+    include_entropy : bool, default=True
+        Whether to include entropy feature.
+
     include_autocorr : bool, default=False
         Whether to include autocorrelation features.
 
@@ -198,23 +222,17 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
         self,
         resolutions,
         k=2,
+        feat_time_threshold=1e-3,
         score_method="combined",
         n_jobs=-1,
-        include_variance=True,
-        include_derivative_std=True,
-        include_entropy=False,
-        include_autocorr=False,
-        include_spectral_entropy=False,
+        features=None,
     ):
         self.resolutions = resolutions
         self.k = k
+        self.feat_time_threshold = feat_time_threshold
         self.score_method = score_method
         self.n_jobs = n_jobs
-        self.include_variance = include_variance
-        self.include_derivative_std = include_derivative_std
-        self.include_entropy = include_entropy
-        self.include_autocorr = include_autocorr
-        self.include_spectral_entropy = include_spectral_entropy
+        self.features = features or list(FEATURE_FUNCTIONS.keys())
 
     def calibrate_features(self, X, sample_size=1):
         """
@@ -241,26 +259,14 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
         Auto-disables slow features after first measurement.
         """
         if not hasattr(self, "_enabled_features"):
-            raise NotFittedError(
-                "This resolution selector is not fitted yet. "
-                "Call `.fit(X)` before using `.transform(X)`."
-            )
-        features = []
-        if self._enabled_features.get("variance", False):
-            features.append(np.var(window))
-        if self._enabled_features.get("entropy", False):
-            features.append(entropy_fast(window[:, 0]))
-        if self._enabled_features.get("derivative_std", False):
-            deriv = np.diff(window, axis=0)
-            features.append(np.std(deriv))
-        if self._enabled_features.get("autocorr", False):
-            features.append(autocorr_fast(window[:, 0]))
-        if self._enabled_features.get("spectral_entropy", False):
-            freqs, psd = welch(window[:, 0], nperseg=len(window))
-            psd = psd / np.sum(psd)
-            se = -np.sum(psd * np.log(psd + 1e-8))
-            features.append(se)
-        return np.array(features)
+            raise NotFittedError("Call `.fit(X)` before using `.transform(X)`.")
+        return np.array(
+            [
+                FEATURE_FUNCTIONS[name](window)
+                for name in self._enabled_features
+                if self._enabled_features[name]
+            ]
+        )
 
     def _time_features(self, window):
         """
@@ -269,10 +275,14 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
         times = {}
         enabled = {}
 
-        def timed(name, func):
-            start = time.perf_counter()
+        for name in self.features:
+            func = FEATURE_FUNCTIONS.get(name)
+            if func is None:
+                warnings.warn(f"Unknown feature: {name}")
+                continue
             try:
-                func()
+                start = time.perf_counter()
+                func(window)
                 elapsed = time.perf_counter() - start
                 times[name] = elapsed
                 enabled[name] = True
@@ -281,34 +291,11 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
                 enabled[name] = False
                 warnings.warn(f"Feature '{name}' failed: {e}")
 
-        # Time each feature
-        timed("variance", lambda: np.var(window))
-        timed(
-            "entropy",
-            lambda: -np.sum(
-                np.histogram(window, bins=10, density=True)[0]
-                * np.log(np.histogram(window, bins=10, density=True)[0] + 1e-8)
-            ),
-        )
-        timed("derivative_std", lambda: np.std(np.diff(window, axis=0)))
-        timed(
-            "autocorr", lambda: np.correlate(window[:, 0], window[:, 0], mode="full")[0]
-        )
-        timed(
-            "spectral_entropy",
-            lambda: __import__("scipy.signal").signal.welch(
-                window[:, 0], nperseg=len(window)
-            ),
-        )
-
-        fastest = min(t for t in times.values() if t > 0)
-        threshold = fastest * 10
-
         logger.info("Feature timing (seconds):")
         for name, t in sorted(times.items(), key=lambda x: x[1]):
-            status = "✅" if t <= threshold else "❌ (disabled)"
+            status = "✅" if t <= self.feat_time_threshold else "❌ (disabled)"
             logger.info(f"  {name:<16}: {t:.6f} {status}")
-            enabled[name] = enabled[name] and (t <= threshold)
+            enabled[name] = enabled[name] and (t <= self.feat_time_threshold)
 
         self._enabled_features = enabled
 
@@ -385,6 +372,21 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
         logger.info(f"Enabled features: {enabled}")
         return self
 
+    def fit(self, X, y=None):
+        if hasattr(X, "values"):
+            X = X.values
+        if not hasattr(self, "_enabled_features"):
+            # Use first valid window to calibrate features
+            for w in self.resolutions:
+                hw = w // 2
+                if X.shape[0] > 2 * hw:
+                    window = X[hw:-hw][:w]  # a valid centered window
+                    self._time_features(window)
+                    break
+        enabled = [k for k, v in self._enabled_features.items() if v]
+        logger.info(f"Enabled features: {enabled}")
+        return self
+
 
 class GlobalResolutionsFinder(BaseResolutionsFinder):
     """
@@ -401,6 +403,7 @@ class GlobalResolutionsFinder(BaseResolutionsFinder):
     """
 
     def fit(self, X, y=None):
+        return super().fit(X, y)
         return super().fit(X, y)
 
     def transform(self, X):
@@ -440,6 +443,7 @@ class LocalResolutionsFinder(BaseResolutionsFinder):
     """
 
     def fit(self, X, y=None):
+        return super().fit(X, y)
         return super().fit(X, y)
 
     def transform(self, X):
