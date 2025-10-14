@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 
 from tdaad.resolution_selector import (
@@ -5,6 +6,8 @@ from tdaad.resolution_selector import (
     LocalResolutionsFinder,
     ResolutionSelector,
 )
+
+logging.basicConfig(level=logging.INFO)
 
 X = np.random.randn(10000, 3)
 
@@ -38,7 +41,7 @@ print(f"Top-k local resolutions at {local_topk[100]=}")
 
 
 selector = ResolutionSelector(
-    candidates=[2, 50, 500],  # or fixed int, or list of candidates
+    candidates=[10, 50, 100, 500, 1000],  # or fixed int, or list of candidates
     k=2,
     n_jobs=4,
     feature_selector_kwargs={"include_entropy": True},

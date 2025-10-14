@@ -1,9 +1,14 @@
 from collections import defaultdict
+import logging
 from sklearn.base import BaseEstimator, TransformerMixin
 from joblib import Parallel, delayed
 import numpy as np
 from scipy.stats import entropy
 from scipy.signal import welch
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class ResolutionSelector(BaseEstimator, TransformerMixin):
@@ -202,6 +207,11 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
         resolutions = self.resolutions
         half_ws = {w: w // 2 for w in resolutions}
 
+        logger.info(
+            f"Starting resolution scoring: X.shape={X.shape}, "
+            f"{resolutions=}, score_method='{self.score_method}', k={self.k}"
+        )
+
         def compute(t, w):
             hw = half_ws[w]
             if t - hw < 0 or t + hw > n_samples:
@@ -215,7 +225,7 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
             elif self.score_method == "combined":
                 score = features.mean() * features.var()
             else:
-                raise ValueError(f"Invalid score_method: {score_method}")
+                raise ValueError(f"Invalid score_method: {self.score_method}")
             return (t, w, score)
 
         # Build valid (t, w) jobs
@@ -230,13 +240,16 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
         # Aggregate
         scores_by_t = defaultdict(list)
         scores_by_w = defaultdict(list)
+        valid_count = 0
         for item in results:
             if item is None:
                 continue
             t, w, score = item
             scores_by_t[t].append((score, w))
             scores_by_w[w].append(score)
+            valid_count += 1
 
+        logger.info(f"Completed scoring over {valid_count} valid (t, w) windows.")
         return scores_by_t, scores_by_w
 
 
@@ -271,9 +284,11 @@ class GlobalResolutionsFinder(BaseResolutionsFinder):
                 agg = scores.var()
             elif self.score_method == "combined":
                 agg = scores.mean() * scores.var()
+            logger.debug(f"Resolution {w}: aggregated score = {agg:.4f}")
             results.append((w, agg))
 
         top_k = sorted(results, key=lambda x: x[1], reverse=True)[: self.k]
+        logger.info(f"Top-{self.k} resolutions (global): {[w for w, _ in top_k]}")
         return [w for w, _ in top_k]
 
 
@@ -307,4 +322,5 @@ class LocalResolutionsFinder(BaseResolutionsFinder):
             ]
             top_k_per_time.append([w for _, w in top_k])
 
+        logger.info(f"Computed top-{self.k} resolutions per time index (local).")
         return top_k_per_time
