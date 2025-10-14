@@ -1,3 +1,4 @@
+from collections import defaultdict
 from sklearn.base import BaseEstimator, TransformerMixin
 from joblib import Parallel, delayed
 import numpy as np
@@ -5,18 +6,112 @@ from scipy.stats import entropy
 from scipy.signal import welch
 
 
-class BaseResolutionSelector(BaseEstimator, TransformerMixin):
+class ResolutionSelector(BaseEstimator, TransformerMixin):
     """
-    Base class for resolution selectors that extract and score
+    Selects resolution (window size(s)) for downstream algorithms.
+
+    Parameters
+    ----------
+    resolution : int, str, list of int, or dict
+        - int: use fixed resolution
+        - "adaptive_global": select top-k global resolutions using default candidates
+        - "adaptive_local": select top-k local resolutions using default candidates
+        - list of int: adaptive global resolution selection over provided candidates
+        - dict: {"global": [...]} or {"local": [...]} — candidates + strategy
+
+    k : int, default=2
+        Number of top resolutions to select (adaptive only).
+
+    n_jobs : int, default=-1
+        Number of parallel jobs for adaptive selectors.
+
+    feature_selector_kwargs : dict
+        Additional kwargs for the resolution selector classes.
+
+    Methods
+    -------
+    fit(X, y=None):
+        Fits selector if adaptive.
+
+    transform(X):
+        Returns:
+            - int if fixed window size
+            - list of int for global adaptive
+            - list of list of int for local adaptive
+    """
+
+    def __init__(
+        self,
+        candidates,
+        k=2,
+        n_jobs=-1,
+        feature_selector_kwargs=None,
+    ):
+        self.candidates = candidates
+        self.k = k
+        self.n_jobs = n_jobs
+        self.feature_selector_kwargs = feature_selector_kwargs or {}
+
+    def fit(self, X, y=None):
+        if hasattr(X, "values"):
+            X = X.values
+
+        if isinstance(self.candidates, int):
+            return self  # fixed window size
+
+        candidates = [64, 128, 256]
+        # Decide strategy and candidates
+        if self.candidates == "adaptive_global":
+            strategy = "global"
+        elif self.candidates == "adaptive_local":
+            strategy = "local"
+        elif isinstance(self.candidates, list):
+            strategy = "global"
+            candidates = self.candidates
+        elif isinstance(self.candidates, dict):
+            if "global" in self.candidates:
+                strategy = "global"
+                candidates = self.candidates["global"]
+            elif "local" in self.candidates:
+                strategy = "local"
+                candidates = self.candidates["local"]
+            else:
+                raise ValueError("Dict window_size must have 'global' or 'local' key.")
+        else:
+            raise ValueError(f"Invalid window_size value: {self.candidates}")
+
+        # Initialize appropriate selector
+        selector_cls = (
+            GlobalResolutionsFinder if strategy == "global" else LocalResolutionsFinder
+        )
+        self.selector_ = selector_cls(
+            resolutions=candidates,
+            k=self.k,
+            n_jobs=self.n_jobs,
+            **self.feature_selector_kwargs,
+        )
+        self.selector_.fit(X)
+        return self
+
+    def transform(self, X):
+        if isinstance(self.candidates, int):
+            return self.candidates
+        else:
+            return self.selector_.transform(X)
+
+
+class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
+    """
+    Base class for resolution finding that extract and score
     time-domain features from sliding windows over multiple candidate resolutions.
 
     Parameters
     ----------
-    window_sizes : list of int
+    resolutions : list of int
         Candidate window sizes (resolutions) to evaluate.
 
     k : int, default=2
-        Number of top resolutions to select.
+        Number of top resolutions to find.
 
     score_method : str, default='combined'
         Method to aggregate feature vectors into a single score.
@@ -43,7 +138,7 @@ class BaseResolutionSelector(BaseEstimator, TransformerMixin):
 
     def __init__(
         self,
-        window_sizes,
+        resolutions,
         k=2,
         score_method="combined",
         n_jobs=-1,
@@ -53,7 +148,7 @@ class BaseResolutionSelector(BaseEstimator, TransformerMixin):
         include_autocorr=False,
         include_spectral_entropy=False,
     ):
-        self.window_sizes = window_sizes
+        self.resolutions = resolutions
         self.k = k
         self.score_method = score_method
         self.n_jobs = n_jobs
@@ -94,58 +189,97 @@ class BaseResolutionSelector(BaseEstimator, TransformerMixin):
             feats.append(np.mean(se_vals))
         return np.array(feats)
 
+    def _parallel_score_matrix(self, X):
+        """
+        Compute features for all valid (t, w) pairs in parallel.
 
-class GlobalResolutionSelector(BaseResolutionSelector):
+        Returns
+        -------
+        dict[t] -> list of (w, score)
+        dict[w] -> list of feature vectors
+        """
+        n_samples = X.shape[0]
+        resolutions = self.resolutions
+        half_ws = {w: w // 2 for w in resolutions}
+
+        def compute(t, w):
+            hw = half_ws[w]
+            if t - hw < 0 or t + hw > n_samples:
+                return (t, w, None)  # invalid
+            window = X[t - hw : t + hw]
+            features = self._extract_features(window)
+            if self.score_method == "mean":
+                score = features.mean()
+            elif self.score_method == "variance":
+                score = features.var()
+            elif self.score_method == "combined":
+                score = features.mean() * features.var()
+            else:
+                raise ValueError(f"Invalid score_method: {score_method}")
+            return (t, w, score)
+
+        # Build valid (t, w) jobs
+        jobs = [
+            (t, w)
+            for w in resolutions
+            for t in range(half_ws[w], n_samples - half_ws[w])
+        ]
+
+        results = Parallel(n_jobs=self.n_jobs)(delayed(compute)(t, w) for t, w in jobs)
+
+        # Aggregate
+        scores_by_t = defaultdict(list)
+        scores_by_w = defaultdict(list)
+        for item in results:
+            if item is None:
+                continue
+            t, w, score = item
+            scores_by_t[t].append((score, w))
+            scores_by_w[w].append(score)
+
+        return scores_by_t, scores_by_w
+
+
+class GlobalResolutionsFinder(BaseResolutionsFinder):
     """
-    Selects top-k global resolutions (window sizes) based on scoring
+    Finds top-k global resolutions (window sizes) based on scoring
     feature vectors extracted across all sliding windows.
 
     The scoring aggregates features computed at every valid window position
     for each resolution, producing a global score per resolution, from which
-    the top-k resolutions are selected.
+    the top-k resolutions are found.
 
     Parameters
     ----------
-    Inherits all parameters from BaseResolutionSelector.
+    Inherits all parameters from BaseResolutionsFinder.
     """
 
     def fit(self, X, y=None):
         return self
 
-    def _score_resolution(self, X, w):
-        half_w = w // 2
-        n_samples = X.shape[0]
-        features = []
-        for t in range(half_w, n_samples - half_w):
-            window = X[t - half_w : t + half_w]
-            f = self._extract_features(window)
-            features.append(f)
-        if not features:
-            return (w, -np.inf)
-        features = np.vstack(features)
-        if self.score_method == "mean":
-            score = features.mean()
-        elif self.score_method == "variance":
-            score = features.var()
-        elif self.score_method == "combined":
-            score = features.mean() * features.var()
-        else:
-            raise ValueError(f"Invalid score_method: {self.score_method}")
-        return (w, score)
-
     def transform(self, X):
         if hasattr(X, "values"):
             X = X.values
-        results = Parallel(n_jobs=self.n_jobs)(
-            delayed(self._score_resolution)(X, w) for w in self.window_sizes
-        )
+        _, scores_by_w = self._parallel_score_matrix(X)
+
+        results = []
+        for w, scores in scores_by_w.items():
+            scores = np.array(scores)
+            if self.score_method == "mean":
+                agg = scores.mean()
+            elif self.score_method == "variance":
+                agg = scores.var()
+            elif self.score_method == "combined":
+                agg = scores.mean() * scores.var()
+            results.append((w, agg))
+
         top_k = sorted(results, key=lambda x: x[1], reverse=True)[: self.k]
         return [w for w, _ in top_k]
 
 
-class LocalResolutionSelector(BaseResolutionSelector):
+class LocalResolutionsFinder(BaseResolutionsFinder):
     """
-    Selects the top-k local resolutions (window sizes) per time index by computing
+    Finds the top-k local resolutions (window sizes) per time index by computing
     features on sliding windows centered at each time point for each candidate resolution.
 
     For each time index, scores are computed for all candidate resolutions, and
@@ -154,7 +288,7 @@ class LocalResolutionSelector(BaseResolutionSelector):
 
     Parameters
     ----------
-    Inherits all parameters from BaseResolutionSelector.
+    Inherits all parameters from BaseResolutionsFinder.
     """
 
     def fit(self, X, y=None):
@@ -163,42 +297,14 @@ class LocalResolutionSelector(BaseResolutionSelector):
     def transform(self, X):
         if hasattr(X, "values"):
             X = X.values
+        scores_by_t, _ = self._parallel_score_matrix(X)
+
         n_samples = X.shape[0]
-        n_channels = X.shape[1]
-        k = self.k
-        window_sizes = self.window_sizes
+        top_k_per_time = []
+        for t in range(n_samples):
+            top_k = sorted(scores_by_t.get(t, []), key=lambda x: x[0], reverse=True)[
+                : self.k
+            ]
+            top_k_per_time.append([w for _, w in top_k])
 
-        # Precompute half window sizes for convenience
-        half_ws = {w: w // 2 for w in window_sizes}
-
-        # For each time index, compute features for all window sizes
-        def features_at_t(t):
-            feats_per_resolution = []
-            for w in window_sizes:
-                hw = half_ws[w]
-                if t - hw < 0 or t + hw > n_samples:
-                    feats_per_resolution.append(
-                        (-np.inf, w)
-                    )  # invalid window, score=-inf
-                    continue
-                window = X[t - hw : t + hw]
-                f = self._extract_features(window)
-                # score features as mean/var/combined
-                if self.score_method == "mean":
-                    score = f.mean()
-                elif self.score_method == "variance":
-                    score = f.var()
-                elif self.score_method == "combined":
-                    score = f.mean() * f.var()
-                else:
-                    raise ValueError(f"Invalid score_method: {self.score_method}")
-                feats_per_resolution.append((score, w))
-            # pick top k scores (score, w) tuples
-            feats_per_resolution.sort(key=lambda x: x[0], reverse=True)
-            return [w for _, w in feats_per_resolution[:k]]
-
-        # Parallel over time indices
-        top_k_per_time = Parallel(n_jobs=self.n_jobs)(
-            delayed(features_at_t)(t) for t in range(n_samples)
-        )
         return top_k_per_time
