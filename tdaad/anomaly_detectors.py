@@ -3,9 +3,9 @@
 # Author: Martin Royer
 from typing import Sequence, Optional, Union
 
-import numpy as np
 import numbers
 import warnings
+import numpy as np
 
 from sklearn.base import _fit_context, TransformerMixin
 from sklearn.utils._param_validation import Interval
@@ -73,7 +73,7 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
         "window_size": [Interval(numbers.Integral, 1, None, closed="left")],
         "step": [Interval(numbers.Integral, 1, None, closed="left")],
         "tda_max_dim": [Interval(numbers.Integral, 0, 2, closed="both")],
-        "n_centers_by_dim": [Interval(numbers.Integral, 1, None, closed="left")],
+        "n_centers_by_dim": [Interval(numbers.Integral, 2, None, closed="left")],
         "support_fraction": [Interval(numbers.Real, 0, 1, closed="both"), None],
         "contamination": [Interval(numbers.Real, 0, 0.5, closed="both")],
         "random_state": ["random_state"],
