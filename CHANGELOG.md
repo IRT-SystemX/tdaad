@@ -1,6 +1,9 @@
 
 # CHANGELOG
 
+## ?
+- major computation gains (joblib.Parallel)
+
 ## 1.4.0
 - functional tests
 - minor edits
