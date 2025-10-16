@@ -80,15 +80,19 @@
 
 <span class="c1"># Author: Martin Royer</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span><span class="p">,</span> <span class="n">FunctionTransformer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionTransformer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.compose</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnTransformer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">gudhi.representations.vector_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">Atol</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.persistencediagram_transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">PersistenceDiagramTransformer</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.utils.local_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalPipeline</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.utils.window_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">sliding_window_ppl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.utils.tda_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">transform_to_persistence_diagram</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.utils.window_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">sliding_window_ppl_pp</span>
 
 
 <span class="n">atol_vanilla_fit</span> <span class="o">=</span> <span class="n">Atol</span><span class="o">.</span><span class="n">fit</span>
@@ -97,7 +101,7 @@
 <div class="viewcode-block" id="local_atol_fit">
 <a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.local_atol_fit">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">local_atol_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; local modification to prevent FutureWarning triggered by np.concatenate(X) when X is a pd.Series.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;local modification to prevent FutureWarning triggered by np.concatenate(X) when X is a pd.Series.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">):</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">values</span>
     <span class="k">return</span> <span class="n">atol_vanilla_fit</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">)</span></div>
@@ -109,7 +113,7 @@
 
 <div class="viewcode-block" id="TopologicalEmbedding">
 <a class="viewcode-back" href="../../tech_docs.html#tdaad.topological_embedding.TopologicalEmbedding">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">TopologicalEmbedding</span><span class="p">(</span><span class="n">LocalPipeline</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TopologicalEmbedding</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Topological embedding for multiple time series.</span>
 
 <span class="sd">    Slices time series into smaller time series windows, forms an affinity matrix on each window</span>
@@ -142,35 +146,112 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">window_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
-            <span class="n">step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
-            <span class="n">tda_max_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="n">n_centers_by_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">window_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
+        <span class="n">step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="n">tda_max_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">n_centers_by_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">=</span> <span class="n">window_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">step</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tda_max_dim</span> <span class="o">=</span> <span class="n">tda_max_dim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_centers_by_dim</span> <span class="o">=</span> <span class="n">n_centers_by_dim</span>
-        <span class="n">named_ppl</span> <span class="o">=</span> <span class="n">PersistenceDiagramTransformer</span><span class="p">(</span>
-            <span class="n">tda_max_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tda_max_dim</span><span class="p">,</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;Standard scaler&quot;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()))</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">transform_to_persistence_diagram</span><span class="p">,</span> <span class="n">tda_max_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tda_max_dim</span><span class="p">)</span>
+        <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Sliding persistence diagram transformer&quot;</span><span class="p">,</span>
+                <span class="n">FunctionTransformer</span><span class="p">(</span>
+                    <span class="n">func</span><span class="o">=</span><span class="n">sliding_window_ppl_pp</span><span class="p">,</span>
+                    <span class="n">kw_args</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span>
+                        <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">,</span>
+                        <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">func</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
         <span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
-            <span class="p">(</span><span class="s2">&quot;StandardScaler&quot;</span><span class="p">,</span>
-             <span class="n">StandardScaler</span><span class="p">()</span>
-             <span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;SlidingPersistenceDiagramTransformer&quot;</span><span class="p">,</span>
-             <span class="n">FunctionTransformer</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">sliding_window_ppl</span><span class="p">,</span> <span class="n">kw_args</span><span class="o">=</span><span class="p">{</span>
-                                 <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">,</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span> <span class="n">named_ppl</span><span class="p">})</span>
-             <span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Archipelago&quot;</span><span class="p">,</span>
-             <span class="n">ColumnTransformer</span><span class="p">(</span>
-                 <span class="p">[(</span><span class="sa">f</span><span class="s2">&quot;Atol</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                   <span class="n">Atol</span><span class="p">(</span><span class="n">quantiser</span><span class="o">=</span><span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_centers_by_dim</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">202312</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">)),</span> <span class="n">i</span><span class="p">)</span>
-                  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tda_max_dim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span>
-             <span class="p">),</span>
-        <span class="p">])</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_output</span><span class="p">(</span><span class="n">transform</span><span class="o">=</span><span class="s2">&quot;pandas&quot;</span><span class="p">)</span></div>
+        <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Archipelago&quot;</span><span class="p">,</span>
+                <span class="n">ColumnTransformer</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Atol</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">Atol</span><span class="p">(</span>
+                                <span class="n">quantiser</span><span class="o">=</span><span class="n">KMeans</span><span class="p">(</span>
+                                    <span class="n">n_clusters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_centers_by_dim</span><span class="p">,</span>
+                                    <span class="n">random_state</span><span class="o">=</span><span class="mi">202312</span><span class="p">,</span>
+                                    <span class="n">n_init</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+                                <span class="p">)</span>
+                            <span class="p">),</span>
+                            <span class="n">i</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tda_max_dim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="p">]</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span><span class="o">.</span><span class="n">set_output</span><span class="p">(</span><span class="n">transform</span><span class="o">=</span><span class="s2">&quot;pandas&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TopologicalEmbedding.fit">
+<a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.TopologicalEmbedding.fit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit the internal pipeline to the data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : pandas.DataFrame</span>
+<span class="sd">            Input feature matrix.</span>
+
+<span class="sd">        y : array-like, optional</span>
+<span class="sd">            Target values (not used here, but accepted for compatibility with sklearn).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+<span class="sd">            Fitted transformer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_pipeline</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="TopologicalEmbedding.transform">
+<a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.TopologicalEmbedding.transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply transformations to the input data using the fitted pipeline.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : pandas.DataFrame</span>
+<span class="sd">            Input data to transform.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_transformed : array-like or DataFrame</span>
+<span class="sd">            Transformed data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TopologicalEmbedding.fit_transform">
+<a class="viewcode-back" href="../../tdaad.html#tdaad.topological_embedding.TopologicalEmbedding.fit_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit to data, then transform it.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_transformed : array-like</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div>
+</div>
 
 </pre></div>
 

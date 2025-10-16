@@ -62,11 +62,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#tdaad.anomaly_detectors.TopologicalAnomalyDetector"><code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-tdaad.persistencediagram_transformer">tdaad.persistencediagram_transformer module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#tdaad.persistencediagram_transformer.PersistenceDiagramTransformer"><code class="docutils literal notranslate"><span class="pre">PersistenceDiagramTransformer</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tdaad.persistencediagram_transformer.wrap_in_list"><code class="docutils literal notranslate"><span class="pre">wrap_in_list()</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="#module-tdaad.topological_embedding">tdaad.topological_embedding module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#tdaad.topological_embedding.TopologicalEmbedding"><code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#tdaad.topological_embedding.local_atol_fit"><code class="docutils literal notranslate"><span class="pre">local_atol_fit()</span></code></a></li>
@@ -120,19 +115,18 @@
 <li class="toctree-l3"><a class="reference internal" href="tdaad.utils.html#tdaad.utils.local_elliptic_envelope.pandas_score_samples"><code class="docutils literal notranslate"><span class="pre">pandas_score_samples()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tdaad.utils.html#module-tdaad.utils.local_pipeline">tdaad.utils.local_pipeline module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tdaad.utils.html#tdaad.utils.local_pipeline.LocalPipeline"><code class="docutils literal notranslate"><span class="pre">LocalPipeline</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="tdaad.utils.html#tdaad.utils.local_pipeline.LocalPipeline.set_score_request"><code class="docutils literal notranslate"><span class="pre">LocalPipeline.set_score_request()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="tdaad.utils.html#module-tdaad.utils.remapping_functions">tdaad.utils.remapping_functions module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="tdaad.utils.html#tdaad.utils.remapping_functions.score_flat_fast_remapping"><code class="docutils literal notranslate"><span class="pre">score_flat_fast_remapping()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="tdaad.utils.html#module-tdaad.utils.tda_functions">tdaad.utils.tda_functions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tdaad.utils.html#tdaad.utils.tda_functions.transform_to_persistence_diagram"><code class="docutils literal notranslate"><span class="pre">transform_to_persistence_diagram()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="tdaad.utils.html#module-tdaad.utils.window_functions">tdaad.utils.window_functions module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tdaad.utils.html#tdaad.utils.window_functions.sliding_window_ppl"><code class="docutils literal notranslate"><span class="pre">sliding_window_ppl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tdaad.utils.html#tdaad.utils.window_functions.hash_window"><code class="docutils literal notranslate"><span class="pre">hash_window()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tdaad.utils.html#tdaad.utils.window_functions.sliding_window_3D_view"><code class="docutils literal notranslate"><span class="pre">sliding_window_3D_view()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tdaad.utils.html#tdaad.utils.window_functions.sliding_window_ppl_pp"><code class="docutils literal notranslate"><span class="pre">sliding_window_ppl_pp()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tdaad.utils.html#module-tdaad.utils">Module contents</a></li>
@@ -149,45 +143,22 @@
 <p>Topological Anomaly Detectors.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tdaad.anomaly_detectors.TopologicalAnomalyDetector">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tdaad.anomaly_detectors.</span></span><span class="sig-name descname"><span class="pre">TopologicalAnomalyDetector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tda_max_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_centers_by_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">support_fraction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contamination</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/anomaly_detectors.html#TopologicalAnomalyDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.anomaly_detectors.TopologicalAnomalyDetector" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tdaad.anomaly_detectors.</span></span><span class="sig-name descname"><span class="pre">TopologicalAnomalyDetector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tda_max_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_centers_by_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">support_fraction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contamination</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">RandomState</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/anomaly_detectors.html#TopologicalAnomalyDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.anomaly_detectors.TopologicalAnomalyDetector" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">EllipticEnvelope</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">TransformerMixin</span></code></p>
-<p>Object for detecting anomaly base on Topological Embedding and sklearn.covariance.EllipticEnvelope.</p>
-<p>This object analyzes multiple time series data through the following operations:
-- run a sliding window algorithm and represent each time series window with topological features,</p>
-<blockquote>
-<div><p>see <a class="reference internal" href="theory_overview.html#topological-embedding"><span class="std std-ref">Topological Embedding</span></a>,</p>
-</div></blockquote>
-<ul class="simple">
-<li><dl class="simple">
-<dt>use a MinCovDet algorithm to robustly estimate the data mean and covariance in the embedding space,</dt><dd><p>and use these to derive an embedding mahalanobis distance and associated outlier detection procedure,
-see <a class="reference internal" href="theory_overview.html#elliptic-envelope"><span class="std std-ref">Elliptic Envelope</span></a>.</p>
-</dd>
-</dl>
-</li>
-</ul>
-<p>After fitting, it is able to produce an anomaly score from a time series describing normal / abnormal time segments.
-(the lower, the more abnormal)
-The predict method (inherited from EllipticEnvelope) allows to transform that score into
-binary normal / anomaly labels.</p>
+<p>Anomaly detection for multivariate time series using topological embeddings and robust covariance estimation.</p>
+<p>This detector extracts topological features from sliding windows of time series data and
+uses a robust Mahalanobis distance (via EllipticEnvelope) to score anomalies.</p>
 <p>Read more in the <a class="reference internal" href="theory_overview.html#topological-anomaly-detection"><span class="std std-ref">User Guide</span></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>window_size</strong> (<em>int</em><em>, </em><em>default=40</em>) – Size of the sliding window algorithm to extract subsequences as input to named_pipeline.</p></li>
-<li><p><strong>step</strong> (<em>int</em><em>, </em><em>default=5</em>) – Size of the sliding window steps between each window.</p></li>
-<li><p><strong>tda_max_dim</strong> (<em>int</em><em>, </em><em>default=2</em>) – The maximum dimension of the topological feature extraction.</p></li>
-<li><p><strong>n_centers_by_dim</strong> (<em>int</em><em>, </em><em>default=5</em>) – The number of centroids to generate by dimension for vectorizing topological features.
-The resulting embedding will have total dimension =&lt; tda_max_dim * n_centers_by_dim.
-The resulting embedding dimension might be smaller because of the KMeans algorithm in the Archipelago step.</p></li>
-<li><p><strong>support_fraction</strong> (<em>float</em><em>, </em><em>default=None</em>) – The proportion of points to be included in the support of the raw
-MCD estimate. If None, the minimum value of support_fraction will
-be used within the algorithm: <cite>[n_sample + n_features + 1] / 2</cite>.
-Range is (0, 1).</p></li>
-<li><p><strong>contamination</strong> (<em>float</em><em>, </em><em>default=0.1</em>) – The amount of contamination of the data set, i.e. the proportion
-of outliers in the data set. Range is (0, 0.5]. Only matters for computing the decision function.</p></li>
-<li><p><strong>random_state</strong> (<em>int</em><em>, </em><em>RandomState instance</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Determines the pseudo random number generator for shuffling
-the data. Pass an int for reproducible results across multiple function
-calls.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em><em>, </em><em>default=100</em>) – Sliding window size for extracting time series subsequences.</p></li>
+<li><p><strong>step</strong> (<em>int</em><em>, </em><em>default=5</em>) – Step size between windows.</p></li>
+<li><p><strong>tda_max_dim</strong> (<em>int</em><em>, </em><em>default=1</em>) – Maximum homology dimension used for topological feature extraction.</p></li>
+<li><p><strong>n_centers_by_dim</strong> (<em>int</em><em>, </em><em>default=5</em>) – Number of k-means centers per topological dimension (for vectorization).</p></li>
+<li><p><strong>support_fraction</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Proportion of data to use for robust covariance estimation. If None, computed automatically.</p></li>
+<li><p><strong>contamination</strong> (<em>float</em><em>, </em><em>default=0.1</em>) – Proportion of anomalies in the data, used to compute decision threshold.</p></li>
+<li><p><strong>random_state</strong> (<em>int</em><em>, </em><em>RandomState instance</em><em>, or </em><em>None</em><em>, </em><em>default=42</em>) – Controls randomness of the topological embedding and robust estimator.</p></li>
 </ul>
 </dd>
 </dl>
@@ -203,9 +174,9 @@ calls.</p></li>
 </dd></dl>
 
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">n_timestamps</span> <span class="o">=</span> <span class="mi">1000</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n_timestamps</span> <span class="o">=</span> <span class="mi">1000</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n_sensors</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">timestamps</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2024-01-01&#39;</span><span class="p">,</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_timestamps</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_timestamps</span><span class="p">,</span> <span class="n">n_sensors</span><span class="p">)),</span> <span class="n">index</span><span class="o">=</span><span class="n">timestamps</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">n_timestamps</span><span class="o">//</span><span class="mi">2</span><span class="p">:,:</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">n_timestamps</span><span class="o">//</span><span class="mi">2</span><span class="p">:,</span><span class="mi">10</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span>
@@ -215,6 +186,12 @@ calls.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">anomalies</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 </pre></div>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="tdaad.anomaly_detectors.TopologicalAnomalyDetector.decision_function">
+<span class="sig-name descname"><span class="pre">decision_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/anomaly_detectors.html#TopologicalAnomalyDetector.decision_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.anomaly_detectors.TopologicalAnomalyDetector.decision_function" title="Link to this definition"></a></dt>
+<dd><p>Return the distance to the decision boundary.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="tdaad.anomaly_detectors.TopologicalAnomalyDetector.fit">
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/anomaly_detectors.html#TopologicalAnomalyDetector.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.anomaly_detectors.TopologicalAnomalyDetector.fit" title="Link to this definition"></a></dt>
@@ -236,6 +213,12 @@ in the series X, and <cite>n_sensors</cite> is the number of sensors.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="tdaad.anomaly_detectors.TopologicalAnomalyDetector.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/anomaly_detectors.html#TopologicalAnomalyDetector.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.anomaly_detectors.TopologicalAnomalyDetector.predict" title="Link to this definition"></a></dt>
+<dd><p>Predict inliers (1) and outliers (-1) using learned threshold.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="tdaad.anomaly_detectors.TopologicalAnomalyDetector.required_properties">
 <span class="sig-name descname"><span class="pre">required_properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['multiple_time_series']</span></em><a class="headerlink" href="#tdaad.anomaly_detectors.TopologicalAnomalyDetector.required_properties" title="Link to this definition"></a></dt>
@@ -244,141 +227,15 @@ in the series X, and <cite>n_sensors</cite> is the number of sensors.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="tdaad.anomaly_detectors.TopologicalAnomalyDetector.score_samples">
 <span class="sig-name descname"><span class="pre">score_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/anomaly_detectors.html#TopologicalAnomalyDetector.score_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.anomaly_detectors.TopologicalAnomalyDetector.score_samples" title="Link to this definition"></a></dt>
-<dd><p>Compute the negative Mahalanobis distances associated with the TopologicalEmbedding representation of X.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix}</em><em> of </em><em>shape</em><em> (</em><em>n_timestamps</em><em>, </em><em>n_sensors</em><em>)</em>) – Multiple time series to transform, where <cite>n_timestamps</cite> is the number of timestamps
-in the series X, and <cite>n_sensors</cite> is the number of sensors.</p></li>
-<li><p><strong>y</strong> (<em>Ignored</em>) – Not used, present for API consistency by convention.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>negative_mahal_distances</strong> – Opposite of the Mahalanobis distances.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>ndarray of shape (n_samples,)</p>
-</dd>
-</dl>
+<dd><p>Compute anomaly scores from topological features.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tdaad.anomaly_detectors.TopologicalAnomalyDetector.transform">
-<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tdaad.anomaly_detectors.TopologicalAnomalyDetector.transform" title="Link to this definition"></a></dt>
-<dd><p>Compute the negative Mahalanobis distances associated with the TopologicalEmbedding representation of X.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix}</em><em> of </em><em>shape</em><em> (</em><em>n_timestamps</em><em>, </em><em>n_sensors</em><em>)</em>) – Multiple time series to transform, where <cite>n_timestamps</cite> is the number of timestamps
-in the series X, and <cite>n_sensors</cite> is the number of sensors.</p></li>
-<li><p><strong>y</strong> (<em>Ignored</em>) – Not used, present for API consistency by convention.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>negative_mahal_distances</strong> – Opposite of the Mahalanobis distances.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>ndarray of shape (n_samples,)</p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/anomaly_detectors.html#TopologicalAnomalyDetector.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.anomaly_detectors.TopologicalAnomalyDetector.transform" title="Link to this definition"></a></dt>
+<dd><p>Alias for score_samples. Returns anomaly scores.</p>
 </dd></dl>
 
-</dd></dl>
-
-</section>
-<section id="module-tdaad.persistencediagram_transformer">
-<span id="tdaad-persistencediagram-transformer-module"></span><h2>tdaad.persistencediagram_transformer module<a class="headerlink" href="#module-tdaad.persistencediagram_transformer" title="Link to this heading"></a></h2>
-<p>Persistence Diagram Transformers.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="tdaad.persistencediagram_transformer.PersistenceDiagramTransformer">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tdaad.persistencediagram_transformer.</span></span><span class="sig-name descname"><span class="pre">PersistenceDiagramTransformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tda_max_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/persistencediagram_transformer.html#PersistenceDiagramTransformer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.persistencediagram_transformer.PersistenceDiagramTransformer" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="tdaad.utils.html#tdaad.utils.local_pipeline.LocalPipeline" title="tdaad.utils.local_pipeline.LocalPipeline"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocalPipeline</span></code></a></p>
-<p>Persistence Diagram Transformer for point cloud.</p>
-<p>For a given point cloud, form a similarity matrix and apply a RipsPersistence procedure
-to produce topological descriptors in the form of persistence diagrams.</p>
-<p>Read more in the :ref: <cite>User Guide &lt;persistence_diagrams&gt;</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>tda_max_dim</strong> – int, default=2
-The maximum dimension of the topological feature extraction.</p>
-</dd>
-</dl>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n_timestamps</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">n_sensors</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">timestamps</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="s1">&#39;2024-01-01&#39;</span><span class="p">,</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_timestamps</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_timestamps</span><span class="p">,</span> <span class="n">n_sensors</span><span class="p">)),</span> <span class="n">index</span><span class="o">=</span><span class="n">timestamps</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">PersistenceDiagramTransformer</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="py method">
-<dt class="sig sig-object py" id="tdaad.persistencediagram_transformer.PersistenceDiagramTransformer.fit_transform">
-<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/persistencediagram_transformer.html#PersistenceDiagramTransformer.fit_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.persistencediagram_transformer.PersistenceDiagramTransformer.fit_transform" title="Link to this definition"></a></dt>
-<dd><p>Transforms data X into a list of persistence diagrams arranged in order of homology dimension.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> – {array-like, sparse matrix} of shape (n_timestamps, n_sensors)
-Multiple time series to transform, where <cite>n_timestamps</cite> is the number of timestamps
-in the series X, and <cite>n_sensors</cite> is the number of sensors.</p></li>
-<li><p><strong>y</strong> – Ignored
-Not used, present for API consistency by convention.</p></li>
-<li><p><strong>**fit_params</strong> – Ignored
-Not used, present for API consistency.</p></li>
-</ul>
-</dd>
-</dl>
-<p>Nb: this function can be removed, but is here so that returns can be explicited.</p>
-<section id="returns">
-<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
-<dl class="simple">
-<dt>by_dim_arrays: list of persistence diagrams [pd_0, pd_1, …] arranged in order of homology dimension.</dt><dd><p>a persistence diagram pd_i is a ndarray of shape {n_i, 2} where n_i is the number of homological
-features in dimension i found in the similarity matrix of the data.</p>
-</dd>
-</dl>
-</section>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="tdaad.persistencediagram_transformer.PersistenceDiagramTransformer.set_score_request">
-<span class="sig-name descname"><span class="pre">set_score_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tdaad.persistencediagram_transformer.PersistenceDiagramTransformer" title="tdaad.persistencediagram_transformer.PersistenceDiagramTransformer"><span class="pre">PersistenceDiagramTransformer</span></a></span></span><a class="headerlink" href="#tdaad.persistencediagram_transformer.PersistenceDiagramTransformer.set_score_request" title="Link to this definition"></a></dt>
-<dd><p>Configure whether metadata should be requested to be passed to the <code class="docutils literal notranslate"><span class="pre">score</span></code> method.</p>
-<blockquote>
-<div><p>Note that this method is only relevant when this estimator is used as a
-sub-estimator within a <span class="xref std std-term">meta-estimator</span> and metadata routing is enabled
-with <code class="docutils literal notranslate"><span class="pre">enable_metadata_routing=True</span></code> (see <code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.set_config()</span></code>).
-Please check the <span class="xref std std-ref">User Guide</span> on how the routing
-mechanism works.</p>
-<p>The options for each parameter are:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code>: metadata is requested, and passed to <code class="docutils literal notranslate"><span class="pre">score</span></code> if provided. The request is ignored if metadata is not provided.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code>: metadata is not requested and the meta-estimator will not pass it to <code class="docutils literal notranslate"><span class="pre">score</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: metadata is not requested, and the meta-estimator will raise an error if the user provides it.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">str</span></code>: metadata should be passed to the meta-estimator with this given alias instead of the original name.</p></li>
-</ul>
-<p>The default (<code class="docutils literal notranslate"><span class="pre">sklearn.utils.metadata_routing.UNCHANGED</span></code>) retains the
-existing request. This allows you to change the request for some
-parameters and not others.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">Added in version 1.3.</span></p>
-</div>
-<dl class="simple">
-<dt>sample_weight<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">sample_weight</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">score</span></code>.</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>self<span class="classifier">object</span></dt><dd><p>The updated object.</p>
-</dd>
-</dl>
-</div></blockquote>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="tdaad.persistencediagram_transformer.wrap_in_list">
-<span class="sig-prename descclassname"><span class="pre">tdaad.persistencediagram_transformer.</span></span><span class="sig-name descname"><span class="pre">wrap_in_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/persistencediagram_transformer.html#wrap_in_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.persistencediagram_transformer.wrap_in_list" title="Link to this definition"></a></dt>
-<dd><p>wrapper because RipsPersistence.transform expects a list</p>
 </dd></dl>
 
 </section>
@@ -388,7 +245,7 @@ parameters and not others.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tdaad.topological_embedding.TopologicalEmbedding">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tdaad.topological_embedding.</span></span><span class="sig-name descname"><span class="pre">TopologicalEmbedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tda_max_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_centers_by_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/topological_embedding.html#TopologicalEmbedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.topological_embedding.TopologicalEmbedding" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="tdaad.utils.html#tdaad.utils.local_pipeline.LocalPipeline" title="tdaad.utils.local_pipeline.LocalPipeline"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocalPipeline</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">TransformerMixin</span></code></p>
 <p>Topological embedding for multiple time series.</p>
 <p>Slices time series into smaller time series windows, forms an affinity matrix on each window
 and applies a Rips procedure to produce persistence diagrams for each affinity
@@ -416,37 +273,54 @@ The resulting embedding dimension might be smaller because of the KMeans algorit
 </pre></div>
 </div>
 <dl class="py method">
-<dt class="sig sig-object py" id="tdaad.topological_embedding.TopologicalEmbedding.set_score_request">
-<span class="sig-name descname"><span class="pre">set_score_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tdaad.topological_embedding.TopologicalEmbedding" title="tdaad.topological_embedding.TopologicalEmbedding"><span class="pre">TopologicalEmbedding</span></a></span></span><a class="headerlink" href="#tdaad.topological_embedding.TopologicalEmbedding.set_score_request" title="Link to this definition"></a></dt>
-<dd><p>Configure whether metadata should be requested to be passed to the <code class="docutils literal notranslate"><span class="pre">score</span></code> method.</p>
-<blockquote>
-<div><p>Note that this method is only relevant when this estimator is used as a
-sub-estimator within a <span class="xref std std-term">meta-estimator</span> and metadata routing is enabled
-with <code class="docutils literal notranslate"><span class="pre">enable_metadata_routing=True</span></code> (see <code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.set_config()</span></code>).
-Please check the <span class="xref std std-ref">User Guide</span> on how the routing
-mechanism works.</p>
-<p>The options for each parameter are:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code>: metadata is requested, and passed to <code class="docutils literal notranslate"><span class="pre">score</span></code> if provided. The request is ignored if metadata is not provided.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code>: metadata is not requested and the meta-estimator will not pass it to <code class="docutils literal notranslate"><span class="pre">score</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: metadata is not requested, and the meta-estimator will raise an error if the user provides it.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">str</span></code>: metadata should be passed to the meta-estimator with this given alias instead of the original name.</p></li>
+<dt class="sig sig-object py" id="tdaad.topological_embedding.TopologicalEmbedding.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/topological_embedding.html#TopologicalEmbedding.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.topological_embedding.TopologicalEmbedding.fit" title="Link to this definition"></a></dt>
+<dd><p>Fit the internal pipeline to the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>pandas.DataFrame</em>) – Input feature matrix.</p></li>
+<li><p><strong>y</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Target values (not used here, but accepted for compatibility with sklearn).</p></li>
 </ul>
-<p>The default (<code class="docutils literal notranslate"><span class="pre">sklearn.utils.metadata_routing.UNCHANGED</span></code>) retains the
-existing request. This allows you to change the request for some
-parameters and not others.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">Added in version 1.3.</span></p>
-</div>
-<dl class="simple">
-<dt>sample_weight<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">sample_weight</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">score</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>self</strong> – Fitted transformer.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>object</p>
 </dd>
 </dl>
-<dl class="simple">
-<dt>self<span class="classifier">object</span></dt><dd><p>The updated object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tdaad.topological_embedding.TopologicalEmbedding.fit_transform">
+<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/topological_embedding.html#TopologicalEmbedding.fit_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.topological_embedding.TopologicalEmbedding.fit_transform" title="Link to this definition"></a></dt>
+<dd><p>Fit to data, then transform it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X_transformed</strong></p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>array-like</p>
 </dd>
 </dl>
-</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tdaad.topological_embedding.TopologicalEmbedding.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdaad/topological_embedding.html#TopologicalEmbedding.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tdaad.topological_embedding.TopologicalEmbedding.transform" title="Link to this definition"></a></dt>
+<dd><p>Apply transformations to the input data using the fitted pipeline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>X</strong> (<em>pandas.DataFrame</em>) – Input data to transform.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>X_transformed</strong> – Transformed data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like or DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

@@ -27,6 +27,41 @@
     <div class="container-fluid mt-3">
         <div class="card bg-light mb-3">
           <div class="card-header">
+            <h5 class="mb-0">tdaad</h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover table-sm">
+                <thead class="thead-light">
+                  <tr scope="col">
+                    <th></th>
+                    <th data-field="line">Line</th>
+                    <th data-field="column">Column</th>
+                    <th data-field="type">Type</th>
+                    <th data-field="obj">Object</th>
+                    <th data-field="message">Message</th>
+                    <th data-field="symbol">Symbol</th>
+                    <th data-field="message_id">Message Id</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="table-error">
+                    <td><a href="/blob//tdaad/__init__.py#L14" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>14</td>
+                    <td>4</td>
+                    <td>error</td>
+                    <td></td>
+                    <td>Undefined variable name 'persistencediagram_transformer' in __all__</td>
+                    <td>undefined-all-variable</td>
+                    <td>E0603</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="card bg-light mb-3">
+          <div class="card-header">
             <h5 class="mb-0">tdaad.anomaly_detectors</h5>
           </div>
           <div class="card-body">
@@ -46,8 +81,8 @@
                 </thead>
                 <tbody>
                   <tr class="table-primary">
-                    <td><a href="/blob//tdaad/anomaly_detectors.py#L17" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
-                    <td>17</td>
+                    <td><a href="/blob//tdaad/anomaly_detectors.py#L19" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>19</td>
                     <td>0</td>
                     <td>refactor</td>
                     <td>TopologicalAnomalyDetector</td>
@@ -56,8 +91,8 @@
                     <td>R0901</td>
                   </tr>
                   <tr class="table-primary">
-                    <td><a href="/blob//tdaad/anomaly_detectors.py#L89" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
-                    <td>89</td>
+                    <td><a href="/blob//tdaad/anomaly_detectors.py#L82" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>82</td>
                     <td>4</td>
                     <td>refactor</td>
                     <td>TopologicalAnomalyDetector.__init__</td>
@@ -66,18 +101,8 @@
                     <td>R0917</td>
                   </tr>
                   <tr class="table-warning">
-                    <td><a href="/blob//tdaad/anomaly_detectors.py#L144" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
-                    <td>144</td>
-                    <td>39</td>
-                    <td>warning</td>
-                    <td>TopologicalAnomalyDetector._warped_score_samples</td>
-                    <td>Unused argument 'y'</td>
-                    <td>unused-argument</td>
-                    <td>W0613</td>
-                  </tr>
-                  <tr class="table-warning">
-                    <td><a href="/blob//tdaad/anomaly_detectors.py#L170" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
-                    <td>170</td>
+                    <td><a href="/blob//tdaad/anomaly_detectors.py#L153" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>153</td>
                     <td>31</td>
                     <td>warning</td>
                     <td>TopologicalAnomalyDetector.score_samples</td>
@@ -86,8 +111,8 @@
                     <td>W0613</td>
                   </tr>
                   <tr class="table-warning">
-                    <td><a href="/blob//tdaad/anomaly_detectors.py#L126" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
-                    <td>126</td>
+                    <td><a href="/blob//tdaad/anomaly_detectors.py#L119" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>119</td>
                     <td>8</td>
                     <td>warning</td>
                     <td>TopologicalAnomalyDetector.fit</td>
@@ -96,11 +121,31 @@
                     <td>W0201</td>
                   </tr>
                   <tr class="table-warning">
-                    <td><a href="/blob//tdaad/anomaly_detectors.py#L164" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
-                    <td>164</td>
+                    <td><a href="/blob//tdaad/anomaly_detectors.py#L133" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>133</td>
                     <td>8</td>
                     <td>warning</td>
-                    <td>TopologicalAnomalyDetector._warped_score_samples</td>
+                    <td>TopologicalAnomalyDetector.fit</td>
+                    <td>Attribute 'dist_' defined outside __init__</td>
+                    <td>attribute-defined-outside-init</td>
+                    <td>W0201</td>
+                  </tr>
+                  <tr class="table-warning">
+                    <td><a href="/blob//tdaad/anomaly_detectors.py#L139" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>139</td>
+                    <td>8</td>
+                    <td>warning</td>
+                    <td>TopologicalAnomalyDetector.fit</td>
+                    <td>Attribute 'offset_' defined outside __init__</td>
+                    <td>attribute-defined-outside-init</td>
+                    <td>W0201</td>
+                  </tr>
+                  <tr class="table-warning">
+                    <td><a href="/blob//tdaad/anomaly_detectors.py#L144" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>144</td>
+                    <td>8</td>
+                    <td>warning</td>
+                    <td>TopologicalAnomalyDetector._update_padding</td>
                     <td>Attribute 'padding_length_' defined outside __init__</td>
                     <td>attribute-defined-outside-init</td>
                     <td>W0201</td>
@@ -131,8 +176,8 @@
                 </thead>
                 <tbody>
                   <tr class="table-warning">
-                    <td><a href="/blob//tdaad/topological_embedding.py#L19" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
-                    <td>19</td>
+                    <td><a href="/blob//tdaad/topological_embedding.py#L23" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>23</td>
                     <td>28</td>
                     <td>warning</td>
                     <td>local_atol_fit</td>
@@ -141,14 +186,24 @@
                     <td>W0613</td>
                   </tr>
                   <tr class="table-warning">
-                    <td><a href="/blob//tdaad/topological_embedding.py#L19" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
-                    <td>19</td>
+                    <td><a href="/blob//tdaad/topological_embedding.py#L23" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>23</td>
                     <td>36</td>
                     <td>warning</td>
                     <td>local_atol_fit</td>
                     <td>Unused argument 'sample_weight'</td>
                     <td>unused-argument</td>
                     <td>W0613</td>
+                  </tr>
+                  <tr class="table-warning">
+                    <td><a href="/blob//tdaad/topological_embedding.py#L134" class="btn btn-light btn-sm" role="button"><i class="fas fa-code"></i> Source</a></td>
+                    <td>134</td>
+                    <td>8</td>
+                    <td>warning</td>
+                    <td>TopologicalEmbedding.fit</td>
+                    <td>Attribute 'pipeline_' defined outside __init__</td>
+                    <td>attribute-defined-outside-init</td>
+                    <td>W0201</td>
                   </tr>
                 </tbody>
               </table>

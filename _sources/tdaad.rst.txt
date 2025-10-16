@@ -20,14 +20,6 @@ tdaad.anomaly\_detectors module
    :show-inheritance:
    :undoc-members:
 
-tdaad.persistencediagram\_transformer module
---------------------------------------------
-
-.. automodule:: tdaad.persistencediagram_transformer
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 tdaad.topological\_embedding module
 -----------------------------------
 

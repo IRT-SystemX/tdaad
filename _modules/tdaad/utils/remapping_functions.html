@@ -86,22 +86,55 @@
 <div class="viewcode-block" id="score_flat_fast_remapping">
 <a class="viewcode-back" href="../../../tdaad.utils.html#tdaad.utils.remapping_functions.score_flat_fast_remapping">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">score_flat_fast_remapping</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">padding_length</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Univariate score remapping without window indices and with precomputed padding_length.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remap window-level anomaly scores to a flat sequence of per-time-step scores.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scores : array-like of shape (n_windows,)</span>
+<span class="sd">        Anomaly scores for each window. Can be a pandas Series or NumPy array.</span>
+
+<span class="sd">    window_size : int</span>
+<span class="sd">        Size of the sliding window.</span>
+
+<span class="sd">    stride : int</span>
+<span class="sd">        Step size between windows.</span>
+
+<span class="sd">    padding_length : int, optional (default=0)</span>
+<span class="sd">        Extra length to pad the output array (typically at the end of a signal).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    remapped_scores : np.ndarray of shape (n_timestamps + padding_length,)</span>
+<span class="sd">        Flattened anomaly scores with per-timestep resolution. NaN values (from</span>
+<span class="sd">        positions not covered by any window) are replaced with 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Ensure scores is a NumPy array</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">):</span>
         <span class="n">scores</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">values</span>
-    <span class="n">begins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span> <span class="o">*</span> <span class="n">stride</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
+
+    <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+
+    <span class="c1"># Compute begin and end indices for each window</span>
+    <span class="n">begins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_windows</span><span class="p">)</span> <span class="o">*</span> <span class="n">stride</span>
     <span class="n">ends</span> <span class="o">=</span> <span class="n">begins</span> <span class="o">+</span> <span class="n">window_size</span>
 
-    <span class="n">remapped_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">stride</span> <span class="o">*</span> <span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">window_size</span> <span class="o">+</span> <span class="n">padding_length</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="c1"># Output length based on last window + padding</span>
+    <span class="n">total_length</span> <span class="o">=</span> <span class="n">ends</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">padding_length</span>
+    <span class="n">remapped_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">total_length</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
 
-    <span class="c1"># iterate over window intersection points, interpolate (vote) in-between intersection and next_intersection</span>
-    <span class="n">intersections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">begins</span><span class="p">,</span> <span class="n">ends</span><span class="p">])</span>
-    <span class="k">for</span> <span class="n">intersection</span><span class="p">,</span> <span class="n">next_intersection</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">intersections</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">intersections</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
-        <span class="n">window_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">((</span><span class="n">begins</span> <span class="o">&lt;=</span> <span class="n">intersection</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">next_intersection</span> <span class="o">&lt;</span> <span class="n">ends</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="n">remapped_scores</span><span class="p">[</span><span class="n">intersection</span><span class="p">:</span><span class="n">next_intersection</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="n">window_indices</span><span class="p">])</span>    <span class="c1"># or nanmedian</span>
+    <span class="c1"># Find all unique intersection points between windows</span>
+    <span class="n">intersections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">begins</span><span class="p">,</span> <span class="n">ends</span><span class="p">)))</span>
 
-    <span class="c1"># replace unknown values with 0 = normal (for the padding at the end)</span>
+    <span class="c1"># For each interval between two intersections, find overlapping windows and sum their scores</span>
+    <span class="k">for</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">intersections</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">intersections</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="n">overlapping</span> <span class="o">=</span> <span class="p">(</span><span class="n">begins</span> <span class="o">&lt;=</span> <span class="n">left</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">right</span> <span class="o">&lt;=</span> <span class="n">ends</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">overlapping</span><span class="p">):</span>
+            <span class="n">remapped_scores</span><span class="p">[</span><span class="n">left</span><span class="p">:</span><span class="n">right</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="n">overlapping</span><span class="p">])</span>
+
+    <span class="c1"># Replace NaNs (unscored positions) with 0</span>
     <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">remapped_scores</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">remapped_scores</span></div>
 
 </pre></div>

@@ -12,18 +12,18 @@ tdaad.utils.local\_elliptic\_envelope module
    :show-inheritance:
    :undoc-members:
 
-tdaad.utils.local\_pipeline module
-----------------------------------
-
-.. automodule:: tdaad.utils.local_pipeline
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 tdaad.utils.remapping\_functions module
 ---------------------------------------
 
 .. automodule:: tdaad.utils.remapping_functions
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+tdaad.utils.tda\_functions module
+---------------------------------
+
+.. automodule:: tdaad.utils.tda_functions
    :members:
    :show-inheritance:
    :undoc-members:
