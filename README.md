@@ -102,7 +102,7 @@ scores = detector.score_samples(X)
 ```
 You can also use `pandas.DataFrame` instead of a NumPy array — column names will be preserved in the output.
 
-For more advanced usage (e.g. custom embeddings, parameter tuning), see the [examples folder](examples/) or [API documentation](docs/)
+For more advanced usage (e.g. custom embeddings, parameter tuning), see the [examples folder](examples/) or [API documentation](https://irt-systemx.github.io/tdaad/)
 
 
 ## 📌 Usage Notes
