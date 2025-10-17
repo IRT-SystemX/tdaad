@@ -1,8 +1,9 @@
 
 # CHANGELOG
 
-## ?
+## 1.5.0
 - major computation gains (joblib.Parallel)
+- cleared, streamlined readme with acknowledgements
 
 ## 1.4.0
 - functional tests

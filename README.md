@@ -25,6 +25,7 @@
 </div>
 <br>
 
+
 <div align="center">
     <a href="https://github.com/IRT-SystemX/tdaad">
         <img src="https://img.shields.io/badge/GitHub-Repository-181717?logo=github" alt="GitHub">
@@ -36,110 +37,102 @@
         <img src="https://img.shields.io/pypi/v/tdaad?color=blue&label=PyPI&logo=pypi&logoColor=white" alt="PyPI">
     </a>
 </div>
+<br>
 
-# Topological Data Analysis for Anomaly Detection module
 
-This package named `tdaad` is a Python module for detecting anomalies in multiple time series.
+---
+# TDAAD – Topological Data Analysis for Anomaly Detection
 
-Website: https://irt-systemx.github.io/tdaad/
+## Overview
 
-## 🚀 Install
+TDAAD is a Python package for unsupervised anomaly detection in multivariate time series using Topological Data Analysis (TDA). Website and documentation: https://irt-systemx.github.io/tdaad/
 
-To install and use the component you can create a Python virtual environment as follows:
+It builds upon two powerful open-source libraries:
+
+- [![GUDHI](https://gudhi.inria.fr/assets/img/home.png)](https://gudhi.inria.fr/) **[GUDHI](https://gudhi.inria.fr/)** for efficient and scalable computation of persistent homology and topological features,
+- [![scikit-learn](https://scikit-learn.org/stable/_static/scikit-learn-logo-small.png)](https://scikit-learn.org/) **[scikit-learn](https://scikit-learn.org/)** for core machine learning utilities like `Pipeline` and objects like `EllipticEnvelope`.
+
+TDAAD is inspired by the methodology introduced in:
+
+> **Chazal, F., Levrard, C., & Royer, M. (2024).** *Topological Analysis for Detecting Anomalies (TADA) in dependent sequences: application to Time Series*. Journal of Machine Learning Research, 25(365), 1–49. [https://www.jmlr.org/papers/v25/24-0853.html](https://www.jmlr.org/papers/v25/24-0853.html)
+
+
+## 🔍 Features
+
+- Unsupervised anomaly detection in multivariate time series
+- Topological embedding using persistent homology
+- Scikit-learn–style API (`fit`, `transform`, `score_samples`)
+- Configurable embedding dimension, window size, and topological parameters
+- Works with NumPy arrays or pandas DataFrames
+
+
+## 🛠 Installation
+
+Install from PyPI (recommended):
+
 ```bash
-pip install virtualenv
-virtualenv myenv
-source myenv/bin/activate
+pip install tdaad
 ```
-
-Then you can clone the git repo and install from within the folder:
+Or install from source:
 ```bash
 git clone https://github.com/IRT-SystemX/tdaad.git
 cd tdaad
 pip install .
 ```
+Requirements:
+- Python ≥ 3.7
+- See `requirements.txt` for full dependency list
 
-## 🎮 Basic usage
+## 🚀 Quickstart
 
-### Context
+Here’s a minimal example using `TopologicalAnomalyDetector`:
+```python
+import numpy as np
+from tdaad.anomaly_detectors import TopologicalAnomalyDetector
 
-`tdaad` provides machine learning algorithms for analyzing timeseries data through the lense of Topological Data
-Analysis, and deriving anomaly scores.
+# Example multivariate time series with shape (n_samples, n_features)
+X = np.random.randn(1000, 3)
 
-The targeted input is an object `X` representing a _multiple time series_ with variables columns and timestamps lines.
-We use the term _multiple time series_ to describe a set of univariate timeseries that describe a system or object.
-Note that the package does not handle analysis of a single univariate timeseries.
+# Initialize and fit the detector
+detector = TopologicalAnomalyDetector(window_size=100, n_centers_by_dim=3)
+detector.fit(X)
 
-The main idea of this package is to analyze time series with topological methods. It is done in three essential steps:
-
-1. cut the timeseries into chunks using a sliding window algorithm,
-2. represent each timeseries window with topological features,
-3. estimate the empirical covariance of those topological features to derive an anomaly detection procedure.
-
-The combination of steps 1. and 2. are performed by an object called `TopologicalEmbedding`,
-and the method can be understood as a representation learning method.
-
-Step 3. is a standard step of anomaly detection procedure based on vectorized data.
-
-The combined result is the `TopologicalAnomalyDetector` object.
-
-
-### Main features: `TopologicalEmbedding` and `TopologicalAnomalyDetector`
-
-As the package is based upon, inspired by and compatible with reknown `scikit-learn`
-python library, the representation learning and anomaly detection learning are performed in the most standard way.
-
+# Compute anomaly scores
+scores = detector.score_samples(X)
 ```
-   from tdaad.topological_embedding import TopologicalEmbedding
-   embedding = TopologicalEmbedding().fit_transform(X)
-```
+You can also use `pandas.DataFrame` instead of a NumPy array — column names will be preserved in the output.
 
-Based on this representation, an empirical covariance is learned and an
-elliptic envelope is calculated with the associated mahalanobis distance, allowing for derivation of an anomaly score.
-All of this is performed within the `TopologicalAnomalyDetector` object, so that to perform an anomaly detection process
-one only needs the following:
+For more advanced usage (e.g. custom embeddings, parameter tuning), see the [examples folder](examples/) or [API documentation](docs/)
 
 
-```
-   from tdaad.anomaly_detectors import TopologicalAnomalyDetector
-   detector = TopologicalAnomalyDetector().fit(X)
-   anomaly_scores = detector.score_samples(X)
-```
+## 📌 Usage Notes
 
-## 🔀 Improved usage
+- TDAAD is designed for **multivariate time series** (2D inputs) — univariate data is not supported.
+- The core detection method relies on **sliding-window embeddings** and **persistent homology** to identify structural changes in the signal.
+- The key parameters that impact results and runtime are:
+    - `window_size` controls the time resolution — larger windows capture slower anomalies, smaller ones detect more localized changes.
+    - `n_centers_by_dim` controls the number of reference shapes used per homology dimension (e.g. connected components in H0, loops in H1, ...). Increasing this improves sensitivity but adds computation time.
+    - `tda_max_dim` sets the **maximum topological feature dimension** computed (0 = connected components, 1 = loops, 2 = voids, ...). Higher values increase runtime and memory usage.
+- Internally, computations are **parallelized** using `joblib` to scale to larger datasets. Use `n_jobs` to control parallelism.
+- Inputs can be `numpy.ndarray` or `pandas.DataFrame`. Column names are preserved in the output when using DataFrames.
 
-### Inputs
+⚙️ You can typically handle ~100 sensors and a few hundred time steps per window on a modern machine.
 
-For now the component is designed to handle inputs `X` in the form of a
-DataFrame with variables as columns and timestamps as lines.
+### 🧮 Basic Complexity of Persistent Homology in TDAAD
 
-### Main outputs
-
-The main output is an `anomaly_score` from the `TopologicalAnomalyDetector` object,
-in the form of a univariate `numpy.ndarray`. The scores are not bounded, the lower scores correspond to the more abnormal portions of the timeseries, according to the topological representation that was constructed.
-
-Another key output is that topological representation or embedding, result of the `transform` of the `TopologicalEmbedding` object: a multivariate `pandas.DataFrame` that "encodes" the timeseries into vectorial (and topological) representation.
+- Total complexity scales with:  $`O(N × (w × p)^{(d+2)})`$ where $`w`$ is the time resolution (or `window_size`, number of time steps per window), $`p`$ is the number of variables (features/sensors), $`d`$ is the maximum homology dimension `tda_max_dim`, and $`N`$ is the total number of sliding windows.
+- So note that increasing max homology dimension `d` raises the exponent, causing exponential growth. The number of centers `n_centers_by_dim` used after the PH computation does not significantly affect the overall complexity.
 
 
-### Algorithm main parameters
 
-The aforementioned `TopologicalAnomalyDetector` objects are ready-to-use as such,
-but should be manually tuned for better results. Key parameters include:
-+ `window_size` for the sliding window algorithm, important for capturing phenomenons at a certain scale. Ideally one would want at least `window_size=100`.
-+ `n_centers_by_dim` determining the size of the embedding, that one wants as small as possible at risk of missing key information. Perhaps start with value 2 or 3, and if the features are not relevant it is worth going to 10 to 20.
-+ `tda_max_dim` the maximum topological dimension to create features. One should start with dimension 0, 1 or 2. The computation time increases sensibly with this parameter.
+## 📚 Documentation & Resources
 
-### Good to know
+- [📖 Full API Documentation](https://irt-systemx.github.io/tdaad/)
+- [🧪 Examples](examples/)
+- [🛠 Contributing Guide](CONTRIBUTING.md)
+- [🗒 Changelog](CHANGELOG.md)
 
-- For this algorithm to run smoothly, the number of sensors involved can go to 100 without too much problem.
-- It seems possible to adapt the algorithm to an online version if one stays around this order of magnitude. The way to go would be 1. find a reasonable "normal-regime" period and `window_size` to train the detector, then run it on streaming data.
-- Because of its design, the tda detectors would be invariant to noises or transformation that are invariant through correlation (e.g. multiplication), but also to label shifts (as TDA is invariant to label permutation).
-- This detector is good to use in a context where a complex system (e.g. train on a railway, drone fleet, factory...) has various sensors information that can be used to build inference on the state of the system (working / anomalous => needs attending).
-
-## Changelog
-Stay up-to-date with the changes and improvements made to TDAAD in our changelog. Each release provides a summary of new features, fixes, and enhancements.
-Check out our [changelog](CHANGELOG.md) to see what's new and improved!
-
+---
 
 ## Document generation
 
@@ -154,12 +147,14 @@ sphinx-build -M html docs/source docs/build -W --keep-going
 
 ## Contributors and Support
 
+This work has been supported by the French government under the "France 2030” program, as part of the SystemX Technological Research Institute within the **Confiance.ai** project. 
+
 <p align="center">
-  TDAAD is developed by  
+  TDAAD is developed by
   <a href="https://www.irt-systemx.fr/en/" title="IRT SystemX">
    <img src="https://www.irt-systemx.fr/wp-content/uploads/2013/03/system-x-logo.jpeg"  height="70">
-  </a>and supported by the 
+  </a>and supported by the
 <a href="https://www.trustworthy-ai-foundation.eu/" title="European Trustworthy AI association">
-<img src="https://media.licdn.com/dms/image/v2/D4E0BAQGzfvLxz3sS8Q/company-logo_200_200/B4EZfkq1KLHwAI-/0/1751888122857/european_trustworthy_ai_foundation_logo?e=1759968000&v=beta&t=L2BNgzJNtZeWxHyrU_8Ap3VhrJ_9MdZmh-75IDQIMDc"  height="90">
+<img src="https://www.trustworthy-ai-association.eu/wp-content/uploads/2025/07/cropped-M0302_LOGO-ETAIA_BLANC_2000px-1-300x100.png"  height="90">
 </a>
 </p>
