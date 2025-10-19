@@ -20,6 +20,7 @@ from tdaad._feature_functions import (
     feature_dominant_freq,
     feature_skewness,
     feature_kurtosis,
+    feature_total_persistence_corr,
 )
 
 
@@ -39,6 +40,7 @@ FEATURE_FUNCTIONS = {
     "dominant_freq": feature_dominant_freq,
     "skewness": feature_skewness,
     "kurtosis": feature_kurtosis,
+    "totalpers": feature_total_persistence_corr,
 }
 # @todo: add total persistence
 # @todo: then plot TP(window size) on topolwheels

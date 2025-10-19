@@ -5,6 +5,8 @@ from scipy.fft import fft
 
 from numba import njit
 
+from ripser import ripser
+
 
 @njit
 def entropy_fast(x, bins=10):
@@ -110,3 +112,37 @@ def feature_skewness(window):
 
 def feature_kurtosis(window):
     return np.mean(kurtosis(window, axis=0))
+
+
+def feature_total_persistence_corr(window, maxdim=1, p=1):
+    """
+    Computes total persistence using 1 - correlation as a distance matrix
+    between channels in a multivariate time window.
+
+    Parameters
+    ----------
+    window : np.ndarray of shape (n_samples, n_channels)
+        Time series window.
+
+    dim : int, default=1
+        Homology dimension for persistent homology (0, 1, etc).
+
+    p : int, default=1
+        Power to raise each persistence value before summing.
+
+    Returns
+    -------
+    float
+        Total persistence.
+    """
+    # Compute channel-to-channel correlation
+    target = 1.0 - np.corrcoef(window.T)
+    dgms = ripser(target, distance_matrix=True, maxdim=maxdim)["dgms"]
+    total_persistence = 0.0
+    for dim in range(maxdim):
+        dgm = dgms[dim]
+        if dgm.size > 0:
+            dgm = dgm[~np.isinf(dgm[:, 1]), :]
+            pers_dim = dgm[:, 1] - dgm[:, 0]
+            total_persistence += np.sum(pers_dim**p)
+    return total_persistence
