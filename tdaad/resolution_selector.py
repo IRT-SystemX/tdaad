@@ -42,8 +42,6 @@ FEATURE_FUNCTIONS = {
     "kurtosis": feature_kurtosis,
     "totalpers": feature_total_persistence_corr,
 }
-# @todo: add total persistence
-# @todo: then plot TP(window size) on topolwheels
 
 
 class ResolutionSelector(BaseEstimator, TransformerMixin):

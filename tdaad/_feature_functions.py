@@ -139,7 +139,7 @@ def feature_total_persistence_corr(window, maxdim=1, p=1):
     target = 1.0 - np.corrcoef(window.T)
     dgms = ripser(target, distance_matrix=True, maxdim=maxdim)["dgms"]
     total_persistence = 0.0
-    for dim in range(maxdim):
+    for dim in range(maxdim + 1):
         dgm = dgms[dim]
         if dgm.size > 0:
             dgm = dgm[~np.isinf(dgm[:, 1]), :]

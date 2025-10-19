@@ -49,3 +49,11 @@ for feature in FEATURES:
     selector.fit(X)
     best_resolutions = selector.transform(X)
     print(f"Selector with {feature=}, selected {best_resolutions=}")
+
+    # selector.finder_.fit_transform(X)
+    # scores = selector.finder_._parallel_score_matrix(X)
+
+    # from tdaad._feature_functions import feature_total_persistence_corr
+
+    # window = X[:50, :]
+    # feature_total_persistence_corr(window)
