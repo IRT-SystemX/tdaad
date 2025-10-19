@@ -122,23 +122,24 @@ class ResolutionSelector(BaseEstimator, TransformerMixin):
             raise ValueError(f"Invalid window_size value: {self.candidates}")
 
         # Initialize appropriate selector
-        selector_cls = (
+        finder_cls = (
             GlobalResolutionsFinder if strategy == "global" else LocalResolutionsFinder
         )
-        self.selector_ = selector_cls(
+        self.finder_ = finder_cls(
             resolutions=candidates,
             k=self.k,
             n_jobs=self.n_jobs,
             **self.feature_selector_kwargs,
         )
-        self.selector_.fit(X)
+        self.finder_.fit(X)
         return self
 
     def transform(self, X):
         if isinstance(self.candidates, int):
             return self.candidates
         else:
-            return self.selector_.transform(X)
+            best_resolutions, scores = self.finder_.transform(X)
+            return best_resolutions
 
 
 class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
@@ -230,7 +231,14 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         X = self._to_array(X)
         self._calibrate_on_first_valid_window(X)
-        logger.info(f"Enabled features: {list(self._enabled_features.keys())}")
+
+        enabled = [k for k, v in self._enabled_features.items() if v]
+        if not enabled:
+            raise RuntimeError(
+                "BaseResolutionsFinder: All features were disabled after calibration. "
+                "Check your input data, feature functions, or 'feat_time_threshold'."
+            )
+        logger.info(f"Enabled features: {enabled}")
         return self
 
     def _extract_features(self, window):
@@ -241,16 +249,6 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
                 if self._enabled_features[name]
             ]
         )
-
-    def _score_window(self, features):
-        if self.score_method == "mean":
-            return features.mean()
-        elif self.score_method == "variance":
-            return features.var()
-        elif self.score_method == "combined":
-            return features.mean() * features.var()
-        else:
-            raise ValueError(f"Invalid score_method: {self.score_method}")
 
     def _parallel_score_matrix(self, X):
         if not self._enabled_features:
@@ -276,7 +274,7 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
             if window is None:
                 return (t, w, None)
             features = self._extract_features(window)
-            score = self._score_window(features)
+            score = features.mean()
             return (t, w, score)
 
         results = Parallel(n_jobs=self.n_jobs)(delayed(compute)(t, w) for t, w in jobs)
@@ -332,7 +330,7 @@ class GlobalResolutionsFinder(BaseResolutionsFinder):
 
         top_k = sorted(results, key=lambda x: x[1], reverse=True)[: self.k]
         logger.info(f"Top-{self.k} resolutions (global): {[w for w, _ in top_k]}")
-        return [w for w, _ in top_k]
+        return [w for w, _ in top_k], results
 
 
 class LocalResolutionsFinder(BaseResolutionsFinder):
@@ -366,4 +364,4 @@ class LocalResolutionsFinder(BaseResolutionsFinder):
             top_k_per_time.append([w for _, w in top_k])
 
         logger.info(f"Computed top-{self.k} resolutions per time index (local).")
-        return top_k_per_time
+        return top_k_per_time, scores_by_t
