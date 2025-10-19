@@ -12,9 +12,14 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from tdaad._feature_functions import (
     feature_variance,
     feature_derivative_std,
-    entropy_fast,
-    autocorr_fast,
+    feature_entropy,
+    feature_autocorr,
     feature_spectral_entropy,
+    feature_rms,
+    feature_channel_correlation,
+    feature_dominant_freq,
+    feature_skewness,
+    feature_kurtosis,
 )
 
 
@@ -26,10 +31,17 @@ logger.setLevel(logging.INFO)
 FEATURE_FUNCTIONS = {
     "variance": feature_variance,
     "derivative_std": feature_derivative_std,
-    "entropy": entropy_fast,
-    "autocorr": autocorr_fast,
+    "entropy": feature_entropy,
+    "autocorr": feature_autocorr,
     "spectral_entropy": feature_spectral_entropy,
+    "rms": feature_rms,
+    "channel_corr": feature_channel_correlation,
+    "dominant_freq": feature_dominant_freq,
+    "skewness": feature_skewness,
+    "kurtosis": feature_kurtosis,
 }
+# @todo: add total persistence
+# @todo: then plot TP(window size) on topolwheels
 
 
 class ResolutionSelector(BaseEstimator, TransformerMixin):

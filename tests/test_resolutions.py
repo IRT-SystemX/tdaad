@@ -5,6 +5,7 @@ from tdaad.resolution_selector import (
     GlobalResolutionsFinder,
     LocalResolutionsFinder,
     ResolutionSelector,
+    FEATURE_FUNCTIONS,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -34,12 +35,14 @@ local_topk = selector.fit_transform(X)
 print(f"Top-k local resolutions at {local_topk[100]=}")
 
 
-selector = ResolutionSelector(
-    candidates=[10, 50, 100, 500, 1000],  # or fixed int, or list of candidates
-    k=2,
-    n_jobs=-1,
-)
+for feature in FEATURE_FUNCTIONS.keys():
+    selector = ResolutionSelector(
+        candidates=[10, 50, 100, 500, 1000],  # or fixed int, or list of candidates
+        k=2,
+        n_jobs=-1,
+        feature_selector_kwargs={"features": [feature]},
+    )
 
-selector.fit(X)
-best_resolutions = selector.transform(X)
-print("Selected window size(s):", best_resolutions)
+    selector.fit(X)
+    best_resolutions = selector.transform(X)
+    print(f"Selector with {feature=}, selected {best_resolutions=}")

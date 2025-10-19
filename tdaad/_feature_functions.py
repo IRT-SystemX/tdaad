@@ -1,19 +1,13 @@
 import numpy as np
+from scipy.stats import skew, kurtosis
 from scipy.signal import welch
+from scipy.fft import fft
+
 from numba import njit
 
 
-def feature_variance(window):
-    return np.var(window)
-
-
-def feature_derivative_std(window):
-    return np.std(np.diff(window, axis=0))
-
-
 @njit
-def entropy_fast(window, bins=10):
-    x = window[:, 0]
+def entropy_fast(x, bins=10):
     hist = np.zeros(bins, dtype=np.float64)
     bin_edges = np.linspace(np.min(x), np.max(x), bins + 1)
     n = x.shape[0]
@@ -42,15 +36,8 @@ def entropy_fast(window, bins=10):
     return s
 
 
-def feature_spectral_entropy(window):
-    freqs, psd = welch(window[:, 0], nperseg=len(window))
-    psd = psd / np.sum(psd)
-    return -np.sum(psd * np.log(psd + 1e-8))
-
-
 @njit
-def autocorr_fast(window):
-    x = window[:, 0]
+def autocorr_fast(x):
     n = x.shape[0]
     mean_x = 0.0
     for i in range(n):
@@ -67,3 +54,59 @@ def autocorr_fast(window):
     if denominator == 0:
         return 0.0
     return numerator / denominator
+
+
+def feature_variance(window):
+    return np.var(window, axis=0).mean()  # mean over channels
+
+
+def feature_derivative_std(window):
+    return np.std(np.diff(window, axis=0), axis=0).mean()
+
+
+def feature_entropy(window, bins=10):
+    return np.mean([entropy_fast(window[:, i], bins) for i in range(window.shape[1])])
+
+
+def feature_spectral_entropy(window):
+    entropies = []
+    for i in range(window.shape[1]):
+        freqs, psd = welch(window[:, i], nperseg=len(window))
+        psd /= np.sum(psd)
+        entropies.append(-np.sum(psd * np.log(psd + 1e-8)))
+    return np.mean(entropies)
+
+
+def feature_autocorr(window):
+    return np.mean([autocorr_fast(window[:, i]) for i in range(window.shape[1])])
+
+
+def feature_rms(window):
+    return np.sqrt(np.mean(window**2, axis=0)).mean()
+
+
+def feature_channel_correlation(window):
+    if window.shape[1] < 2:
+        return 0.0  # not enough channels
+    corr_matrix = np.corrcoef(window.T)
+    # Take upper triangle without diagonal
+    upper = corr_matrix[np.triu_indices_from(corr_matrix, k=1)]
+    return np.mean(np.abs(upper))  # mean absolute correlation
+
+
+def feature_dominant_freq(window):
+    dom_freqs = []
+    for i in range(window.shape[1]):
+        signal = window[:, i]
+        spectrum = np.abs(fft(signal))
+        dom_freq = np.argmax(spectrum[1:])  # skip DC component
+        dom_freqs.append(dom_freq)
+    return np.mean(dom_freqs)
+
+
+def feature_skewness(window):
+    return np.mean(skew(window, axis=0))
+
+
+def feature_kurtosis(window):
+    return np.mean(kurtosis(window, axis=0))
