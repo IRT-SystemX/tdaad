@@ -129,56 +129,6 @@ class ResolutionSelector(BaseEstimator, TransformerMixin):
             return self.selector_.transform(X)
 
 
-@njit
-def entropy_fast(x, bins=10):
-    hist = np.zeros(bins, dtype=np.float64)
-    bin_edges = np.linspace(np.min(x), np.max(x), bins + 1)
-    n = x.shape[0]
-
-    # Compute histogram manually (since np.histogram not supported by njit)
-    for i in range(n):
-        xi = x[i]
-        # Find the right bin (linear scan since bins small)
-        for b in range(bins):
-            if bin_edges[b] <= xi < bin_edges[b + 1]:
-                hist[b] += 1
-                break
-        else:
-            # If xi == max(x), put it in last bin
-            if xi == bin_edges[-1]:
-                hist[bins - 1] += 1
-
-    # Normalize histogram
-    for i in range(bins):
-        hist[i] /= n
-
-    s = 0.0
-    for h in hist:
-        if h > 0:
-            s -= h * np.log(h)
-    return s
-
-
-@njit
-def autocorr_fast(x):
-    n = x.shape[0]
-    mean_x = 0.0
-    for i in range(n):
-        mean_x += x[i]
-    mean_x /= n
-
-    numerator = 0.0
-    denominator = 0.0
-    for i in range(n - 1):
-        numerator += (x[i] - mean_x) * (x[i + 1] - mean_x)
-    for i in range(n):
-        denominator += (x[i] - mean_x) ** 2
-
-    if denominator == 0:
-        return 0.0
-    return numerator / denominator
-
-
 class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
     """
     Base class for resolution finding that extract and score
@@ -199,23 +149,8 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
     n_jobs : int, default=-1
         Number of parallel jobs to run for feature extraction or scoring.
 
-    include_variance : bool, default=True
-        Whether to include variance feature.
-
-    include_derivative_std : bool, default=True
-        Whether to include standard deviation of derivatives feature.
-
-    include_entropy : bool, default=True
-        Whether to include entropy feature.
-
-    include_entropy : bool, default=True
-        Whether to include entropy feature.
-
-    include_autocorr : bool, default=False
-        Whether to include autocorrelation features.
-
-    include_spectral_entropy : bool, default=False
-        Whether to include spectral entropy feature.
+    features : list of str, optional
+        List of feature names to use. Defaults to all available in FEATURE_FUNCTIONS.
     """
 
     def __init__(
@@ -234,50 +169,16 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
         self.n_jobs = n_jobs
         self.features = features or list(FEATURE_FUNCTIONS.keys())
 
-    def calibrate_features(self, X, sample_size=1):
-        """
-        Measure feature timing on a few random windows to auto-disable slow features
-        before parallel transform.
-        """
-        if hasattr(X, "values"):
-            X = X.values
-        if not hasattr(self, "_enabled_features"):
-            self._enabled_features = {}
-
-        n = X.shape[0]
-        for _ in range(sample_size):
-            t = np.random.randint(20, n - 20)
-            w = self.resolutions[0]
-            hw = w // 2
-            window = X[t - hw : t + hw]
-            self._time_features(window)
-            break  # only run once for now
-
-    def _extract_features(self, window):
-        """
-        Extracts time-domain features from a given window.
-        Auto-disables slow features after first measurement.
-        """
-        if not hasattr(self, "_enabled_features"):
-            raise NotFittedError("Call `.fit(X)` before using `.transform(X)`.")
-        return np.array(
-            [
-                FEATURE_FUNCTIONS[name](window)
-                for name in self._enabled_features
-                if self._enabled_features[name]
-            ]
-        )
+    def _to_array(self, X):
+        return X.values if hasattr(X, "values") else X
 
     def _time_features(self, window):
-        """
-        Measure time per feature, auto-disable slow ones.
-        """
         times = {}
         enabled = {}
 
         for name in self.features:
             func = FEATURE_FUNCTIONS.get(name)
-            if func is None:
+            if not func:
                 warnings.warn(f"Unknown feature: {name}")
                 continue
             try:
@@ -285,7 +186,7 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
                 func(window)
                 elapsed = time.perf_counter() - start
                 times[name] = elapsed
-                enabled[name] = True
+                enabled[name] = elapsed <= self.feat_time_threshold
             except Exception as e:
                 times[name] = float("inf")
                 enabled[name] = False
@@ -295,97 +196,92 @@ class BaseResolutionsFinder(BaseEstimator, TransformerMixin):
         for name, t in sorted(times.items(), key=lambda x: x[1]):
             status = "✅" if t <= self.feat_time_threshold else "❌ (disabled)"
             logger.info(f"  {name:<16}: {t:.6f} {status}")
-            enabled[name] = enabled[name] and (t <= self.feat_time_threshold)
 
-        self._enabled_features = enabled
+        self._enabled_features = {
+            name: is_enabled for name, is_enabled in enabled.items() if is_enabled
+        }
+
+    def _extract_window(self, X, t, w):
+        hw = w // 2
+        if t - hw < 0 or t + hw > X.shape[0]:
+            return None
+        return X[t - hw : t + hw]
+
+    def _calibrate_on_first_valid_window(self, X):
+        for w in self.resolutions:
+            window = self._extract_window(X, w // 2, w)
+            if window is None:
+                continue
+            self._time_features(window)
+            break
+
+    def fit(self, X, y=None):
+        X = self._to_array(X)
+        self._calibrate_on_first_valid_window(X)
+        logger.info(f"Enabled features: {list(self._enabled_features.keys())}")
+        return self
+
+    def _extract_features(self, window):
+        return np.array(
+            [
+                FEATURE_FUNCTIONS[name](window)
+                for name in self._enabled_features
+                if self._enabled_features[name]
+            ]
+        )
+
+    def _score_window(self, features):
+        if self.score_method == "mean":
+            return features.mean()
+        elif self.score_method == "variance":
+            return features.var()
+        elif self.score_method == "combined":
+            return features.mean() * features.var()
+        else:
+            raise ValueError(f"Invalid score_method: {self.score_method}")
 
     def _parallel_score_matrix(self, X):
-        """
-        Compute features for all valid (t, w) pairs in parallel.
+        if not self._enabled_features:
+            raise NotFittedError("Call `.fit(X)` before using `.transform(X)`.")
 
-        Returns
-        -------
-        dict[t] -> list of (w, score)
-        dict[w] -> list of feature vectors
-        """
+        X = self._to_array(X)
         n_samples = X.shape[0]
-        resolutions = self.resolutions
-        half_ws = {w: w // 2 for w in resolutions}
+        half_ws = {w: w // 2 for w in self.resolutions}
 
         logger.info(
             f"Starting resolution scoring: X.shape={X.shape}, "
-            f"{resolutions=}, score_method='{self.score_method}', k={self.k}"
+            f"resolutions={self.resolutions}, score_method='{self.score_method}', k={self.k}"
         )
 
-        def compute(t, w):
-            hw = half_ws[w]
-            if t - hw < 0 or t + hw > n_samples:
-                return (t, w, None)  # invalid
-            window = X[t - hw : t + hw]
-            features = self._extract_features(window)
-            if self.score_method == "mean":
-                score = features.mean()
-            elif self.score_method == "variance":
-                score = features.var()
-            elif self.score_method == "combined":
-                score = features.mean() * features.var()
-            else:
-                raise ValueError(f"Invalid score_method: {self.score_method}")
-            return (t, w, score)
-
-        # Build valid (t, w) jobs
         jobs = [
             (t, w)
-            for w in resolutions
+            for w in self.resolutions
             for t in range(half_ws[w], n_samples - half_ws[w])
         ]
 
+        def compute(t, w):
+            window = self._extract_window(X, t, w)
+            if window is None:
+                return (t, w, None)
+            features = self._extract_features(window)
+            score = self._score_window(features)
+            return (t, w, score)
+
         results = Parallel(n_jobs=self.n_jobs)(delayed(compute)(t, w) for t, w in jobs)
 
-        # Aggregate
         scores_by_t = defaultdict(list)
         scores_by_w = defaultdict(list)
         valid_count = 0
-        for item in results:
-            if item is None:
+
+        for t, w, score in results:
+            if score is None:
                 continue
-            t, w, score = item
             scores_by_t[t].append((score, w))
             scores_by_w[w].append(score)
             valid_count += 1
 
         logger.info(f"Completed scoring over {valid_count} valid (t, w) windows.")
         return scores_by_t, scores_by_w
-
-    def fit(self, X, y=None):
-        if hasattr(X, "values"):
-            X = X.values
-        if not hasattr(self, "_enabled_features"):
-            # Use first valid window to calibrate features
-            for w in self.resolutions:
-                hw = w // 2
-                if X.shape[0] > 2 * hw:
-                    window = X[hw:-hw][:w]  # a valid centered window
-                    self._time_features(window)
-                    break
-        enabled = [k for k, v in self._enabled_features.items() if v]
-        logger.info(f"Enabled features: {enabled}")
-        return self
-
-    def fit(self, X, y=None):
-        if hasattr(X, "values"):
-            X = X.values
-        if not hasattr(self, "_enabled_features"):
-            # Use first valid window to calibrate features
-            for w in self.resolutions:
-                hw = w // 2
-                if X.shape[0] > 2 * hw:
-                    window = X[hw:-hw][:w]  # a valid centered window
-                    self._time_features(window)
-                    break
-        enabled = [k for k, v in self._enabled_features.items() if v]
-        logger.info(f"Enabled features: {enabled}")
-        return self
 
 
 class GlobalResolutionsFinder(BaseResolutionsFinder):
@@ -403,7 +299,6 @@ class GlobalResolutionsFinder(BaseResolutionsFinder):
     """
 
     def fit(self, X, y=None):
-        return super().fit(X, y)
         return super().fit(X, y)
 
     def transform(self, X):
@@ -443,7 +338,6 @@ class LocalResolutionsFinder(BaseResolutionsFinder):
     """
 
     def fit(self, X, y=None):
-        return super().fit(X, y)
         return super().fit(X, y)
 
     def transform(self, X):
