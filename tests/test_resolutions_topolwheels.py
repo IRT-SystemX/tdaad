@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from joblib import Parallel, delayed
 
+import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as plt
@@ -32,6 +33,8 @@ from tdaad._feature_functions import feature_total_persistence_corr
 
 resolutions = [10, 20, 40, 60, 80, 100, 150, 200, 300, 400, 500, 600, 800]
 X = X_train.values
+
+X = np.random.randn(10000, 64)
 n_samples = X.shape[0]
 half_ws = {w: w // 2 for w in resolutions}
 
@@ -52,19 +55,21 @@ def compute(t, w):
         return (t, w, None)
     total_pers_01 = feature_total_persistence_corr(window)
     total_pers_0 = feature_total_persistence_corr(window, maxdim=0)
-    return (t, w, total_pers_0, total_pers_01)
+    total_pers_1 = total_pers_01 - total_pers_0
+    return (t, w, total_pers_0, total_pers_1, total_pers_01)
 
 
 results = Parallel(n_jobs=-1)(delayed(compute)(t, w) for t, w in jobs)
 
-df = pd.DataFrame(results, columns=["time", "w", "total_pers_0", "total_pers_01"])
+df = pd.DataFrame(
+    results, columns=["time", "w", "total_pers_0", "total_pers_1", "total_pers_01"]
+)
 df["time"] = pd.to_datetime(df["time"])
 
 
 # Compute total persistence wrt time per w
 plt.figure(figsize=(10, 6))
 for w_value, group in df.groupby("w"):
-    plt.plot(group["time"], group["total_pers_0"], marker="o", label=f"w={w_value}")
     plt.plot(group["time"], group["total_pers_01"], marker="o", label=f"w={w_value}")
 
 plt.xlabel("Time")
@@ -78,6 +83,7 @@ plt.show()
 
 # Compute mean feature per w
 mean_totalpers_0 = df.groupby("w")["total_pers_0"].mean().reset_index()
+mean_totalpers_1 = df.groupby("w")["total_pers_1"].mean().reset_index()
 mean_totalpers_01 = df.groupby("w")["total_pers_01"].mean().reset_index()
 
 # Plot
@@ -88,6 +94,13 @@ plt.plot(
     color="skyblue",
     marker="o",
     label="PH0",
+)
+plt.plot(
+    mean_totalpers_1["w"],
+    mean_totalpers_1["total_pers_1"],
+    color="green",
+    marker="o",
+    label="PH1",
 )
 plt.plot(
     mean_totalpers_01["w"],
