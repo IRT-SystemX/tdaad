@@ -1,7 +1,7 @@
 """Topological Anomaly Detectors."""
 
 # Author: Martin Royer
-from typing import Sequence, Optional, Union
+from typing import Optional, Union
 
 import numbers
 import warnings
@@ -67,14 +67,12 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
     >>> anomalies = detector.predict(X)
     """
 
-    required_properties: Sequence[str] = ["multiple_time_series"]
-
     _parameter_constraints: dict = {
         "window_size": [Interval(numbers.Integral, 1, None, closed="left")],
         "step": [Interval(numbers.Integral, 1, None, closed="left")],
         "tda_max_dim": [Interval(numbers.Integral, 0, 2, closed="both")],
         "n_centers_by_dim": [Interval(numbers.Integral, 2, None, closed="left")],
-        "support_fraction": [Interval(numbers.Real, 0, 1, closed="both"), None],
+        "support_fraction": [Interval(numbers.Real, 0, 1, closed="right"), None],
         "contamination": [Interval(numbers.Real, 0, 0.5, closed="both")],
         "random_state": ["random_state"],
     }
