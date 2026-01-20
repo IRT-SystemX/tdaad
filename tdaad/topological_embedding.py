@@ -3,6 +3,11 @@
 # Author: Martin Royer
 
 from functools import partial
+import multiprocessing
+
+from joblib import Parallel, delayed
+
+import pandas as pd
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
@@ -14,7 +19,6 @@ from sklearn.cluster import KMeans
 from gudhi.representations.vector_methods import Atol
 
 from tdaad.utils.tda_functions import transform_to_persistence_diagram
-from tdaad.utils.window_functions import sliding_window_ppl_pp
 
 
 atol_vanilla_fit = Atol.fit
@@ -28,6 +32,71 @@ def local_atol_fit(self, X, y=None, sample_weight=None):
 
 
 Atol.fit = local_atol_fit
+
+
+def effective_n_jobs(default=-1):
+    """Return a safe n_jobs based on whether we're already inside a worker process."""
+    try:
+        # If we're in the main process, multiprocessing.current_process().name == 'MainProcess'
+        if multiprocessing.current_process().name != "MainProcess":
+            return 1  # inside pool → avoid nested parallelism
+    except Exception:
+        pass
+    return default
+
+
+def sliding_window_ppl_pp(
+    data,
+    func,
+    window_size=120,
+    step=5,
+    n_jobs=-1,
+):
+    """
+    Apply a processing function to sliding windows over time series data in parallel.
+
+    Each window is identified by its starting index in the original DataFrame,
+    providing uniqueness and full traceability.
+
+    Parameters
+    ----------
+    data : pd.DataFrame
+        Input 2D time series data with shape (num_rows, num_features).
+    func : callable
+        Function applied to each window. Receives a NumPy array of shape
+        (window_size, num_features).
+    window_size : int, optional
+        Number of consecutive rows per window.
+    step : int, optional
+        Stride between successive windows.
+    n_jobs : int, optional
+        Number of parallel jobs (joblib).
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per window. Index = window start index in `data`.
+    """
+
+    values = data.to_numpy()
+    n_rows = len(data)
+
+    # Compute window start positions
+    start_indices = range(0, n_rows - window_size + 1, step)
+
+    def process_window(start_idx):
+        window = values[start_idx : start_idx + window_size]
+        return start_idx, func(window)
+
+    results = Parallel(n_jobs=n_jobs)(delayed(process_window)(i) for i in start_indices)
+
+    # Convert results to DataFrame
+    result_dict = dict(results)
+    result_df = pd.DataFrame.from_dict(result_dict, orient="index")
+
+    result_df.index.name = "window_start"
+
+    return result_df
 
 
 class TopologicalEmbedding(BaseEstimator, TransformerMixin):
@@ -68,11 +137,20 @@ class TopologicalEmbedding(BaseEstimator, TransformerMixin):
         step: int = 5,
         tda_max_dim: int = 2,
         n_centers_by_dim: int = 5,
+        parallel="auto",
     ):
         self.window_size = window_size
         self.step = step
         self.tda_max_dim = tda_max_dim
         self.n_centers_by_dim = n_centers_by_dim
+        self.parallel = parallel
+        if parallel == "auto":
+            n_jobs = effective_n_jobs(default=-1)
+        elif parallel is True:
+            n_jobs = -1
+        else:
+            n_jobs = 1
+        self.n_jobs = n_jobs
 
     def _build_pipeline(self):
         steps = []
@@ -87,6 +165,7 @@ class TopologicalEmbedding(BaseEstimator, TransformerMixin):
                         "window_size": self.window_size,
                         "step": self.step,
                         "func": func,
+                        "n_jobs": self.n_jobs,
                     },
                 ),
             )
