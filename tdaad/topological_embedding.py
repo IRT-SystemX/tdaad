@@ -6,7 +6,6 @@ from functools import partial
 import multiprocessing
 
 from joblib import Parallel, delayed
-
 import pandas as pd
 
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -25,9 +24,8 @@ class PandasAtol(Atol):
     """
     ATOL vectorization with pandas-compatible input handling.
 
-    This subclass converts pandas Series or DataFrame inputs to NumPy arrays
-    before delegating to the base Atol implementation, avoiding warnings
-    caused by np.concatenate on pandas objects.
+    Converts pandas inputs to NumPy arrays before calling the base
+    implementation to avoid warnings caused by np.concatenate on pandas objects.
     """
 
     def fit(self, X, y=None, sample_weight=None):
@@ -36,68 +34,49 @@ class PandasAtol(Atol):
         return super().fit(X, y=y, sample_weight=sample_weight)
 
 
-def effective_n_jobs(default=-1):
-    """Return a safe n_jobs based on whether we're already inside a worker process."""
-    try:
-        # If we're in the main process, multiprocessing.current_process().name == 'MainProcess'
-        if multiprocessing.current_process().name != "MainProcess":
-            return 1  # inside pool → avoid nested parallelism
-    except Exception:
-        pass
-    return default
+def resolve_n_jobs(parallel):
+    """
+    Resolve n_jobs safely, avoiding nested parallelism.
+    """
+    if parallel == "auto":
+        try:
+            if multiprocessing.current_process().name != "MainProcess":
+                return 1
+        except Exception:
+            pass
+        return -1
+
+    if parallel is True:
+        return -1
+
+    return 1
 
 
-def sliding_window_ppl_pp(
-    data,
-    func,
-    window_size=120,
-    step=5,
-    n_jobs=-1,
-):
+def sliding_window_apply(
+    data: pd.DataFrame,
+    window_fn,
+    window_size: int,
+    step: int,
+    n_jobs: int,
+) -> pd.DataFrame:
     """
     Apply a processing function to sliding windows over time series data in parallel.
 
-    Each window is identified by its starting index in the original DataFrame,
-    providing uniqueness and full traceability.
-
-    Parameters
-    ----------
-    data : pd.DataFrame
-        Input 2D time series data with shape (num_rows, num_features).
-    func : callable
-        Function applied to each window. Receives a NumPy array of shape
-        (window_size, num_features).
-    window_size : int, optional
-        Number of consecutive rows per window.
-    step : int, optional
-        Stride between successive windows.
-    n_jobs : int, optional
-        Number of parallel jobs (joblib).
-
-    Returns
-    -------
-    pd.DataFrame
-        One row per window. Index = window start index in `data`.
+    Returns a DataFrame indexed by window start index.
     """
-
     values = data.to_numpy()
     n_rows = len(data)
 
-    # Compute window start positions
     start_indices = range(0, n_rows - window_size + 1, step)
 
     def process_window(start_idx):
         window = values[start_idx : start_idx + window_size]
-        return start_idx, func(window)
+        return start_idx, window_fn(window)
 
     results = Parallel(n_jobs=n_jobs)(delayed(process_window)(i) for i in start_indices)
 
-    # Convert results to DataFrame
-    result_dict = dict(results)
-    result_df = pd.DataFrame.from_dict(result_dict, orient="index")
-
+    result_df = pd.DataFrame.from_dict(dict(results), orient="index")
     result_df.index.name = "window_start"
-
     return result_df
 
 
@@ -117,12 +96,12 @@ class TopologicalEmbedding(BaseEstimator, TransformerMixin):
         Size of the sliding window algorithm to extract subsequences as input to named_pipeline.
     step : int, default=5
         Size of the sliding window steps between each window.
+    tda_max_dim : int, default=2
+        The maximum dimension of the topological feature extraction.
     n_centers_by_dim : int, default=5
         The number of centroids to generate by dimension for vectorizing topological features.
         The resulting embedding will have total dimension =< tda_max_dim * n_centers_by_dim.
         The resulting embedding dimension might be smaller because of the KMeans algorithm in the Archipelago step.
-    tda_max_dim : int, default=2
-        The maximum dimension of the topological feature extraction.
 
     Examples
     ----------
@@ -146,98 +125,55 @@ class TopologicalEmbedding(BaseEstimator, TransformerMixin):
         self.tda_max_dim = tda_max_dim
         self.n_centers_by_dim = n_centers_by_dim
         self.parallel = parallel
-        if parallel == "auto":
-            n_jobs = effective_n_jobs(default=-1)
-        elif parallel is True:
-            n_jobs = -1
-        else:
-            n_jobs = 1
-        self.n_jobs = n_jobs
 
     def _build_pipeline(self):
-        steps = []
-        steps.append(("Standard scaler", StandardScaler()))
-        func = partial(transform_to_persistence_diagram, tda_max_dim=self.tda_max_dim)
-        steps.append(
-            (
-                "Sliding persistence diagram transformer",
-                FunctionTransformer(
-                    func=sliding_window_ppl_pp,
-                    kw_args={
-                        "window_size": self.window_size,
-                        "step": self.step,
-                        "func": func,
-                        "n_jobs": self.n_jobs,
-                    },
-                ),
-            )
+        n_jobs = resolve_n_jobs(self.parallel)
+        persistence_fn = partial(
+            transform_to_persistence_diagram,
+            tda_max_dim=self.tda_max_dim,
         )
-        steps.append(
-            (
-                "Archipelago",
-                ColumnTransformer(
-                    [
-                        (
-                            f"Atol{i}",
-                            PandasAtol(
-                                quantiser=KMeans(
-                                    n_clusters=self.n_centers_by_dim,
-                                    random_state=202312,
-                                    n_init="auto",
-                                )
-                            ),
-                            i,
+
+        window_transformer = FunctionTransformer(
+            func=sliding_window_apply,
+            kw_args=dict(
+                window_fn=persistence_fn,
+                window_size=self.window_size,
+                step=self.step,
+                n_jobs=n_jobs,
+            ),
+        )
+
+        archipelago = ColumnTransformer(
+            transformers=[
+                (
+                    f"atol_dim_{i}",
+                    PandasAtol(
+                        quantiser=KMeans(
+                            n_clusters=self.n_centers_by_dim,
+                            random_state=202312,
+                            n_init="auto",
                         )
-                        for i in range(self.tda_max_dim + 1)
-                    ]
-                ),
-            )
+                    ),
+                    i,
+                )
+                for i in range(self.tda_max_dim + 1)
+            ]
         )
-        return Pipeline(steps).set_output(transform="pandas")
+
+        pipeline = Pipeline(
+            steps=[
+                ("scale", StandardScaler()),
+                ("sliding_persistence", window_transformer),
+                ("archipelago", archipelago),
+            ]
+        )
+
+        return pipeline.set_output(transform="pandas")
 
     def fit(self, X, y=None):
-        """
-        Fit the internal pipeline to the data.
-
-        Parameters
-        ----------
-        X : pandas.DataFrame
-            Input feature matrix.
-
-        y : array-like, optional
-            Target values (not used here, but accepted for compatibility with sklearn).
-
-        Returns
-        -------
-        self : object
-            Fitted transformer.
-        """
         self.pipeline_ = self._build_pipeline()
         self.pipeline_.fit(X, y)
         return self
 
     def transform(self, X):
-        """
-        Apply transformations to the input data using the fitted pipeline.
-
-        Parameters
-        ----------
-        X : pandas.DataFrame
-            Input data to transform.
-
-        Returns
-        -------
-        X_transformed : array-like or DataFrame
-            Transformed data.
-        """
         return self.pipeline_.transform(X)
-
-    def fit_transform(self, X, y=None, **fit_params):
-        """
-        Fit to data, then transform it.
-
-        Returns
-        -------
-        X_transformed : array-like
-        """
-        return self.fit(X, y).transform(X)
