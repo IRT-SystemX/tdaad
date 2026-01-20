@@ -10,10 +10,10 @@ import numpy as np
 from sklearn.base import _fit_context, TransformerMixin
 from sklearn.utils._param_validation import Interval
 from sklearn.utils.validation import check_is_fitted
+from sklearn.covariance import EllipticEnvelope
 
 from tdaad.utils.remapping_functions import score_flat_fast_remapping
 from tdaad.topological_embedding import TopologicalEmbedding
-from tdaad.utils.local_elliptic_envelope import EllipticEnvelope
 
 
 class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
@@ -21,7 +21,7 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
     Anomaly detection for multivariate time series using topological embeddings and robust covariance estimation.
 
     This detector extracts topological features from sliding windows of time series data and
-    uses a robust Mahalanobis distance (via EllipticEnvelope) to score anomalies.
+    uses a robust Mahalanobis distance (via PandasEllipticEnvelope) to score anomalies.
 
     Read more in the :ref:`User Guide <topological_anomaly_detection>`.
 
@@ -164,8 +164,7 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
 
     def predict(self, X):
         """Predict inliers (1) and outliers (-1) using learned threshold."""
-        scores = self.score_samples(X)
-        return np.where(scores < self.offset_, -1, 1)
+        return np.where(self.decision_function(X) < 0, -1, 1)
 
     def transform(self, X):
         """Alias for score_samples. Returns anomaly scores."""
