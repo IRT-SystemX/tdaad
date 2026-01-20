@@ -21,17 +21,19 @@ from gudhi.representations.vector_methods import Atol
 from tdaad.utils.tda_functions import transform_to_persistence_diagram
 
 
-atol_vanilla_fit = Atol.fit
+class PandasAtol(Atol):
+    """
+    ATOL vectorization with pandas-compatible input handling.
 
+    This subclass converts pandas Series or DataFrame inputs to NumPy arrays
+    before delegating to the base Atol implementation, avoiding warnings
+    caused by np.concatenate on pandas objects.
+    """
 
-def local_atol_fit(self, X, y=None, sample_weight=None):
-    """local modification to prevent FutureWarning triggered by np.concatenate(X) when X is a pd.Series."""
-    if hasattr(X, "values"):
-        X = X.values
-    return atol_vanilla_fit(self=self, X=X)
-
-
-Atol.fit = local_atol_fit
+    def fit(self, X, y=None, sample_weight=None):
+        if hasattr(X, "values"):
+            X = X.values
+        return super().fit(X, y=y, sample_weight=sample_weight)
 
 
 def effective_n_jobs(default=-1):
@@ -177,7 +179,7 @@ class TopologicalEmbedding(BaseEstimator, TransformerMixin):
                     [
                         (
                             f"Atol{i}",
-                            Atol(
+                            PandasAtol(
                                 quantiser=KMeans(
                                     n_clusters=self.n_centers_by_dim,
                                     random_state=202312,
