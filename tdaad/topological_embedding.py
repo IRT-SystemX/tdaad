@@ -2,6 +2,7 @@
 
 # Author: Martin Royer
 import numpy as np
+import pandas as pd
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
@@ -48,6 +49,22 @@ class TopologicalEmbedding(BaseEstimator, TransformerMixin):
 
     Pipeline:
         Sliding windows -> similarity -> RipsPersistence -> ColumnTransformer(Atol)
+
+    Parameters
+    ----------
+    window_size : int
+        Number of rows per sliding window.
+    step : int
+        Step size between windows.
+    tda_max_dim : int
+        Maximum homology dimension for RipsPersistence.
+    n_centers_by_dim : int
+        Number of centroids per homology dimension in ATOL.
+    filter_nan : bool
+        Whether to filter NaNs in similarity matrices.
+    output : str, default="pandas"
+        "pandas" returns a DataFrame with proper index and column names.
+        "numpy" returns a numpy array.
     """
 
     def __init__(
@@ -57,12 +74,14 @@ class TopologicalEmbedding(BaseEstimator, TransformerMixin):
         tda_max_dim: int = 2,
         n_centers_by_dim: int = 5,
         filter_nan: bool = True,
+        output: str = "pandas",
     ):
         self.window_size = window_size
         self.step = step
         self.tda_max_dim = tda_max_dim
         self.n_centers_by_dim = n_centers_by_dim
         self.filter_nan = filter_nan
+        self.output = output
 
     def _build_pipeline(self):
         # FunctionTransformer to convert windows -> distance/similarity matrices
@@ -131,11 +150,18 @@ class TopologicalEmbedding(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         """
-        Apply the fitted pipeline to the input data.
-
-        Returns
-        -------
-        X_transformed : np.ndarray
-            Topological feature embedding.
+        Transform the input data and return a pandas DataFrame with
+        row index = window start position and columns named feature_0, feature_1, ...
         """
-        return self.pipeline_.transform(X)
+        X_transformed = self.pipeline_.transform(X)
+
+        # Build column names: ph{i}_center{j}
+        columns = [
+            f"ph{i}_center{j + 1}"
+            for i in range(self.tda_max_dim + 1)
+            for j in range(self.n_centers_by_dim)
+        ]
+
+        # Build DataFrame with window index from SlidingWindowTransformer
+        window_index = self.pipeline_.named_steps["windows"].window_index_
+        return pd.DataFrame(X_transformed, index=window_index, columns=columns)
