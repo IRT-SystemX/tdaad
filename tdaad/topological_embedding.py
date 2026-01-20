@@ -1,6 +1,7 @@
 """Topological Embedding Transformers."""
 
 # Author: Martin Royer
+import numpy as np
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
@@ -11,21 +12,13 @@ from sklearn.cluster import KMeans
 from gudhi.representations.vector_methods import Atol
 from gudhi.sklearn.rips_persistence import RipsPersistence
 
-from tdaad.utils.tda_functions import numpy_data_to_similarity
 
-
-class PandasAtol(Atol):
-    """
-    ATOL vectorization with pandas-compatible input handling.
-
-    Converts pandas inputs to NumPy arrays before calling the base
-    implementation to avoid warnings caused by np.concatenate on pandas objects.
-    """
-
-    def fit(self, X, y=None, sample_weight=None):
-        if hasattr(X, "values"):
-            X = X.values
-        return super().fit(X, y=y, sample_weight=sample_weight)
+def numpy_data_to_similarity(X, filter_nan=True):
+    r"""Transforms numpy matrix X into similarity matrix :math:`1-\mathbf{Corr}(X)`."""
+    target = 1 - np.corrcoef(X, rowvar=False)
+    # this filters when a variable is constant -> nan on all rows
+    nanrowcols = np.isnan(target).all(axis=0) if filter_nan else ~target.any(axis=0)
+    return target[~nanrowcols][:, ~nanrowcols]
 
 
 class SlidingWindowTransformer(BaseEstimator, TransformerMixin):
