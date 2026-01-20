@@ -160,7 +160,7 @@ class TopologicalAnomalyDetector(EllipticEnvelope, TransformerMixin):
 
     def decision_function(self, X):
         """Return the distance to the decision boundary."""
-        return self.offset_ - self.score_samples(X)
+        return self.score_samples(X) - self.offset_
 
     def predict(self, X):
         """Predict inliers (1) and outliers (-1) using learned threshold."""
