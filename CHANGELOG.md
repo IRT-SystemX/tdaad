@@ -1,6 +1,11 @@
 
 # CHANGELOG
 
+## 1.6.0
+- major package refactor and simplification
+- streamlined TopologicalEmbedding pipeline (numpy computations, removed parallel)
+- fix bug (thanks to F. Hudrisier) due to wrong hash usage
+
 ## 1.5.0
 - major computation gains (joblib.Parallel)
 - cleared, streamlined readme with acknowledgements

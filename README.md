@@ -39,7 +39,6 @@
 </div>
 <br>
 
-
 ---
 # TDAAD – Topological Data Analysis for Anomaly Detection
 
@@ -113,7 +112,6 @@ For more advanced usage (e.g. custom embeddings, parameter tuning), see the [exa
     - `window_size` controls the time resolution — larger windows capture slower anomalies, smaller ones detect more localized changes.
     - `n_centers_by_dim` controls the number of reference shapes used per homology dimension (e.g. connected components in H0, loops in H1, ...). Increasing this improves sensitivity but adds computation time.
     - `tda_max_dim` sets the **maximum topological feature dimension** computed (0 = connected components, 1 = loops, 2 = voids, ...). Higher values increase runtime and memory usage.
-- Internally, computations are **parallelized** using `joblib` to scale to larger datasets. Use `n_jobs` to control parallelism.
 - Inputs can be `numpy.ndarray` or `pandas.DataFrame`. Column names are preserved in the output when using DataFrames.
 
 ⚙️ You can typically handle ~100 sensors and a few hundred time steps per window on a modern machine.

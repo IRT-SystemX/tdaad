@@ -7,7 +7,7 @@ learning algorithms designed to detect anomalies in Multiple/Multivariate Time S
 
 """
 
-__version__ = "1.3.2"
+__version__ = "1.6.0"
 
 __all__ = [
     "anomaly_detectors",
