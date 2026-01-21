@@ -1,65 +1,70 @@
 """Topological Embedding Transformers."""
 
 # Author: Martin Royer
-
-from functools import partial
+import numpy as np
+import pandas as pd
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import FunctionTransformer
+from sklearn.preprocessing import FunctionTransformer, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.cluster import KMeans
 
 from gudhi.representations.vector_methods import Atol
-
-from tdaad.utils.tda_functions import transform_to_persistence_diagram
-from tdaad.utils.window_functions import sliding_window_ppl_pp
+from gudhi.sklearn.rips_persistence import RipsPersistence
 
 
-atol_vanilla_fit = Atol.fit
+def numpy_data_to_similarity(X, filter_nan=True):
+    r"""Transforms numpy matrix X into similarity matrix :math:`1-\mathbf{Corr}(X)`."""
+    target = 1 - np.corrcoef(X, rowvar=False)
+    # this filters when a variable is constant -> nan on all rows
+    nanrowcols = np.isnan(target).all(axis=0) if filter_nan else ~target.any(axis=0)
+    return target[~nanrowcols][:, ~nanrowcols]
 
 
-def local_atol_fit(self, X, y=None, sample_weight=None):
-    """local modification to prevent FutureWarning triggered by np.concatenate(X) when X is a pd.Series."""
-    if hasattr(X, "values"):
-        X = X.values
-    return atol_vanilla_fit(self=self, X=X)
+class SlidingWindowTransformer(BaseEstimator, TransformerMixin):
+    """
+    Slice a 2D numpy array into overlapping windows.
 
+    Output: list of 2D numpy arrays, one per window.
+    """
 
-Atol.fit = local_atol_fit
+    def __init__(self, window_size=40, step=5):
+        self.window_size = window_size
+        self.step = step
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        n_rows = X.shape[0]
+        self.window_index_ = list(range(0, n_rows - self.window_size + 1, self.step))
+        return [X[i : i + self.window_size] for i in self.window_index_]
 
 
 class TopologicalEmbedding(BaseEstimator, TransformerMixin):
-    """Topological embedding for multiple time series.
+    """
+    Topological embedding for multivariate time series using sliding windows,
+    persistent homology (Rips), and ATOL vectorization.
 
-    Slices time series into smaller time series windows, forms an affinity matrix on each window
-    and applies a Rips procedure to produce persistence diagrams for each affinity
-    matrix. Then uses Atol [ref:Atol] on each dimension through the
-    gudhi.representation.Archipelago representation to produce topological vectorization.
-
-    Read more in the :ref:`User Guide <topological_embedding>`.
+    Pipeline:
+        Sliding windows -> similarity -> RipsPersistence -> ColumnTransformer(Atol)
 
     Parameters
     ----------
-    window_size : int, default=40
-        Size of the sliding window algorithm to extract subsequences as input to named_pipeline.
-    step : int, default=5
-        Size of the sliding window steps between each window.
-    n_centers_by_dim : int, default=5
-        The number of centroids to generate by dimension for vectorizing topological features.
-        The resulting embedding will have total dimension =< tda_max_dim * n_centers_by_dim.
-        The resulting embedding dimension might be smaller because of the KMeans algorithm in the Archipelago step.
-    tda_max_dim : int, default=2
-        The maximum dimension of the topological feature extraction.
-
-    Examples
-    ----------
-    >>> n_timestamps = 100
-    >>> n_sensors = 5
-    >>> timestamps = pd.to_datetime('2024-01-01', utc=True) + pd.Timedelta(1, 'h') * np.arange(n_timestamps)
-    >>> X = pd.DataFrame(np.random.random(size=(n_timestamps, n_sensors)), index=timestamps)
-    >>> TopologicalEmbedding(n_centers_by_dim=2, tda_max_dim=1).fit_transform(X)
+    window_size : int
+        Number of rows per sliding window.
+    step : int
+        Step size between windows.
+    tda_max_dim : int
+        Maximum homology dimension for RipsPersistence.
+    n_centers_by_dim : int
+        Number of centroids per homology dimension in ATOL.
+    filter_nan : bool
+        Whether to filter NaNs in similarity matrices.
+    output : str, default="pandas"
+        "pandas" returns a DataFrame with proper index and column names.
+        "numpy" returns a numpy array.
     """
 
     def __init__(
@@ -68,68 +73,76 @@ class TopologicalEmbedding(BaseEstimator, TransformerMixin):
         step: int = 5,
         tda_max_dim: int = 2,
         n_centers_by_dim: int = 5,
+        filter_nan: bool = True,
+        output: str = "pandas",
     ):
         self.window_size = window_size
         self.step = step
         self.tda_max_dim = tda_max_dim
         self.n_centers_by_dim = n_centers_by_dim
+        self.filter_nan = filter_nan
+        self.output = output
 
     def _build_pipeline(self):
-        steps = []
-        steps.append(("Standard scaler", StandardScaler()))
-        func = partial(transform_to_persistence_diagram, tda_max_dim=self.tda_max_dim)
-        steps.append(
-            (
-                "Sliding persistence diagram transformer",
-                FunctionTransformer(
-                    func=sliding_window_ppl_pp,
-                    kw_args={
-                        "window_size": self.window_size,
-                        "step": self.step,
-                        "func": func,
-                    },
-                ),
-            )
+        # FunctionTransformer to convert windows -> distance/similarity matrices
+        similarity_fn = FunctionTransformer(
+            func=lambda X_list: [
+                numpy_data_to_similarity(x, filter_nan=self.filter_nan) for x in X_list
+            ]
         )
-        steps.append(
-            (
-                "Archipelago",
-                ColumnTransformer(
-                    [
-                        (
-                            f"Atol{i}",
-                            Atol(
-                                quantiser=KMeans(
-                                    n_clusters=self.n_centers_by_dim,
-                                    random_state=202312,
-                                    n_init="auto",
-                                )
-                            ),
-                            i,
+
+        # Batched RipsPersistence
+        rips_transformer = RipsPersistence(
+            homology_dimensions=range(self.tda_max_dim + 1),
+            input_type="lower distance matrix",
+        )
+
+        # ColumnTransformer: one Atol per homology dimension
+        archipelago_transformer = ColumnTransformer(
+            transformers=[
+                (
+                    f"atol_dim_{i}",
+                    Atol(
+                        quantiser=KMeans(
+                            n_clusters=self.n_centers_by_dim,
+                            random_state=42,
+                            n_init="auto",
                         )
-                        for i in range(self.tda_max_dim + 1)
-                    ]
-                ),
-            )
+                    ),
+                    i,
+                )
+                for i in range(self.tda_max_dim + 1)
+            ]
         )
-        return Pipeline(steps).set_output(transform="pandas")
+
+        # Full sklearn pipeline
+        pipeline = Pipeline(
+            steps=[
+                ("scaler", StandardScaler()),
+                (
+                    "windows",
+                    SlidingWindowTransformer(
+                        window_size=self.window_size, step=self.step
+                    ),
+                ),
+                ("similarity", similarity_fn),
+                ("rips", rips_transformer),
+                ("archipelago", archipelago_transformer),
+            ]
+        )
+
+        return pipeline
 
     def fit(self, X, y=None):
         """
-        Fit the internal pipeline to the data.
+        Fit the full pipeline to the data.
 
         Parameters
         ----------
-        X : pandas.DataFrame
-            Input feature matrix.
+        X : np.ndarray, shape (n_samples, n_features)
+            Input multivariate time series.
 
-        y : array-like, optional
-            Target values (not used here, but accepted for compatibility with sklearn).
-
-        Returns
-        -------
-        self : object
-            Fitted transformer.
+        y : Ignored
         """
         self.pipeline_ = self._build_pipeline()
         self.pipeline_.fit(X, y)
@@ -137,26 +150,18 @@ class TopologicalEmbedding(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         """
-        Apply transformations to the input data using the fitted pipeline.
-
-        Parameters
-        ----------
-        X : pandas.DataFrame
-            Input data to transform.
-
-        Returns
-        -------
-        X_transformed : array-like or DataFrame
-            Transformed data.
+        Transform the input data and return a pandas DataFrame with
+        row index = window start position and columns named feature_0, feature_1, ...
         """
-        return self.pipeline_.transform(X)
+        X_transformed = self.pipeline_.transform(X)
 
-    def fit_transform(self, X, y=None, **fit_params):
-        """
-        Fit to data, then transform it.
+        # Build column names: ph{i}_center{j}
+        columns = [
+            f"ph{i}_center{j + 1}"
+            for i in range(self.tda_max_dim + 1)
+            for j in range(self.n_centers_by_dim)
+        ]
 
-        Returns
-        -------
-        X_transformed : array-like
-        """
-        return self.fit(X, y).transform(X)
+        # Build DataFrame with window index from SlidingWindowTransformer
+        window_index = self.pipeline_.named_steps["windows"].window_index_
+        return pd.DataFrame(X_transformed, index=window_index, columns=columns)
