@@ -39,13 +39,10 @@ jobs:
         cd ..
     - name : Build the documentation
       run: |
-        cp -R _static docs/source/
-        cp -R examples docs/source/
-        rm -f docs/source/tdaad*.rst
-        sphinx-apidoc -o docs/source tdaad
-        cd docs
-        make clean
-        make html
+        cd scripts 
+        chmod +x build_sphinx_documentation_linux.sh
+        ./build_sphinx_documentation_linux.sh
+        cd ..
         
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4
