@@ -1,18 +1,20 @@
-************* Module tdaad
-tdaad/__init__.py:14:4: E0603: Undefined variable name 'persistencediagram_transformer' in __all__ (undefined-all-variable)
 ************* Module tdaad.anomaly_detectors
-tdaad/anomaly_detectors.py:19:0: R0901: Too many ancestors (10/7) (too-many-ancestors)
-tdaad/anomaly_detectors.py:82:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
-tdaad/anomaly_detectors.py:153:31: W0613: Unused argument 'y' (unused-argument)
-tdaad/anomaly_detectors.py:119:8: W0201: Attribute 'topological_embedding_' defined outside __init__ (attribute-defined-outside-init)
-tdaad/anomaly_detectors.py:133:8: W0201: Attribute 'dist_' defined outside __init__ (attribute-defined-outside-init)
-tdaad/anomaly_detectors.py:139:8: W0201: Attribute 'offset_' defined outside __init__ (attribute-defined-outside-init)
-tdaad/anomaly_detectors.py:144:8: W0201: Attribute 'padding_length_' defined outside __init__ (attribute-defined-outside-init)
+tdaad/anomaly_detectors.py:71:0: R0901: Too many ancestors (10/7) (too-many-ancestors)
+tdaad/anomaly_detectors.py:132:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+tdaad/anomaly_detectors.py:203:31: W0613: Unused argument 'y' (unused-argument)
+tdaad/anomaly_detectors.py:169:8: W0201: Attribute 'topological_embedding_' defined outside __init__ (attribute-defined-outside-init)
+tdaad/anomaly_detectors.py:183:8: W0201: Attribute 'dist_' defined outside __init__ (attribute-defined-outside-init)
+tdaad/anomaly_detectors.py:189:8: W0201: Attribute 'offset_' defined outside __init__ (attribute-defined-outside-init)
+tdaad/anomaly_detectors.py:194:8: W0201: Attribute 'padding_length_' defined outside __init__ (attribute-defined-outside-init)
 ************* Module tdaad.topological_embedding
-tdaad/topological_embedding.py:23:28: W0613: Unused argument 'y' (unused-argument)
-tdaad/topological_embedding.py:23:36: W0613: Unused argument 'sample_weight' (unused-argument)
-tdaad/topological_embedding.py:134:8: W0201: Attribute 'pipeline_' defined outside __init__ (attribute-defined-outside-init)
+tdaad/topological_embedding.py:36:4: C0116: Missing function or method docstring (missing-function-docstring)
+tdaad/topological_embedding.py:36:18: W0613: Unused argument 'X' (unused-argument)
+tdaad/topological_embedding.py:36:21: W0613: Unused argument 'y' (unused-argument)
+tdaad/topological_embedding.py:39:4: C0116: Missing function or method docstring (missing-function-docstring)
+tdaad/topological_embedding.py:41:8: W0201: Attribute 'window_index_' defined outside __init__ (attribute-defined-outside-init)
+tdaad/topological_embedding.py:70:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+tdaad/topological_embedding.py:147:8: W0201: Attribute 'pipeline_' defined outside __init__ (attribute-defined-outside-init)
 
 -----------------------------------
-Your code has been rated at 8.94/10
+Your code has been rated at 8.72/10
 

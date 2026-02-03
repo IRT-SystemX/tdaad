@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🔎 Tdaad package &mdash; Topological Data Analysis for Anomaly Detection 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=01f34227"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -86,18 +86,6 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="tdaad.html">tdaad package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tdaad.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tdaad.utils.html">tdaad.utils package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="tdaad.utils.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tdaad.utils.html#module-tdaad.utils.local_elliptic_envelope">tdaad.utils.local_elliptic_envelope module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tdaad.utils.html#module-tdaad.utils.remapping_functions">tdaad.utils.remapping_functions module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tdaad.utils.html#module-tdaad.utils.tda_functions">tdaad.utils.tda_functions module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tdaad.utils.html#module-tdaad.utils.window_functions">tdaad.utils.window_functions module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tdaad.utils.html#module-tdaad.utils">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="tdaad.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tdaad.html#module-tdaad.anomaly_detectors">tdaad.anomaly_detectors module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="tdaad.html#tdaad.anomaly_detectors.TopologicalAnomalyDetector"><code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code></a><ul>
@@ -105,21 +93,25 @@
 <li class="toctree-l4"><a class="reference internal" href="tdaad.html#tdaad.anomaly_detectors.TopologicalAnomalyDetector.decision_function"><code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector.decision_function()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="tdaad.html#tdaad.anomaly_detectors.TopologicalAnomalyDetector.fit"><code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector.fit()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="tdaad.html#tdaad.anomaly_detectors.TopologicalAnomalyDetector.predict"><code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector.predict()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="tdaad.html#tdaad.anomaly_detectors.TopologicalAnomalyDetector.required_properties"><code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector.required_properties</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="tdaad.html#tdaad.anomaly_detectors.TopologicalAnomalyDetector.score_samples"><code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector.score_samples()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="tdaad.html#tdaad.anomaly_detectors.TopologicalAnomalyDetector.transform"><code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector.transform()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="tdaad.html#tdaad.anomaly_detectors.score_flat_fast_remapping"><code class="docutils literal notranslate"><span class="pre">score_flat_fast_remapping()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tdaad.html#module-tdaad.topological_embedding">tdaad.topological_embedding module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tdaad.html#tdaad.topological_embedding.SlidingWindowTransformer"><code class="docutils literal notranslate"><span class="pre">SlidingWindowTransformer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tdaad.html#tdaad.topological_embedding.SlidingWindowTransformer.fit"><code class="docutils literal notranslate"><span class="pre">SlidingWindowTransformer.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="tdaad.html#tdaad.topological_embedding.SlidingWindowTransformer.transform"><code class="docutils literal notranslate"><span class="pre">SlidingWindowTransformer.transform()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="tdaad.html#tdaad.topological_embedding.TopologicalEmbedding"><code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="tdaad.html#tdaad.topological_embedding.TopologicalEmbedding.fit"><code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding.fit()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="tdaad.html#tdaad.topological_embedding.TopologicalEmbedding.fit_transform"><code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding.fit_transform()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="tdaad.html#tdaad.topological_embedding.TopologicalEmbedding.transform"><code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding.transform()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="tdaad.html#tdaad.topological_embedding.local_atol_fit"><code class="docutils literal notranslate"><span class="pre">local_atol_fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tdaad.html#tdaad.topological_embedding.numpy_data_to_similarity"><code class="docutils literal notranslate"><span class="pre">numpy_data_to_similarity()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tdaad.html#module-tdaad">Module contents</a><ul>
@@ -143,7 +135,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Martin Royer.</p>
+    <p>&#169; Copyright 2026, Martin Royer.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

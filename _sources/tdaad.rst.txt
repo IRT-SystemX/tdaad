@@ -1,14 +1,6 @@
 tdaad package
 =============
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   tdaad.utils
-
 Submodules
 ----------
 

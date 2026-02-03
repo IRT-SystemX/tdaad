@@ -8,18 +8,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Learning on a modified Ornstein–Uhlenbeck process &mdash; Topological Data Analysis for Anomaly Detection 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -99,15 +99,17 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">ornstein_uhlenbeck_anomaly</span><span class="p">(</span>
-        <span class="n">t</span><span class="p">,</span>
-        <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">noise_scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">mean_reverting</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">anomaly_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">anomaly_duration</span><span class="o">=</span><span class="mf">.1</span><span class="p">,</span>
-        <span class="n">anomaly_scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">seed</span><span class="o">=</span><span class="mi">314</span><span class="p">,</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ornstein_uhlenbeck_anomaly</span><span class="p">(</span>
+    <span class="n">t</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">noise_scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">mean_reverting</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">anomaly_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">anomaly_duration</span><span class="o">=</span><span class="mf">.1</span><span class="p">,</span>
+    <span class="n">anomaly_scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">314</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">length</span><span class="p">,</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">shape</span>
@@ -185,10 +187,12 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.utils.tda_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">transform_to_persistence_diagram</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.topological_embedding</span><span class="w"> </span><span class="kn">import</span> <span class="n">numpy_data_to_similarity</span><span class="p">,</span> <span class="n">RipsPersistence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gudhi</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_persistence_diagram</span>
 
-<span class="n">global_pdiagram</span> <span class="o">=</span> <span class="n">transform_to_persistence_diagram</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tda_max_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">sim_matrix</span> <span class="o">=</span> <span class="n">numpy_data_to_similarity</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">rips</span> <span class="o">=</span> <span class="n">RipsPersistence</span><span class="p">(</span><span class="n">homology_dimensions</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;lower distance matrix&quot;</span><span class="p">)</span>
+<span class="n">global_pdiagram</span> <span class="o">=</span> <span class="n">rips</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">sim_matrix</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">plot_persistence_diagram</span><span class="p">(</span><span class="n">global_pdiagram</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -220,7 +224,8 @@
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">swv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">stride_tricks</span><span class="o">.</span><span class="n">sliding_window_view</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">//</span><span class="mi">2</span><span class="p">)[::</span><span class="mi">200</span><span class="p">,</span> <span class="p">:]</span>
 
 <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="n">swv</span><span class="p">:</span>
-    <span class="n">pdiagram</span> <span class="o">=</span> <span class="n">transform_to_persistence_diagram</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">window</span><span class="p">],</span> <span class="n">tda_max_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">sim_matrix</span> <span class="o">=</span> <span class="n">numpy_data_to_similarity</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">window</span><span class="p">])</span>
+    <span class="n">pdiagram</span> <span class="o">=</span> <span class="n">rips</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">sim_matrix</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">window</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_persistence_diagram</span><span class="p">(</span><span class="n">pdiagram</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">window</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
@@ -276,172 +281,32 @@
 <p>Selecting a number of encoding points by dimension, <code class="docutils literal notranslate"><span class="pre">n_centers_by_dim</span></code>, this results in a <em>representation method</em> we call <code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding</span></code>.</p>
 <p>Now we apply the procedure from before with the sliding window algorithm. So instead of a single embedding vector, we get a vector for each window in the timeseries <code class="docutils literal notranslate"><span class="pre">X</span></code>:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.topological_embedding</span><span class="w"> </span><span class="kn">import</span> <span class="n">TopologicalEmbedding</span>
 
 <span class="n">embedder</span> <span class="o">=</span> <span class="n">TopologicalEmbedding</span><span class="p">(</span><span class="n">window_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">n_centers_by_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 <span class="n">embedding</span> <span class="o">=</span> <span class="n">embedder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-<span class="n">embedding</span>
+<span class="n">embedding</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subplots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Atol0__Atol Center 1</th>
-      <th>Atol0__Atol Center 2</th>
-      <th>Atol1__Atol Center 1</th>
-      <th>Atol1__Atol Center 2</th>
-      <th>Atol2__Atol Center 1</th>
-      <th>Atol2__Atol Center 2</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>5876e224e0e2cc76cf88d99658e19a5d05f17053</th>
-      <td>8.014427</td>
-      <td>8.337348</td>
-      <td>0.139429</td>
-      <td>2.369379</td>
-      <td>1.041305</td>
-      <td>0.869459</td>
-    </tr>
-    <tr>
-      <th>efa37009e7d2560f20e9baed56c1dd228fb57324</th>
-      <td>7.646981</td>
-      <td>8.840381</td>
-      <td>0.905686</td>
-      <td>0.737120</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>59b90ed4fa88ee1a1db0b4de013b52ebc509cb7c</th>
-      <td>8.490968</td>
-      <td>7.406048</td>
-      <td>1.041629</td>
-      <td>1.851082</td>
-      <td>0.934886</td>
-      <td>0.006830</td>
-    </tr>
-    <tr>
-      <th>c389c33d12111c0f7710f8d0c02fe459cf6d03d0</th>
-      <td>8.781508</td>
-      <td>7.212324</td>
-      <td>1.795035</td>
-      <td>1.523272</td>
-      <td>0.009076</td>
-      <td>0.957346</td>
-    </tr>
-    <tr>
-      <th>78405d0ae4b74c3bb0232b5ca3963e421d920151</th>
-      <td>10.458802</td>
-      <td>5.208043</td>
-      <td>1.027982</td>
-      <td>1.873740</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>02b39cfe47c2e5b6c8efcc391f71294fa3d308e9</th>
-      <td>9.582538</td>
-      <td>4.739616</td>
-      <td>0.158071</td>
-      <td>1.707738</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>ed2c3fa613fbe7d8c3f1ac35e1a7cae4257b1f5e</th>
-      <td>9.188312</td>
-      <td>5.705798</td>
-      <td>0.003870</td>
-      <td>1.839969</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>a6cf12b25e6e042083b9bb6de3b5a6032e8ba9de</th>
-      <td>9.862403</td>
-      <td>6.028840</td>
-      <td>0.504404</td>
-      <td>1.867278</td>
-      <td>0.128751</td>
-      <td>0.723518</td>
-    </tr>
-    <tr>
-      <th>0d55a03c9d97f415f1451826bd98971b0dee2235</th>
-      <td>8.202467</td>
-      <td>7.330862</td>
-      <td>0.080560</td>
-      <td>2.732715</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>3139931912f8b6d1541e63495662bbc421644b45</th>
-      <td>8.475916</td>
-      <td>6.191814</td>
-      <td>1.013029</td>
-      <td>2.501380</td>
-      <td>0.205330</td>
-      <td>1.519385</td>
-    </tr>
-  </tbody>
-</table>
-<p>191 rows × 6 columns</p>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
-<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;text.usetex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="n">embedding</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-<span class="n">axes</span> <span class="o">=</span> <span class="n">embedding</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subplots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="c1"># for ax in axes:</span>
-    <span class="c1"># ax.get_xaxis().set_visible(False)</span>
-</pre></div>
-</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([&lt;Axes: &gt;, &lt;Axes: &gt;, &lt;Axes: &gt;, &lt;Axes: &gt;, &lt;Axes: &gt;, &lt;Axes: &gt;],
+      dtype=object)
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/examples_oua_tutorial_15_0.png" src="../_images/examples_oua_tutorial_15_0.png" />
+<img alt="../_images/examples_oua_tutorial_14_1.png" src="../_images/examples_oua_tutorial_14_1.png" />
 </div>
 </div>
 </section>
@@ -461,270 +326,262 @@
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-X.shape[0]=1000, self.window_size=50, self.step=5, so running self.padding_length_=0...
-</pre></div></div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([  -3.62090796,   -3.62090796,   -3.62090796,   -3.62090796,
-         -3.62090796,  -10.08873951,  -10.08873951,  -10.08873951,
-        -10.08873951,  -10.08873951,  -10.78583457,  -10.78583457,
-        -10.78583457,  -10.78583457,  -10.78583457,  -12.18904978,
-        -12.18904978,  -12.18904978,  -12.18904978,  -12.18904978,
-        -12.72126438,  -12.72126438,  -12.72126438,  -12.72126438,
-        -12.72126438,  -17.02984659,  -17.02984659,  -17.02984659,
-        -17.02984659,  -17.02984659,  -18.43424569,  -18.43424569,
-        -18.43424569,  -18.43424569,  -18.43424569,  -23.00511013,
-        -23.00511013,  -23.00511013,  -23.00511013,  -23.00511013,
-        -25.57913524,  -25.57913524,  -25.57913524,  -25.57913524,
-        -25.57913524,  -31.57776802,  -31.57776802,  -31.57776802,
-        -31.57776802,  -31.57776802,  -31.45946288,  -31.45946288,
-        -31.45946288,  -31.45946288,  -31.45946288,  -32.41516313,
-        -32.41516313,  -32.41516313,  -32.41516313,  -32.41516313,
-        -33.62752756,  -33.62752756,  -33.62752756,  -33.62752756,
-        -33.62752756,  -34.02074975,  -34.02074975,  -34.02074975,
-        -34.02074975,  -34.02074975,  -38.5246302 ,  -38.5246302 ,
-        -38.5246302 ,  -38.5246302 ,  -38.5246302 ,  -38.63818671,
-        -38.63818671,  -38.63818671,  -38.63818671,  -38.63818671,
-        -39.28788031,  -39.28788031,  -39.28788031,  -39.28788031,
-        -39.28788031,  -42.6035978 ,  -42.6035978 ,  -42.6035978 ,
-        -42.6035978 ,  -42.6035978 ,  -50.29238806,  -50.29238806,
-        -50.29238806,  -50.29238806,  -50.29238806,  -46.10305427,
-        -46.10305427,  -46.10305427,  -46.10305427,  -46.10305427,
-        -50.10379525,  -50.10379525,  -50.10379525,  -50.10379525,
-        -50.10379525,  -48.43836262,  -48.43836262,  -48.43836262,
-        -48.43836262,  -48.43836262,  -47.72314895,  -47.72314895,
-        -47.72314895,  -47.72314895,  -47.72314895,  -47.91093761,
-        -47.91093761,  -47.91093761,  -47.91093761,  -47.91093761,
-        -47.98965423,  -47.98965423,  -47.98965423,  -47.98965423,
-        -47.98965423,  -45.11052359,  -45.11052359,  -45.11052359,
-        -45.11052359,  -45.11052359,  -46.47204516,  -46.47204516,
-        -46.47204516,  -46.47204516,  -46.47204516,  -39.44578881,
-        -39.44578881,  -39.44578881,  -39.44578881,  -39.44578881,
-        -32.90720578,  -32.90720578,  -32.90720578,  -32.90720578,
-        -32.90720578,  -35.10904563,  -35.10904563,  -35.10904563,
-        -35.10904563,  -35.10904563,  -32.45779434,  -32.45779434,
-        -32.45779434,  -32.45779434,  -32.45779434,  -28.93868572,
-        -28.93868572,  -28.93868572,  -28.93868572,  -28.93868572,
-        -31.70128123,  -31.70128123,  -31.70128123,  -31.70128123,
-        -31.70128123,  -32.31686914,  -32.31686914,  -32.31686914,
-        -32.31686914,  -32.31686914,  -30.90304808,  -30.90304808,
-        -30.90304808,  -30.90304808,  -30.90304808,  -37.61721775,
-        -37.61721775,  -37.61721775,  -37.61721775,  -37.61721775,
-        -47.14621736,  -47.14621736,  -47.14621736,  -47.14621736,
-        -47.14621736,  -53.92175157,  -53.92175157,  -53.92175157,
-        -53.92175157,  -53.92175157,  -52.31800896,  -52.31800896,
-        -52.31800896,  -52.31800896,  -52.31800896,  -55.03285144,
-        -55.03285144,  -55.03285144,  -55.03285144,  -55.03285144,
-        -52.78405115,  -52.78405115,  -52.78405115,  -52.78405115,
-        -52.78405115,  -54.53167815,  -54.53167815,  -54.53167815,
-        -54.53167815,  -54.53167815,  -52.09853585,  -52.09853585,
-        -52.09853585,  -52.09853585,  -52.09853585,  -53.56135449,
-        -53.56135449,  -53.56135449,  -53.56135449,  -53.56135449,
-        -52.1935825 ,  -52.1935825 ,  -52.1935825 ,  -52.1935825 ,
-        -52.1935825 ,  -49.5214615 ,  -49.5214615 ,  -49.5214615 ,
-        -49.5214615 ,  -49.5214615 ,  -40.56280223,  -40.56280223,
-        -40.56280223,  -40.56280223,  -40.56280223,  -44.41263656,
-        -44.41263656,  -44.41263656,  -44.41263656,  -44.41263656,
-        -48.66065978,  -48.66065978,  -48.66065978,  -48.66065978,
-        -48.66065978,  -49.99896066,  -49.99896066,  -49.99896066,
-        -49.99896066,  -49.99896066,  -49.34922552,  -49.34922552,
-        -49.34922552,  -49.34922552,  -49.34922552,  -54.0744707 ,
-        -54.0744707 ,  -54.0744707 ,  -54.0744707 ,  -54.0744707 ,
-        -66.11419323,  -66.11419323,  -66.11419323,  -66.11419323,
-        -66.11419323,  -75.57244603,  -75.57244603,  -75.57244603,
-        -75.57244603,  -75.57244603,  -80.82660304,  -80.82660304,
-        -80.82660304,  -80.82660304,  -80.82660304,  -78.05884369,
-        -78.05884369,  -78.05884369,  -78.05884369,  -78.05884369,
-        -77.59082894,  -77.59082894,  -77.59082894,  -77.59082894,
-        -77.59082894,  -69.23543809,  -69.23543809,  -69.23543809,
-        -69.23543809,  -69.23543809,  -69.03692792,  -69.03692792,
-        -69.03692792,  -69.03692792,  -69.03692792,  -63.27832293,
-        -63.27832293,  -63.27832293,  -63.27832293,  -63.27832293,
-        -67.06954701,  -67.06954701,  -67.06954701,  -67.06954701,
-        -67.06954701,  -61.91295318,  -61.91295318,  -61.91295318,
-        -61.91295318,  -61.91295318,  -52.12720126,  -52.12720126,
-        -52.12720126,  -52.12720126,  -52.12720126,  -43.39671989,
-        -43.39671989,  -43.39671989,  -43.39671989,  -43.39671989,
-        -41.34592409,  -41.34592409,  -41.34592409,  -41.34592409,
-        -41.34592409,  -45.94835351,  -45.94835351,  -45.94835351,
-        -45.94835351,  -45.94835351,  -45.18761033,  -45.18761033,
-        -45.18761033,  -45.18761033,  -45.18761033,  -50.88942775,
-        -50.88942775,  -50.88942775,  -50.88942775,  -50.88942775,
-        -47.30047383,  -47.30047383,  -47.30047383,  -47.30047383,
-        -47.30047383,  -48.33243339,  -48.33243339,  -48.33243339,
-        -48.33243339,  -48.33243339,  -48.65493539,  -48.65493539,
-        -48.65493539,  -48.65493539,  -48.65493539,  -52.78563103,
-        -52.78563103,  -52.78563103,  -52.78563103,  -52.78563103,
-        -50.76485606,  -50.76485606,  -50.76485606,  -50.76485606,
-        -50.76485606,  -58.03554053,  -58.03554053,  -58.03554053,
-        -58.03554053,  -58.03554053,  -63.73312163,  -63.73312163,
-        -63.73312163,  -63.73312163,  -63.73312163,  -74.63117375,
-        -74.63117375,  -74.63117375,  -74.63117375,  -74.63117375,
-        -85.15165911,  -85.15165911,  -85.15165911,  -85.15165911,
-        -85.15165911,  -82.42196279,  -82.42196279,  -82.42196279,
-        -82.42196279,  -82.42196279,  -82.5435437 ,  -82.5435437 ,
-        -82.5435437 ,  -82.5435437 ,  -82.5435437 ,  -82.85375948,
-        -82.85375948,  -82.85375948,  -82.85375948,  -82.85375948,
-        -77.87969231,  -77.87969231,  -77.87969231,  -77.87969231,
-        -77.87969231,  -73.5448301 ,  -73.5448301 ,  -73.5448301 ,
-        -73.5448301 ,  -73.5448301 ,  -73.9658258 ,  -73.9658258 ,
-        -73.9658258 ,  -73.9658258 ,  -73.9658258 ,  -63.79194345,
-        -63.79194345,  -63.79194345,  -63.79194345,  -63.79194345,
-        -57.58108672,  -57.58108672,  -57.58108672,  -57.58108672,
-        -57.58108672,  -40.23220596,  -40.23220596,  -40.23220596,
-        -40.23220596,  -40.23220596,  -41.56030716,  -41.56030716,
-        -41.56030716,  -41.56030716,  -41.56030716,  -77.93239779,
-        -77.93239779,  -77.93239779,  -77.93239779,  -77.93239779,
-       -127.48673713, -127.48673713, -127.48673713, -127.48673713,
-       -127.48673713, -179.34701167, -179.34701167, -179.34701167,
-       -179.34701167, -179.34701167, -267.51322046, -267.51322046,
-       -267.51322046, -267.51322046, -267.51322046, -359.26298608,
-       -359.26298608, -359.26298608, -359.26298608, -359.26298608,
-       -418.5569144 , -418.5569144 , -418.5569144 , -418.5569144 ,
-       -418.5569144 , -453.42889887, -453.42889887, -453.42889887,
-       -453.42889887, -453.42889887, -464.27793693, -464.27793693,
-       -464.27793693, -464.27793693, -464.27793693, -466.90705157,
-       -466.90705157, -466.90705157, -466.90705157, -466.90705157,
-       -453.13421738, -453.13421738, -453.13421738, -453.13421738,
-       -453.13421738, -414.78888627, -414.78888627, -414.78888627,
-       -414.78888627, -414.78888627, -367.4540131 , -367.4540131 ,
-       -367.4540131 , -367.4540131 , -367.4540131 , -315.54657638,
-       -315.54657638, -315.54657638, -315.54657638, -315.54657638,
-       -248.04666653, -248.04666653, -248.04666653, -248.04666653,
-       -248.04666653, -183.59516919, -183.59516919, -183.59516919,
-       -183.59516919, -183.59516919, -175.06735838, -175.06735838,
-       -175.06735838, -175.06735838, -175.06735838, -199.89003815,
-       -199.89003815, -199.89003815, -199.89003815, -199.89003815,
-       -260.83807633, -260.83807633, -260.83807633, -260.83807633,
-       -260.83807633, -322.20340895, -322.20340895, -322.20340895,
-       -322.20340895, -322.20340895, -350.42226808, -350.42226808,
-       -350.42226808, -350.42226808, -350.42226808, -363.25798328,
-       -363.25798328, -363.25798328, -363.25798328, -363.25798328,
-       -363.70676502, -363.70676502, -363.70676502, -363.70676502,
-       -363.70676502, -378.28090278, -378.28090278, -378.28090278,
-       -378.28090278, -378.28090278, -362.05856559, -362.05856559,
-       -362.05856559, -362.05856559, -362.05856559, -338.8806949 ,
-       -338.8806949 , -338.8806949 , -338.8806949 , -338.8806949 ,
-       -287.62828084, -287.62828084, -287.62828084, -287.62828084,
-       -287.62828084, -227.48131613, -227.48131613, -227.48131613,
-       -227.48131613, -227.48131613, -151.86148195, -151.86148195,
-       -151.86148195, -151.86148195, -151.86148195,  -89.60697089,
-        -89.60697089,  -89.60697089,  -89.60697089,  -89.60697089,
-        -63.29330952,  -63.29330952,  -63.29330952,  -63.29330952,
-        -63.29330952,  -49.55795657,  -49.55795657,  -49.55795657,
-        -49.55795657,  -49.55795657,  -47.045813  ,  -47.045813  ,
-        -47.045813  ,  -47.045813  ,  -47.045813  ,  -30.29376241,
-        -30.29376241,  -30.29376241,  -30.29376241,  -30.29376241,
-        -36.00891023,  -36.00891023,  -36.00891023,  -36.00891023,
-        -36.00891023,  -32.32139204,  -32.32139204,  -32.32139204,
-        -32.32139204,  -32.32139204,  -35.02436513,  -35.02436513,
-        -35.02436513,  -35.02436513,  -35.02436513,  -37.67405456,
-        -37.67405456,  -37.67405456,  -37.67405456,  -37.67405456,
-        -39.80933939,  -39.80933939,  -39.80933939,  -39.80933939,
-        -39.80933939,  -38.33560525,  -38.33560525,  -38.33560525,
-        -38.33560525,  -38.33560525,  -44.42853951,  -44.42853951,
-        -44.42853951,  -44.42853951,  -44.42853951,  -45.64543219,
-        -45.64543219,  -45.64543219,  -45.64543219,  -45.64543219,
-        -45.21862114,  -45.21862114,  -45.21862114,  -45.21862114,
-        -45.21862114,  -51.07988061,  -51.07988061,  -51.07988061,
-        -51.07988061,  -51.07988061,  -42.04076733,  -42.04076733,
-        -42.04076733,  -42.04076733,  -42.04076733,  -42.36440188,
-        -42.36440188,  -42.36440188,  -42.36440188,  -42.36440188,
-        -38.80380634,  -38.80380634,  -38.80380634,  -38.80380634,
-        -38.80380634,  -38.30312025,  -38.30312025,  -38.30312025,
-        -38.30312025,  -38.30312025,  -42.33929893,  -42.33929893,
-        -42.33929893,  -42.33929893,  -42.33929893,  -43.07194965,
-        -43.07194965,  -43.07194965,  -43.07194965,  -43.07194965,
-        -38.68956918,  -38.68956918,  -38.68956918,  -38.68956918,
-        -38.68956918,  -41.26557772,  -41.26557772,  -41.26557772,
-        -41.26557772,  -41.26557772,  -39.44063089,  -39.44063089,
-        -39.44063089,  -39.44063089,  -39.44063089,  -41.09613501,
-        -41.09613501,  -41.09613501,  -41.09613501,  -41.09613501,
-        -47.16798911,  -47.16798911,  -47.16798911,  -47.16798911,
-        -47.16798911,  -46.87630374,  -46.87630374,  -46.87630374,
-        -46.87630374,  -46.87630374,  -54.2742902 ,  -54.2742902 ,
-        -54.2742902 ,  -54.2742902 ,  -54.2742902 ,  -52.03250394,
-        -52.03250394,  -52.03250394,  -52.03250394,  -52.03250394,
-        -47.83084237,  -47.83084237,  -47.83084237,  -47.83084237,
-        -47.83084237,  -47.86537761,  -47.86537761,  -47.86537761,
-        -47.86537761,  -47.86537761,  -46.08389818,  -46.08389818,
-        -46.08389818,  -46.08389818,  -46.08389818,  -40.66600449,
-        -40.66600449,  -40.66600449,  -40.66600449,  -40.66600449,
-        -42.74159983,  -42.74159983,  -42.74159983,  -42.74159983,
-        -42.74159983,  -34.44249623,  -34.44249623,  -34.44249623,
-        -34.44249623,  -34.44249623,  -31.23243547,  -31.23243547,
-        -31.23243547,  -31.23243547,  -31.23243547,  -30.11961397,
-        -30.11961397,  -30.11961397,  -30.11961397,  -30.11961397,
-        -22.88610359,  -22.88610359,  -22.88610359,  -22.88610359,
-        -22.88610359,  -22.66522498,  -22.66522498,  -22.66522498,
-        -22.66522498,  -22.66522498,  -22.8258467 ,  -22.8258467 ,
-        -22.8258467 ,  -22.8258467 ,  -22.8258467 ,  -25.37145157,
-        -25.37145157,  -25.37145157,  -25.37145157,  -25.37145157,
-        -29.45671685,  -29.45671685,  -29.45671685,  -29.45671685,
-        -29.45671685,  -36.30382435,  -36.30382435,  -36.30382435,
-        -36.30382435,  -36.30382435,  -64.88047059,  -64.88047059,
-        -64.88047059,  -64.88047059,  -64.88047059,  -90.40117992,
-        -90.40117992,  -90.40117992,  -90.40117992,  -90.40117992,
-       -117.85854224, -117.85854224, -117.85854224, -117.85854224,
-       -117.85854224, -146.65567437, -146.65567437, -146.65567437,
-       -146.65567437, -146.65567437, -175.4335766 , -175.4335766 ,
-       -175.4335766 , -175.4335766 , -175.4335766 , -213.1768593 ,
-       -213.1768593 , -213.1768593 , -213.1768593 , -213.1768593 ,
-       -246.36052771, -246.36052771, -246.36052771, -246.36052771,
-       -246.36052771, -254.07443916, -254.07443916, -254.07443916,
-       -254.07443916, -254.07443916, -263.73274134, -263.73274134,
-       -263.73274134, -263.73274134, -263.73274134, -258.03283753,
-       -258.03283753, -258.03283753, -258.03283753, -258.03283753,
-       -233.33633164, -233.33633164, -233.33633164, -233.33633164,
-       -233.33633164, -209.26667778, -209.26667778, -209.26667778,
-       -209.26667778, -209.26667778, -198.50333932, -198.50333932,
-       -198.50333932, -198.50333932, -198.50333932, -192.19746949,
-       -192.19746949, -192.19746949, -192.19746949, -192.19746949,
-       -182.44656671, -182.44656671, -182.44656671, -182.44656671,
-       -182.44656671, -164.21427251, -164.21427251, -164.21427251,
-       -164.21427251, -164.21427251, -143.79641255, -143.79641255,
-       -143.79641255, -143.79641255, -143.79641255, -140.67194607,
-       -140.67194607, -140.67194607, -140.67194607, -140.67194607,
-       -124.58322603, -124.58322603, -124.58322603, -124.58322603,
-       -124.58322603, -124.89753589, -124.89753589, -124.89753589,
-       -124.89753589, -124.89753589, -125.11225829, -125.11225829,
-       -125.11225829, -125.11225829, -125.11225829, -125.81703407,
-       -125.81703407, -125.81703407, -125.81703407, -125.81703407,
-       -106.96613932, -106.96613932, -106.96613932, -106.96613932,
-       -106.96613932,  -83.17853528,  -83.17853528,  -83.17853528,
-        -83.17853528,  -83.17853528,  -69.41292893,  -69.41292893,
-        -69.41292893,  -69.41292893,  -69.41292893,  -54.03692269,
-        -54.03692269,  -54.03692269,  -54.03692269,  -54.03692269,
-        -40.53106631,  -40.53106631,  -40.53106631,  -40.53106631,
-        -40.53106631,  -33.3205849 ,  -33.3205849 ,  -33.3205849 ,
-        -33.3205849 ,  -33.3205849 ,  -36.37400949,  -36.37400949,
-        -36.37400949,  -36.37400949,  -36.37400949,  -35.64897529,
-        -35.64897529,  -35.64897529,  -35.64897529,  -35.64897529,
-        -29.56753594,  -29.56753594,  -29.56753594,  -29.56753594,
-        -29.56753594,  -29.09557814,  -29.09557814,  -29.09557814,
-        -29.09557814,  -29.09557814,  -27.99146529,  -27.99146529,
-        -27.99146529,  -27.99146529,  -27.99146529,  -26.58469763,
-        -26.58469763,  -26.58469763,  -26.58469763,  -26.58469763,
-        -20.32485707,  -20.32485707,  -20.32485707,  -20.32485707,
-        -20.32485707,  -15.06863064,  -15.06863064,  -15.06863064,
-        -15.06863064,  -15.06863064,  -12.47770867,  -12.47770867,
-        -12.47770867,  -12.47770867,  -12.47770867,  -10.55085402,
-        -10.55085402,  -10.55085402,  -10.55085402,  -10.55085402,
-         -7.17536086,   -7.17536086,   -7.17536086,   -7.17536086,
-         -7.17536086,   -4.83432784,   -4.83432784,   -4.83432784,
-         -4.83432784,   -4.83432784,   -4.13833286,   -4.13833286,
-         -4.13833286,   -4.13833286,   -4.13833286,   -1.81402187,
-         -1.81402187,   -1.81402187,   -1.81402187,   -1.81402187])
+array([  -3.66095551,   -3.66095551,   -3.66095551,   -3.66095551,
+         -3.66095551,  -10.15469689,  -10.15469689,  -10.15469689,
+        -10.15469689,  -10.15469689,  -10.83554506,  -10.83554506,
+        -10.83554506,  -10.83554506,  -10.83554506,  -12.26298224,
+        -12.26298224,  -12.26298224,  -12.26298224,  -12.26298224,
+        -12.81018062,  -12.81018062,  -12.81018062,  -12.81018062,
+        -12.81018062,  -17.13168556,  -17.13168556,  -17.13168556,
+        -17.13168556,  -17.13168556,  -18.49040837,  -18.49040837,
+        -18.49040837,  -18.49040837,  -18.49040837,  -23.058788  ,
+        -23.058788  ,  -23.058788  ,  -23.058788  ,  -23.058788  ,
+        -25.74936893,  -25.74936893,  -25.74936893,  -25.74936893,
+        -25.74936893,  -31.76809574,  -31.76809574,  -31.76809574,
+        -31.76809574,  -31.76809574,  -31.6051606 ,  -31.6051606 ,
+        -31.6051606 ,  -31.6051606 ,  -31.6051606 ,  -32.50561294,
+        -32.50561294,  -32.50561294,  -32.50561294,  -32.50561294,
+        -33.68754803,  -33.68754803,  -33.68754803,  -33.68754803,
+        -33.68754803,  -34.03379664,  -34.03379664,  -34.03379664,
+        -34.03379664,  -34.03379664,  -38.48145452,  -38.48145452,
+        -38.48145452,  -38.48145452,  -38.48145452,  -38.65560478,
+        -38.65560478,  -38.65560478,  -38.65560478,  -38.65560478,
+        -39.41334971,  -39.41334971,  -39.41334971,  -39.41334971,
+        -39.41334971,  -42.90029229,  -42.90029229,  -42.90029229,
+        -42.90029229,  -42.90029229,  -50.69685329,  -50.69685329,
+        -50.69685329,  -50.69685329,  -50.69685329,  -46.41068804,
+        -46.41068804,  -46.41068804,  -46.41068804,  -46.41068804,
+        -50.40098257,  -50.40098257,  -50.40098257,  -50.40098257,
+        -50.40098257,  -48.82996051,  -48.82996051,  -48.82996051,
+        -48.82996051,  -48.82996051,  -48.15491751,  -48.15491751,
+        -48.15491751,  -48.15491751,  -48.15491751,  -48.29162426,
+        -48.29162426,  -48.29162426,  -48.29162426,  -48.29162426,
+        -48.351086  ,  -48.351086  ,  -48.351086  ,  -48.351086  ,
+        -48.351086  ,  -45.42569388,  -45.42569388,  -45.42569388,
+        -45.42569388,  -45.42569388,  -46.66366825,  -46.66366825,
+        -46.66366825,  -46.66366825,  -46.66366825,  -39.50706012,
+        -39.50706012,  -39.50706012,  -39.50706012,  -39.50706012,
+        -32.81582863,  -32.81582863,  -32.81582863,  -32.81582863,
+        -32.81582863,  -35.09661565,  -35.09661565,  -35.09661565,
+        -35.09661565,  -35.09661565,  -32.39007233,  -32.39007233,
+        -32.39007233,  -32.39007233,  -32.39007233,  -28.69533847,
+        -28.69533847,  -28.69533847,  -28.69533847,  -28.69533847,
+        -31.37682114,  -31.37682114,  -31.37682114,  -31.37682114,
+        -31.37682114,  -32.13845418,  -32.13845418,  -32.13845418,
+        -32.13845418,  -32.13845418,  -30.67979283,  -30.67979283,
+        -30.67979283,  -30.67979283,  -30.67979283,  -37.3618799 ,
+        -37.3618799 ,  -37.3618799 ,  -37.3618799 ,  -37.3618799 ,
+        -46.96822549,  -46.96822549,  -46.96822549,  -46.96822549,
+        -46.96822549,  -53.80529255,  -53.80529255,  -53.80529255,
+        -53.80529255,  -53.80529255,  -52.0405797 ,  -52.0405797 ,
+        -52.0405797 ,  -52.0405797 ,  -52.0405797 ,  -54.72270732,
+        -54.72270732,  -54.72270732,  -54.72270732,  -54.72270732,
+        -52.53029249,  -52.53029249,  -52.53029249,  -52.53029249,
+        -52.53029249,  -54.32162649,  -54.32162649,  -54.32162649,
+        -54.32162649,  -54.32162649,  -51.97379877,  -51.97379877,
+        -51.97379877,  -51.97379877,  -51.97379877,  -53.41448976,
+        -53.41448976,  -53.41448976,  -53.41448976,  -53.41448976,
+        -52.24489333,  -52.24489333,  -52.24489333,  -52.24489333,
+        -52.24489333,  -49.62311859,  -49.62311859,  -49.62311859,
+        -49.62311859,  -49.62311859,  -40.7785058 ,  -40.7785058 ,
+        -40.7785058 ,  -40.7785058 ,  -40.7785058 ,  -44.56682185,
+        -44.56682185,  -44.56682185,  -44.56682185,  -44.56682185,
+        -48.73463383,  -48.73463383,  -48.73463383,  -48.73463383,
+        -48.73463383,  -49.55638464,  -49.55638464,  -49.55638464,
+        -49.55638464,  -49.55638464,  -48.88197841,  -48.88197841,
+        -48.88197841,  -48.88197841,  -48.88197841,  -53.52776636,
+        -53.52776636,  -53.52776636,  -53.52776636,  -53.52776636,
+        -65.80510059,  -65.80510059,  -65.80510059,  -65.80510059,
+        -65.80510059,  -75.59899543,  -75.59899543,  -75.59899543,
+        -75.59899543,  -75.59899543,  -80.50988188,  -80.50988188,
+        -80.50988188,  -80.50988188,  -80.50988188,  -77.6525158 ,
+        -77.6525158 ,  -77.6525158 ,  -77.6525158 ,  -77.6525158 ,
+        -77.03941021,  -77.03941021,  -77.03941021,  -77.03941021,
+        -77.03941021,  -68.68530605,  -68.68530605,  -68.68530605,
+        -68.68530605,  -68.68530605,  -68.76611303,  -68.76611303,
+        -68.76611303,  -68.76611303,  -68.76611303,  -63.67047032,
+        -63.67047032,  -63.67047032,  -63.67047032,  -63.67047032,
+        -67.60217205,  -67.60217205,  -67.60217205,  -67.60217205,
+        -67.60217205,  -62.57984479,  -62.57984479,  -62.57984479,
+        -62.57984479,  -62.57984479,  -52.48767191,  -52.48767191,
+        -52.48767191,  -52.48767191,  -52.48767191,  -43.37478647,
+        -43.37478647,  -43.37478647,  -43.37478647,  -43.37478647,
+        -41.50744603,  -41.50744603,  -41.50744603,  -41.50744603,
+        -41.50744603,  -46.17664302,  -46.17664302,  -46.17664302,
+        -46.17664302,  -46.17664302,  -45.38105947,  -45.38105947,
+        -45.38105947,  -45.38105947,  -45.38105947,  -51.01299723,
+        -51.01299723,  -51.01299723,  -51.01299723,  -51.01299723,
+        -47.27763367,  -47.27763367,  -47.27763367,  -47.27763367,
+        -47.27763367,  -48.25334073,  -48.25334073,  -48.25334073,
+        -48.25334073,  -48.25334073,  -48.49835099,  -48.49835099,
+        -48.49835099,  -48.49835099,  -48.49835099,  -52.56632606,
+        -52.56632606,  -52.56632606,  -52.56632606,  -52.56632606,
+        -50.42227802,  -50.42227802,  -50.42227802,  -50.42227802,
+        -50.42227802,  -57.61816427,  -57.61816427,  -57.61816427,
+        -57.61816427,  -57.61816427,  -63.3772348 ,  -63.3772348 ,
+        -63.3772348 ,  -63.3772348 ,  -63.3772348 ,  -74.38297329,
+        -74.38297329,  -74.38297329,  -74.38297329,  -74.38297329,
+        -84.90327203,  -84.90327203,  -84.90327203,  -84.90327203,
+        -84.90327203,  -82.1054723 ,  -82.1054723 ,  -82.1054723 ,
+        -82.1054723 ,  -82.1054723 ,  -82.111408  ,  -82.111408  ,
+        -82.111408  ,  -82.111408  ,  -82.111408  ,  -82.37140653,
+        -82.37140653,  -82.37140653,  -82.37140653,  -82.37140653,
+        -77.35207312,  -77.35207312,  -77.35207312,  -77.35207312,
+        -77.35207312,  -73.02306412,  -73.02306412,  -73.02306412,
+        -73.02306412,  -73.02306412,  -73.64090518,  -73.64090518,
+        -73.64090518,  -73.64090518,  -73.64090518,  -63.57203876,
+        -63.57203876,  -63.57203876,  -63.57203876,  -63.57203876,
+        -57.2332708 ,  -57.2332708 ,  -57.2332708 ,  -57.2332708 ,
+        -57.2332708 ,  -39.78140811,  -39.78140811,  -39.78140811,
+        -39.78140811,  -39.78140811,  -41.43735094,  -41.43735094,
+        -41.43735094,  -41.43735094,  -41.43735094,  -78.5594364 ,
+        -78.5594364 ,  -78.5594364 ,  -78.5594364 ,  -78.5594364 ,
+       -128.91494972, -128.91494972, -128.91494972, -128.91494972,
+       -128.91494972, -182.0683358 , -182.0683358 , -182.0683358 ,
+       -182.0683358 , -182.0683358 , -271.80166054, -271.80166054,
+       -271.80166054, -271.80166054, -271.80166054, -364.75474567,
+       -364.75474567, -364.75474567, -364.75474567, -364.75474567,
+       -425.29590126, -425.29590126, -425.29590126, -425.29590126,
+       -425.29590126, -460.72627931, -460.72627931, -460.72627931,
+       -460.72627931, -460.72627931, -472.34690988, -472.34690988,
+       -472.34690988, -472.34690988, -472.34690988, -475.04820759,
+       -475.04820759, -475.04820759, -475.04820759, -475.04820759,
+       -461.05934088, -461.05934088, -461.05934088, -461.05934088,
+       -461.05934088, -422.08562251, -422.08562251, -422.08562251,
+       -422.08562251, -422.08562251, -374.07928156, -374.07928156,
+       -374.07928156, -374.07928156, -374.07928156, -320.77286491,
+       -320.77286491, -320.77286491, -320.77286491, -320.77286491,
+       -252.51230406, -252.51230406, -252.51230406, -252.51230406,
+       -252.51230406, -188.014073  , -188.014073  , -188.014073  ,
+       -188.014073  , -188.014073  , -180.03037434, -180.03037434,
+       -180.03037434, -180.03037434, -180.03037434, -205.92278657,
+       -205.92278657, -205.92278657, -205.92278657, -205.92278657,
+       -268.22123168, -268.22123168, -268.22123168, -268.22123168,
+       -268.22123168, -330.82609263, -330.82609263, -330.82609263,
+       -330.82609263, -330.82609263, -359.53903141, -359.53903141,
+       -359.53903141, -359.53903141, -359.53903141, -372.83315236,
+       -372.83315236, -372.83315236, -372.83315236, -372.83315236,
+       -373.38644164, -373.38644164, -373.38644164, -373.38644164,
+       -373.38644164, -388.03688371, -388.03688371, -388.03688371,
+       -388.03688371, -388.03688371, -370.96587527, -370.96587527,
+       -370.96587527, -370.96587527, -370.96587527, -346.65601714,
+       -346.65601714, -346.65601714, -346.65601714, -346.65601714,
+       -293.6643135 , -293.6643135 , -293.6643135 , -293.6643135 ,
+       -293.6643135 , -231.87068539, -231.87068539, -231.87068539,
+       -231.87068539, -231.87068539, -154.25835379, -154.25835379,
+       -154.25835379, -154.25835379, -154.25835379,  -90.72369144,
+        -90.72369144,  -90.72369144,  -90.72369144,  -90.72369144,
+        -63.92114764,  -63.92114764,  -63.92114764,  -63.92114764,
+        -63.92114764,  -49.80146054,  -49.80146054,  -49.80146054,
+        -49.80146054,  -49.80146054,  -47.29594632,  -47.29594632,
+        -47.29594632,  -47.29594632,  -47.29594632,  -30.57284969,
+        -30.57284969,  -30.57284969,  -30.57284969,  -30.57284969,
+        -36.27858633,  -36.27858633,  -36.27858633,  -36.27858633,
+        -36.27858633,  -32.59923465,  -32.59923465,  -32.59923465,
+        -32.59923465,  -32.59923465,  -35.14912425,  -35.14912425,
+        -35.14912425,  -35.14912425,  -35.14912425,  -37.78275392,
+        -37.78275392,  -37.78275392,  -37.78275392,  -37.78275392,
+        -39.91628223,  -39.91628223,  -39.91628223,  -39.91628223,
+        -39.91628223,  -38.38361056,  -38.38361056,  -38.38361056,
+        -38.38361056,  -38.38361056,  -44.39716652,  -44.39716652,
+        -44.39716652,  -44.39716652,  -44.39716652,  -45.49713636,
+        -45.49713636,  -45.49713636,  -45.49713636,  -45.49713636,
+        -44.85844438,  -44.85844438,  -44.85844438,  -44.85844438,
+        -44.85844438,  -50.72149051,  -50.72149051,  -50.72149051,
+        -50.72149051,  -50.72149051,  -41.73279427,  -41.73279427,
+        -41.73279427,  -41.73279427,  -41.73279427,  -42.08180039,
+        -42.08180039,  -42.08180039,  -42.08180039,  -42.08180039,
+        -38.58468377,  -38.58468377,  -38.58468377,  -38.58468377,
+        -38.58468377,  -38.11222174,  -38.11222174,  -38.11222174,
+        -38.11222174,  -38.11222174,  -42.2517735 ,  -42.2517735 ,
+        -42.2517735 ,  -42.2517735 ,  -42.2517735 ,  -42.94226647,
+        -42.94226647,  -42.94226647,  -42.94226647,  -42.94226647,
+        -38.54946955,  -38.54946955,  -38.54946955,  -38.54946955,
+        -38.54946955,  -41.25203275,  -41.25203275,  -41.25203275,
+        -41.25203275,  -41.25203275,  -39.51561978,  -39.51561978,
+        -39.51561978,  -39.51561978,  -39.51561978,  -41.09485889,
+        -41.09485889,  -41.09485889,  -41.09485889,  -41.09485889,
+        -47.23359675,  -47.23359675,  -47.23359675,  -47.23359675,
+        -47.23359675,  -47.00271004,  -47.00271004,  -47.00271004,
+        -47.00271004,  -47.00271004,  -54.33887119,  -54.33887119,
+        -54.33887119,  -54.33887119,  -54.33887119,  -52.1089725 ,
+        -52.1089725 ,  -52.1089725 ,  -52.1089725 ,  -52.1089725 ,
+        -47.77920109,  -47.77920109,  -47.77920109,  -47.77920109,
+        -47.77920109,  -47.86370443,  -47.86370443,  -47.86370443,
+        -47.86370443,  -47.86370443,  -46.12083485,  -46.12083485,
+        -46.12083485,  -46.12083485,  -46.12083485,  -40.6282201 ,
+        -40.6282201 ,  -40.6282201 ,  -40.6282201 ,  -40.6282201 ,
+        -42.73748324,  -42.73748324,  -42.73748324,  -42.73748324,
+        -42.73748324,  -34.53816465,  -34.53816465,  -34.53816465,
+        -34.53816465,  -34.53816465,  -31.48154511,  -31.48154511,
+        -31.48154511,  -31.48154511,  -31.48154511,  -30.35813994,
+        -30.35813994,  -30.35813994,  -30.35813994,  -30.35813994,
+        -23.22143366,  -23.22143366,  -23.22143366,  -23.22143366,
+        -23.22143366,  -22.98798817,  -22.98798817,  -22.98798817,
+        -22.98798817,  -22.98798817,  -23.11559697,  -23.11559697,
+        -23.11559697,  -23.11559697,  -23.11559697,  -25.72912664,
+        -25.72912664,  -25.72912664,  -25.72912664,  -25.72912664,
+        -29.8791811 ,  -29.8791811 ,  -29.8791811 ,  -29.8791811 ,
+        -29.8791811 ,  -36.74643087,  -36.74643087,  -36.74643087,
+        -36.74643087,  -36.74643087,  -66.43529442,  -66.43529442,
+        -66.43529442,  -66.43529442,  -66.43529442,  -93.07670353,
+        -93.07670353,  -93.07670353,  -93.07670353,  -93.07670353,
+       -121.83133764, -121.83133764, -121.83133764, -121.83133764,
+       -121.83133764, -151.64189695, -151.64189695, -151.64189695,
+       -151.64189695, -151.64189695, -181.39675603, -181.39675603,
+       -181.39675603, -181.39675603, -181.39675603, -220.13196271,
+       -220.13196271, -220.13196271, -220.13196271, -220.13196271,
+       -254.81061354, -254.81061354, -254.81061354, -254.81061354,
+       -254.81061354, -263.20823744, -263.20823744, -263.20823744,
+       -263.20823744, -263.20823744, -273.29941568, -273.29941568,
+       -273.29941568, -273.29941568, -273.29941568, -267.48798416,
+       -267.48798416, -267.48798416, -267.48798416, -267.48798416,
+       -241.71867439, -241.71867439, -241.71867439, -241.71867439,
+       -241.71867439, -216.40222038, -216.40222038, -216.40222038,
+       -216.40222038, -216.40222038, -204.21042269, -204.21042269,
+       -204.21042269, -204.21042269, -204.21042269, -196.70840691,
+       -196.70840691, -196.70840691, -196.70840691, -196.70840691,
+       -185.98132087, -185.98132087, -185.98132087, -185.98132087,
+       -185.98132087, -166.82736614, -166.82736614, -166.82736614,
+       -166.82736614, -166.82736614, -144.79211571, -144.79211571,
+       -144.79211571, -144.79211571, -144.79211571, -140.78743553,
+       -140.78743553, -140.78743553, -140.78743553, -140.78743553,
+       -124.19345636, -124.19345636, -124.19345636, -124.19345636,
+       -124.19345636, -124.68975048, -124.68975048, -124.68975048,
+       -124.68975048, -124.68975048, -124.9340661 , -124.9340661 ,
+       -124.9340661 , -124.9340661 , -124.9340661 , -125.65727945,
+       -125.65727945, -125.65727945, -125.65727945, -125.65727945,
+       -106.76050009, -106.76050009, -106.76050009, -106.76050009,
+       -106.76050009,  -83.05947897,  -83.05947897,  -83.05947897,
+        -83.05947897,  -83.05947897,  -69.18012457,  -69.18012457,
+        -69.18012457,  -69.18012457,  -69.18012457,  -53.74369555,
+        -53.74369555,  -53.74369555,  -53.74369555,  -53.74369555,
+        -40.39046669,  -40.39046669,  -40.39046669,  -40.39046669,
+        -40.39046669,  -33.21744962,  -33.21744962,  -33.21744962,
+        -33.21744962,  -33.21744962,  -36.2121582 ,  -36.2121582 ,
+        -36.2121582 ,  -36.2121582 ,  -36.2121582 ,  -35.42395174,
+        -35.42395174,  -35.42395174,  -35.42395174,  -35.42395174,
+        -29.27091362,  -29.27091362,  -29.27091362,  -29.27091362,
+        -29.27091362,  -28.87791618,  -28.87791618,  -28.87791618,
+        -28.87791618,  -28.87791618,  -27.83706283,  -27.83706283,
+        -27.83706283,  -27.83706283,  -27.83706283,  -26.48698337,
+        -26.48698337,  -26.48698337,  -26.48698337,  -26.48698337,
+        -20.34023399,  -20.34023399,  -20.34023399,  -20.34023399,
+        -20.34023399,  -15.04767964,  -15.04767964,  -15.04767964,
+        -15.04767964,  -15.04767964,  -12.48993776,  -12.48993776,
+        -12.48993776,  -12.48993776,  -12.48993776,  -10.64637837,
+        -10.64637837,  -10.64637837,  -10.64637837,  -10.64637837,
+         -7.32127118,   -7.32127118,   -7.32127118,   -7.32127118,
+         -7.32127118,   -4.92051496,   -4.92051496,   -4.92051496,
+         -4.92051496,   -4.92051496,   -4.22818938,   -4.22818938,
+         -4.22818938,   -4.22818938,   -4.22818938,   -1.89844699,
+         -1.89844699,   -1.89844699,   -1.89844699,   -1.89844699])
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -748,7 +605,7 @@ array([  -3.62090796,   -3.62090796,   -3.62090796,   -3.62090796,
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/examples_oua_tutorial_19_1.png" src="../_images/examples_oua_tutorial_19_1.png" />
+<img alt="../_images/examples_oua_tutorial_18_1.png" src="../_images/examples_oua_tutorial_18_1.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -773,7 +630,15 @@ array([&lt;Axes: &gt;, &lt;Axes: &gt;], dtype=object)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/examples_oua_tutorial_20_1.png" src="../_images/examples_oua_tutorial_20_1.png" />
+<img alt="../_images/examples_oua_tutorial_19_1.png" src="../_images/examples_oua_tutorial_19_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
 </div>
 </div>
 </section>
@@ -789,7 +654,7 @@ array([&lt;Axes: &gt;, &lt;Axes: &gt;], dtype=object)
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Martin Royer.</p>
+    <p>&#169; Copyright 2026, Martin Royer.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

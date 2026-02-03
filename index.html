@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Welcome to Topological Data Analysis for Anomaly Detection’s documentation! &mdash; Topological Data Analysis for Anomaly Detection 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=01f34227"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -80,7 +80,7 @@
   <section id="welcome-to-topological-data-analysis-for-anomaly-detection-s-documentation">
 <h1>Welcome to Topological Data Analysis for Anomaly Detection’s documentation!<a class="headerlink" href="#welcome-to-topological-data-analysis-for-anomaly-detection-s-documentation" title="Link to this heading"></a></h1>
 <div align="center">
-        <img src="_static/Logo_ConfianceAI.png" width="20%" alt="ConfianceAI Logo" />
+	<img src="_static/Logo_ConfianceAI.png" width="20%" alt="ConfianceAI Logo" />
     <h1 style="font-size: large; font-weight: bold;">TDAAD</h1>
 </div>
 <div align="center">
@@ -99,7 +99,7 @@
     <a href="_static/flake8/index.html">
         <img src="_static/flake8/flake8.svg" alt="Flake8 Report">
     </a>
-        <a href="_static/coverage/index.html">
+	<a href="_static/coverage/index.html">
         <img src="_static/coverage/coverage.svg" alt="Coverage report">
     </a>
 </div>
@@ -115,13 +115,40 @@
         <img src="https://img.shields.io/pypi/v/tdaad?color=blue&label=PyPI&logo=pypi&logoColor=white" alt="PyPI">
     </a>
 </div>
+<br>
+<hr class="docutils" />
+<section id="tdaad-topological-data-analysis-for-anomaly-detection">
+<h2>TDAAD – Topological Data Analysis for Anomaly Detection<a class="headerlink" href="#tdaad-topological-data-analysis-for-anomaly-detection" title="Link to this heading"></a></h2>
+<section id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h3>
+<p>TDAAD is a Python package for unsupervised anomaly detection in multivariate time series using Topological Data Analysis (TDA). Website and documentation: https://irt-systemx.github.io/tdaad/</p>
+<p>It builds upon two powerful open-source libraries:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://gudhi.inria.fr/"><img alt="GUDHI" src="https://gudhi.inria.fr/assets/img/home.png" /></a> <strong><a class="reference external" href="https://gudhi.inria.fr/">GUDHI</a></strong> for efficient and scalable computation of persistent homology and topological features,</p></li>
+<li><p><a class="reference external" href="https://scikit-learn.org/"><img alt="scikit-learn" src="https://scikit-learn.org/stable/_static/scikit-learn-logo-small.png" /></a> <strong><a class="reference external" href="https://scikit-learn.org/">scikit-learn</a></strong> for core machine learning utilities like <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code> and objects like <code class="docutils literal notranslate"><span class="pre">EllipticEnvelope</span></code>.</p></li>
+</ul>
+<p>TDAAD is inspired by the methodology introduced in:</p>
+<blockquote>
+<div><p><strong>Chazal, F., Levrard, C., &amp; Royer, M. (2024).</strong> <em>Topological Analysis for Detecting Anomalies (TADA) in dependent sequences: application to Time Series</em>. Journal of Machine Learning Research, 25(365), 1–49. <a class="reference external" href="https://www.jmlr.org/papers/v25/24-0853.html">https://www.jmlr.org/papers/v25/24-0853.html</a></p>
+</div></blockquote>
+</section>
+<section id="features">
+<h3>🔍 Features<a class="headerlink" href="#features" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Unsupervised anomaly detection in multivariate time series</p></li>
+<li><p>Topological embedding using persistent homology</p></li>
+<li><p>Scikit-learn–style API (<code class="docutils literal notranslate"><span class="pre">fit</span></code>, <code class="docutils literal notranslate"><span class="pre">transform</span></code>, <code class="docutils literal notranslate"><span class="pre">score_samples</span></code>)</p></li>
+<li><p>Configurable embedding dimension, window size, and topological parameters</p></li>
+<li><p>Works with NumPy arrays or pandas DataFrames</p></li>
+</ul>
+</section>
+</section>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="guidelines.html">📖 Guidelines</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="guidelines.html#install">🚀 Install</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guidelines.html#basic-usage">🎮 Basic usage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guidelines.html#improved-usage">🔀 Improved usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guidelines.html#quickstart">🚀 Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guidelines.html#usage-notes">📌 Usage Notes</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">🧪 Tutorial</a><ul>
@@ -134,11 +161,12 @@
 <li class="toctree-l1"><a class="reference internal" href="theory_overview.html">💡 Theory overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="theory_overview.html#references">📑 References</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">🔄 Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id1">?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id2">1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id3">1.3.1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id4">1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id5">1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id2">1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id3">1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id4">1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id5">1.3.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id6">1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id7">1.2.0</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">🔎 Tdaad package</a><ul>
@@ -156,6 +184,15 @@
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
 </section>
+<section id="contributors-and-support">
+<h1>Contributors and Support<a class="headerlink" href="#contributors-and-support" title="Link to this heading"></a></h1>
+<p>This work has been supported by the French government under the “France 2030” program,
+as part of the SystemX Technological Research Institute within the <strong>Confiance.ai</strong> project.</p>
+<p>TDAAD is developed by
+<a class="reference external" href="https://www.irt-systemx.fr/en/">IRT SystemX</a>
+and supported by the
+<a class="reference external" href="https://www.trustworthy-ai-foundation.eu/">European Trustworthy AI Association</a></p>
+</section>
 
 
            </div>
@@ -167,7 +204,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Martin Royer.</p>
+    <p>&#169; Copyright 2026, Martin Royer.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

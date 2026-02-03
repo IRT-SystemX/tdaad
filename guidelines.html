@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>📖 Guidelines &mdash; Topological Data Analysis for Anomaly Detection 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=01f34227"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -46,17 +46,9 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">📖 Guidelines</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#install">🚀 Install</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#basic-usage">🎮 Basic usage</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#context">Context</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#main-features-topologicalembedding-and-topologicalanomalydetector">Main features: <code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding</span></code> and <code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#improved-usage">🔀 Improved usage</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#main-outputs">Main outputs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#algorithm-main-parameters">Algorithm main parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#good-to-know">Good to know</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quickstart">🚀 Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage-notes">📌 Usage Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-complexity-of-persistent-homology-in-tdaad">🧮 Basic Complexity of Persistent Homology in TDAAD</a></li>
 </ul>
 </li>
 </ul>
@@ -95,92 +87,61 @@
              
   <section id="guidelines">
 <h1>📖 Guidelines<a class="headerlink" href="#guidelines" title="Link to this heading"></a></h1>
-<p>This package named <code class="docutils literal notranslate"><span class="pre">tdaad</span></code> is a Python module for detecting anomalies in multiple time series.</p>
-<p>Website: https://irt-systemx.github.io/tdaad/</p>
-<section id="install">
-<h2>🚀 Install<a class="headerlink" href="#install" title="Link to this heading"></a></h2>
-<p>To install and use the component you can create a Python virtual environment as follows:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>virtualenv
-virtualenv<span class="w"> </span>myenv
-<span class="nb">source</span><span class="w"> </span>myenv/bin/activate
+<p>Install from PyPI (recommended):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>tdaad
 </pre></div>
 </div>
-<p>Then you can clone the git repo and install from within the folder:</p>
+<p>Or install from source:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/IRT-SystemX/tdaad.git
 <span class="nb">cd</span><span class="w"> </span>tdaad
 pip<span class="w"> </span>install<span class="w"> </span>.
 </pre></div>
 </div>
-</section>
-<section id="basic-usage">
-<h2>🎮 Basic usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h2>
-<section id="context">
-<h3>Context<a class="headerlink" href="#context" title="Link to this heading"></a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">tdaad</span></code> provides machine learning algorithms for analyzing timeseries data through the lense of Topological Data
-Analysis, and deriving anomaly scores.</p>
-<p>The targeted input is an object <code class="docutils literal notranslate"><span class="pre">X</span></code> representing a <em>multiple time series</em> with variables columns and timestamps lines.
-We use the term <em>multiple time series</em> to describe a set of univariate timeseries that describe a system or object.
-Note that the package does not handle analysis of a single univariate timeseries.</p>
-<p>The main idea of this package is to analyze time series with topological methods. It is done in three essential steps:</p>
-<ol class="arabic simple">
-<li><p>cut the timeseries into chunks using a sliding window algorithm,</p></li>
-<li><p>represent each timeseries window with topological features,</p></li>
-<li><p>estimate the empirical covariance of those topological features to derive an anomaly detection procedure.</p></li>
-</ol>
-<p>The combination of steps 1. and 2. are performed by an object called <code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding</span></code>,
-and the method can be understood as a representation learning method.</p>
-<p>Step 3. is a standard step of anomaly detection procedure based on vectorized data.</p>
-<p>The combined result is the <code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code> object.</p>
-</section>
-<section id="main-features-topologicalembedding-and-topologicalanomalydetector">
-<h3>Main features: <code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding</span></code> and <code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code><a class="headerlink" href="#main-features-topologicalembedding-and-topologicalanomalydetector" title="Link to this heading"></a></h3>
-<p>As the package is based upon, inspired by and compatible with reknown <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code>
-python library, the representation learning and anomaly detection learning are performed in the most standard way.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.topological_embedding</span><span class="w"> </span><span class="kn">import</span> <span class="n">TopologicalEmbedding</span>
-   <span class="n">embedding</span> <span class="o">=</span> <span class="n">TopologicalEmbedding</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Based on this representation, an empirical covariance is learned and an
-elliptic envelope is calculated with the associated mahalanobis distance, allowing for derivation of an anomaly score.
-All of this is performed within the <code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code> object, so that to perform an anomaly detection process
-one only needs the following:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.anomaly_detectors</span><span class="w"> </span><span class="kn">import</span> <span class="n">TopologicalAnomalyDetector</span>
-   <span class="n">detector</span> <span class="o">=</span> <span class="n">TopologicalAnomalyDetector</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-   <span class="n">anomaly_scores</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">score_samples</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="improved-usage">
-<h2>🔀 Improved usage<a class="headerlink" href="#improved-usage" title="Link to this heading"></a></h2>
-<section id="inputs">
-<h3>Inputs<a class="headerlink" href="#inputs" title="Link to this heading"></a></h3>
-<p>For now the component is designed to handle inputs <code class="docutils literal notranslate"><span class="pre">X</span></code> in the form of a
-DataFrame with variables as columns and timestamps as lines.</p>
-</section>
-<section id="main-outputs">
-<h3>Main outputs<a class="headerlink" href="#main-outputs" title="Link to this heading"></a></h3>
-<p>The main output is an <code class="docutils literal notranslate"><span class="pre">anomaly_score</span></code> from the <code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code> object,
-in the form of a univariate <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>. The scores are not bounded, the lower scores correspond to the more abnormal portions of the timeseries, according to the topological representation that was constructed.</p>
-<p>Another key output is that topological representation or embedding, result of the <code class="docutils literal notranslate"><span class="pre">transform</span></code> of the <code class="docutils literal notranslate"><span class="pre">TopologicalEmbedding</span></code> object: a multivariate <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> that “encodes” the timeseries into vectorial (and topological) representation.</p>
-</section>
-<section id="algorithm-main-parameters">
-<h3>Algorithm main parameters<a class="headerlink" href="#algorithm-main-parameters" title="Link to this heading"></a></h3>
-<p>The aforementioned <code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code> objects are ready-to-use as such,
-but should be manually tuned for better results. Key parameters include:</p>
+<p>Requirements:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">window_size</span></code> for the sliding window algorithm, important for capturing phenomenons at a certain scale. Ideally one would want at least <code class="docutils literal notranslate"><span class="pre">window_size=100</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">n_centers_by_dim</span></code> determining the size of the embedding, that one wants as small as possible at risk of missing key information. Perhaps start with value 2 or 3, and if the features are not relevant it is worth going to 10 to 20.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tda_max_dim</span></code> the maximum topological dimension to create features. One should start with dimension 0, 1 or 2. The computation time increases sensibly with this parameter.</p></li>
+<li><p>Python ≥ 3.7</p></li>
+<li><p>See <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> for full dependency list</p></li>
 </ul>
+<section id="quickstart">
+<h2>🚀 Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading"></a></h2>
+<p>Here’s a minimal example using <code class="docutils literal notranslate"><span class="pre">TopologicalAnomalyDetector</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.anomaly_detectors</span><span class="w"> </span><span class="kn">import</span> <span class="n">TopologicalAnomalyDetector</span>
+
+<span class="c1"># Example multivariate time series with shape (n_samples, n_features)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Initialize and fit the detector</span>
+<span class="n">detector</span> <span class="o">=</span> <span class="n">TopologicalAnomalyDetector</span><span class="p">(</span><span class="n">window_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">n_centers_by_dim</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="c1"># Compute anomaly scores</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">score_samples</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also use <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> instead of a NumPy array — column names will be preserved in the output.</p>
+<p>For more advanced usage (e.g. custom embeddings, parameter tuning), see the <a class="reference internal" href="#examples/"><span class="xref myst">examples folder</span></a> or <a class="reference external" href="https://irt-systemx.github.io/tdaad/">API documentation</a></p>
 </section>
-<section id="good-to-know">
-<h3>Good to know<a class="headerlink" href="#good-to-know" title="Link to this heading"></a></h3>
+<section id="usage-notes">
+<h2>📌 Usage Notes<a class="headerlink" href="#usage-notes" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p>For this algorithm to run smoothly, the number of sensors involved can go to 100 without too much problem.</p></li>
-<li><p>It seems possible to adapt the algorithm to an online version if one stays around this order of magnitude. The way to go would be 1. find a reasonable “normal-regime” period and <code class="docutils literal notranslate"><span class="pre">window_size</span></code> to train the detector, then run it on streaming data.</p></li>
-<li><p>Because of its design, the tda detectors would be invariant to noises or transformation that are invariant through correlation (e.g. multiplication), but also to label shifts (as TDA is invariant to label permutation).</p></li>
-<li><p>This detector is good to use in a context where a complex system (e.g. train on a railway, drone fleet, factory…) has various sensors information that can be used to build inference on the state of the system (working / anomalous =&gt; needs attending).</p></li>
+<li><p>TDAAD is designed for <strong>multivariate time series</strong> (2D inputs) — univariate data is not supported.</p></li>
+<li><p>The core detection method relies on <strong>sliding-window embeddings</strong> and <strong>persistent homology</strong> to identify structural changes in the signal.</p></li>
+<li><p>The key parameters that impact results and runtime are:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">window_size</span></code> controls the time resolution — larger windows capture slower anomalies, smaller ones detect more localized changes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_centers_by_dim</span></code> controls the number of reference shapes used per homology dimension (e.g. connected components in H0, loops in H1, …). Increasing this improves sensitivity but adds computation time.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tda_max_dim</span></code> sets the <strong>maximum topological feature dimension</strong> computed (0 = connected components, 1 = loops, 2 = voids, …). Higher values increase runtime and memory usage.</p></li>
+</ul>
+</li>
+<li><p>Inputs can be <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> or <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>. Column names are preserved in the output when using DataFrames.</p></li>
+</ul>
+<p>⚙️ You can typically handle ~100 sensors and a few hundred time steps per window on a modern machine.</p>
+<section id="basic-complexity-of-persistent-homology-in-tdaad">
+<h3>🧮 Basic Complexity of Persistent Homology in TDAAD<a class="headerlink" href="#basic-complexity-of-persistent-homology-in-tdaad" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Total complexity scales with:  $<code class="docutils literal notranslate"><span class="pre">O(N</span> <span class="pre">×</span> <span class="pre">(w</span> <span class="pre">×</span> <span class="pre">p)^{(d+2)})</span></code>$ where $<code class="docutils literal notranslate"><span class="pre">w</span></code>$ is the time resolution (or <code class="docutils literal notranslate"><span class="pre">window_size</span></code>, number of time steps per window), $<code class="docutils literal notranslate"><span class="pre">p</span></code>$ is the number of variables (features/sensors), $<code class="docutils literal notranslate"><span class="pre">d</span></code>$ is the maximum homology dimension <code class="docutils literal notranslate"><span class="pre">tda_max_dim</span></code>, and $<code class="docutils literal notranslate"><span class="pre">N</span></code>$ is the total number of sliding windows.</p></li>
+<li><p>So note that increasing max homology dimension <code class="docutils literal notranslate"><span class="pre">d</span></code> raises the exponent, causing exponential growth. The number of centers <code class="docutils literal notranslate"><span class="pre">n_centers_by_dim</span></code> used after the PH computation does not significantly affect the overall complexity.</p></li>
 </ul>
 </section>
 </section>
@@ -197,7 +158,7 @@ but should be manually tuned for better results. Key parameters include:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Martin Royer.</p>
+    <p>&#169; Copyright 2026, Martin Royer.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

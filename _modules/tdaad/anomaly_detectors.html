@@ -7,14 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>tdaad.anomaly_detectors &mdash; Topological Data Analysis for Anomaly Detection 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../_static/documentation_options.js?v=01f34227"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -79,7 +79,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;Topological Anomaly Detectors.&quot;&quot;&quot;</span>
 
 <span class="c1"># Author: Martin Royer</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numbers</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
@@ -88,10 +88,65 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">_fit_context</span><span class="p">,</span> <span class="n">TransformerMixin</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.utils._param_validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Interval</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.utils.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_is_fitted</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.covariance</span><span class="w"> </span><span class="kn">import</span> <span class="n">EllipticEnvelope</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.utils.remapping_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">score_flat_fast_remapping</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.topological_embedding</span><span class="w"> </span><span class="kn">import</span> <span class="n">TopologicalEmbedding</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">tdaad.utils.local_elliptic_envelope</span><span class="w"> </span><span class="kn">import</span> <span class="n">EllipticEnvelope</span>
+
+
+<div class="viewcode-block" id="score_flat_fast_remapping">
+<a class="viewcode-back" href="../../tdaad.html#tdaad.anomaly_detectors.score_flat_fast_remapping">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">score_flat_fast_remapping</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">stride</span><span class="p">,</span> <span class="n">padding_length</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remap window-level anomaly scores to a flat sequence of per-time-step scores.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scores : array-like of shape (n_windows,)</span>
+<span class="sd">        Anomaly scores for each window. Can be a pandas Series or NumPy array.</span>
+
+<span class="sd">    window_size : int</span>
+<span class="sd">        Size of the sliding window.</span>
+
+<span class="sd">    stride : int</span>
+<span class="sd">        Step size between windows.</span>
+
+<span class="sd">    padding_length : int, optional (default=0)</span>
+<span class="sd">        Extra length to pad the output array (typically at the end of a signal).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    remapped_scores : np.ndarray of shape (n_timestamps + padding_length,)</span>
+<span class="sd">        Flattened anomaly scores with per-timestep resolution. NaN values (from</span>
+<span class="sd">        positions not covered by any window) are replaced with 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Ensure scores is a NumPy array</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">):</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+
+    <span class="c1"># Compute begin and end indices for each window</span>
+    <span class="n">begins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_windows</span><span class="p">)</span> <span class="o">*</span> <span class="n">stride</span>
+    <span class="n">ends</span> <span class="o">=</span> <span class="n">begins</span> <span class="o">+</span> <span class="n">window_size</span>
+
+    <span class="c1"># Output length based on last window + padding</span>
+    <span class="n">total_length</span> <span class="o">=</span> <span class="n">ends</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">padding_length</span>
+    <span class="n">remapped_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">total_length</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+    <span class="c1"># Find all unique intersection points between windows</span>
+    <span class="n">intersections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">begins</span><span class="p">,</span> <span class="n">ends</span><span class="p">)))</span>
+
+    <span class="c1"># For each interval between two intersections, find overlapping windows and sum their scores</span>
+    <span class="k">for</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">intersections</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">intersections</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="n">overlapping</span> <span class="o">=</span> <span class="p">(</span><span class="n">begins</span> <span class="o">&lt;=</span> <span class="n">left</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">right</span> <span class="o">&lt;=</span> <span class="n">ends</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">overlapping</span><span class="p">):</span>
+            <span class="n">remapped_scores</span><span class="p">[</span><span class="n">left</span><span class="p">:</span><span class="n">right</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="n">overlapping</span><span class="p">])</span>
+
+    <span class="c1"># Replace NaNs (unscored positions) with 0</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">remapped_scores</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">remapped_scores</span></div>
+
 
 
 <div class="viewcode-block" id="TopologicalAnomalyDetector">
@@ -101,7 +156,7 @@
 <span class="sd">    Anomaly detection for multivariate time series using topological embeddings and robust covariance estimation.</span>
 
 <span class="sd">    This detector extracts topological features from sliding windows of time series data and</span>
-<span class="sd">    uses a robust Mahalanobis distance (via EllipticEnvelope) to score anomalies.</span>
+<span class="sd">    uses a robust Mahalanobis distance (via PandasEllipticEnvelope) to score anomalies.</span>
 
 <span class="sd">    Read more in the :ref:`User Guide &lt;topological_anomaly_detection&gt;`.</span>
 
@@ -147,14 +202,12 @@
 <span class="sd">    &gt;&gt;&gt; anomalies = detector.predict(X)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">required_properties</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;multiple_time_series&quot;</span><span class="p">]</span>
-
     <span class="n">_parameter_constraints</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Interval</span><span class="p">(</span><span class="n">numbers</span><span class="o">.</span><span class="n">Integral</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)],</span>
         <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Interval</span><span class="p">(</span><span class="n">numbers</span><span class="o">.</span><span class="n">Integral</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)],</span>
         <span class="s2">&quot;tda_max_dim&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Interval</span><span class="p">(</span><span class="n">numbers</span><span class="o">.</span><span class="n">Integral</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)],</span>
         <span class="s2">&quot;n_centers_by_dim&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Interval</span><span class="p">(</span><span class="n">numbers</span><span class="o">.</span><span class="n">Integral</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)],</span>
-        <span class="s2">&quot;support_fraction&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Interval</span><span class="p">(</span><span class="n">numbers</span><span class="o">.</span><span class="n">Real</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="s2">&quot;support_fraction&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Interval</span><span class="p">(</span><span class="n">numbers</span><span class="o">.</span><span class="n">Real</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">],</span>
         <span class="s2">&quot;contamination&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">Interval</span><span class="p">(</span><span class="n">numbers</span><span class="o">.</span><span class="n">Real</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)],</span>
         <span class="s2">&quot;random_state&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;random_state&quot;</span><span class="p">],</span>
     <span class="p">}</span>
@@ -250,15 +303,14 @@
 <a class="viewcode-back" href="../../tdaad.html#tdaad.anomaly_detectors.TopologicalAnomalyDetector.decision_function">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">decision_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the distance to the decision boundary.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset_</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_samples</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_samples</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset_</span></div>
 
 
 <div class="viewcode-block" id="TopologicalAnomalyDetector.predict">
 <a class="viewcode-back" href="../../tdaad.html#tdaad.anomaly_detectors.TopologicalAnomalyDetector.predict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict inliers (1) and outliers (-1) using learned threshold.&quot;&quot;&quot;</span>
-        <span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_samples</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">scores</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset_</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decision_function</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="TopologicalAnomalyDetector.transform">
@@ -277,7 +329,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Martin Royer.</p>
+    <p>&#169; Copyright 2026, Martin Royer.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
