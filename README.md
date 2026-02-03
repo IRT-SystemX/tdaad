@@ -44,15 +44,13 @@
 
 ## Overview
 
-TDAAD is a Python package for unsupervised anomaly detection in multivariate time series using Topological Data Analysis (TDA). Website and documentation: https://irt-systemx.github.io/tdaad/
+TDAAD is a Python package for unsupervised anomaly detection in multivariate time series using Topological Data Analysis (TDA). Website and documentation: [https://irt-systemx.github.io/tdaad/](https://irt-systemx.github.io/tdaad/)
 
 It builds upon two powerful open-source libraries:
-
 - [![GUDHI](https://gudhi.inria.fr/assets/img/home.png)](https://gudhi.inria.fr/) **[GUDHI](https://gudhi.inria.fr/)** for efficient and scalable computation of persistent homology and topological features,
 - [![scikit-learn](https://scikit-learn.org/stable/_static/scikit-learn-logo-small.png)](https://scikit-learn.org/) **[scikit-learn](https://scikit-learn.org/)** for core machine learning utilities like `Pipeline` and objects like `EllipticEnvelope`.
 
-TDAAD is inspired by the methodology introduced in:
-
+TDAAD implements the methodology introduced in:
 > **Chazal, F., Levrard, C., & Royer, M. (2024).** *Topological Analysis for Detecting Anomalies (TADA) in dependent sequences: application to Time Series*. Journal of Machine Learning Research, 25(365), 1–49. [https://www.jmlr.org/papers/v25/24-0853.html](https://www.jmlr.org/papers/v25/24-0853.html)
 
 
