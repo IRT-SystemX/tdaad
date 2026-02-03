@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.abspath("../.."))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "Topological Data Analysis for Anomaly Detection"
-copyright = "2024, Martin Royer"
+copyright = "2026, Martin Royer"
 author = "Martin Royer"
 release = "0.1.0"
 

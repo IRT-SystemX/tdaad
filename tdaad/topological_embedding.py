@@ -39,7 +39,7 @@ class SlidingWindowTransformer(BaseEstimator, TransformerMixin):
     def transform(self, X):
         n_rows = X.shape[0]
         self.window_index_ = list(range(0, n_rows - self.window_size + 1, self.step))
-        return [X[i : i + self.window_size] for i in self.window_index_]
+        return [X[i: i + self.window_size] for i in self.window_index_]
 
 
 class TopologicalEmbedding(BaseEstimator, TransformerMixin):

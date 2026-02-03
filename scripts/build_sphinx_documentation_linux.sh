@@ -1,4 +1,3 @@
-
 # Copy dependencies
 cd ..
 cp -R _static docs/source/
@@ -15,8 +14,9 @@ sphinx-apidoc -o docs/source tdaad
 # Generate HTML
 
 cd docs
-./make.bat clean
-./make.bat html
+make clean
+make html
 
+# Clean temp directories
 rm -Rf source/_static
 rm -Rf source/examples

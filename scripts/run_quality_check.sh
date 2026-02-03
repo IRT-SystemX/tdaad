@@ -19,6 +19,10 @@ PYLINT_SCORE=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' _st
 pylint tdaad --rcfile=scripts/.pylintrc --output-format=pylint_gitlab.GitlabPagesHtmlReporter --exit-zero > _static/pylint/index.html 
 anybadge --overwrite --label pylint --value=$PYLINT_SCORE --file=_static/pylint/pylint.svg 4=red 6=orange 8=yellow 10=green
 
+# Ruff check
+
+ruff check tdaad/ > scripts/ruff_report.txt 
+
 # Test coverage
 
 echo "Running test coverage..."
